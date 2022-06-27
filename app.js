@@ -31,6 +31,8 @@ app.use(express.urlencoded({ extended: false }));
 
 // app.use("/post", PostRouter);
 
+
+app.set('view engine', 'ejs');
 app.get('/', async (req, res) => {
     res.status(200).render('index');
 });
