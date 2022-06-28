@@ -1,11 +1,13 @@
 const jwt = require("jsonwebtoken");
-const UserDB = require("../models/user");
+const UserDB = require("../models/users");
 
-//카카오 로그인
-const kakaoCallback = (req, res, next) => {
-    passport.authenticate('kakao',{ failureRedirect: '/' },(err, user) => {
+async function kakaoCallback (req, res, next) {
+    passport.authenticate(
+        'kakao',
+        { failureRedirect: '/' },
+        (err, user, info) => {
             if (err) return next(err)
-            console.log('콜백')
+            console.log('콜백~~~')
             const { userId, nickName, userImage } = user;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
@@ -21,13 +23,6 @@ const kakaoCallback = (req, res, next) => {
         }
     )(req, res, next)
 }
-
-// 구글 로그인
-
-
-
-
-// 네이버 로그인
 
 
 async function checkMe(req, res) {
