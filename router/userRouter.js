@@ -3,7 +3,11 @@ const passport = require("passport")
 const authMiddleware = require("../middlewares/auth-middleware");
 const userController = require("../controller/userController");
 const router = express.Router();
-const { kakaoCallback, checkMe } = require("../controller/userController")
+
+const {
+    kakaoCallback,
+    checkMe
+} = require("../controller/userController")
 
 
 //카카오 로그인
