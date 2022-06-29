@@ -1,0 +1,40 @@
+npm init -y
+npm i aws-sdk bcrypt cors cryptr dotenv express joi jsonwebtoken morgan multer multer-s3 mysql  sequelize sequelize-cl socket.io
+npx sequelize init
+config.json 안의 내 mysql정보 수정
+npx sequelize db:create
+npx sequelize model:generate --name User --attributes email:string,nickname:string,password:string
+의 형식으로 모델 생성
+
+ models/user.js
+ userId: {
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+
+migrations/숫자-create-user.js
+userId: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+
+id값 형식 확인
+
+npx sequelize db:migrate
+migrate하기
+
+*migrate하지않고 models에 직접 파일을 생성할 경우
+index.js의
+const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes
+    );
+문에서 오류가 생긴다.
+
+commentController 오류
+const Comment = require("../models/comment")
+로 require해서 들고와 쓸 수 없다.
+const { Comment, sequelize, Sequelize } = require("../models");
+의 형식으로 들고와 사용한다.
