@@ -135,3 +135,10 @@ async function DeletePost (req, res) {
     }
 };
 
+exports = module.exports = {
+    WritePosting,
+    GetPostingList,
+    GetPost,
+    ModifyPosting,
+    DeletePost
+}

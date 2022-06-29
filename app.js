@@ -1,8 +1,8 @@
 const express = require("express");
-// const mongoose = require("mongoose");
+// const dbconfig = require('./database/db');
 // const cors = require("cors");
-// const connectDB = require("./database/db")
-// const requestMiddleware = ("./middlewares/requestMiddleware");
+const connectDB = require("./database/db")
+const reqLogMiddleware = require('./middlewares/request-log-middleware');
 // const PostRouter = ("./router/postRouter");
 
 const port = 8080;
@@ -12,13 +12,20 @@ const port = 8080;
 //     credentials: true,
 //     };
 
-// DB 연결
-// connectDB();
-// const db = mongoose.connection;
-// db.on("error", console.error.bind(console, "connection error:"));
 
 // 서버어플리케이션
 const app = express();
+
+
+// DB 연결
+app.get('/mysql', (req, res) => {
+    connection.query('SELECT * from jeju_main', (error, rows) => {
+      if (error) throw error;
+      console.log('User info is: ', rows);
+      res.send(rows);
+    });
+  });
+
 
 // Body Parser
 app.use(express.json());
@@ -26,7 +33,7 @@ app.use(express.urlencoded({ extended: false }));
 
 
 // 미들웨어
-// app.use(requestMiddleware);
+app.use(reqLogMiddleware);
 // app.use(cors(corsOption));
 
 // app.use("/post", PostRouter);
