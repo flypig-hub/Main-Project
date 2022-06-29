@@ -1,7 +1,8 @@
 require('dotenv').config();
 const passport = require('passport');
-// const google = require('./google');
+const google = require('./google');
 const kakao = require('./kakao');
+const naver = require('./naver');
 
 module.exports = () => {
     passport.serializeUser((user, done) => {
@@ -16,17 +17,8 @@ module.exports = () => {
         done(null, user);
     });
 
-
-    // passport.serializeUser(function(user, done) {
-    //     done(null, user.id);
-    //   });
-
-    //   passport.deserializeUser(function(id, done) {
-    //     User.findOne(id, function (err, user) {
-    //       done(err, user);
-    //     });
-    //   });
-
-    // google();
+    localStorage();
+    naver();
+    google();
     kakao();
 };

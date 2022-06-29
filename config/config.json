@@ -1,11 +1,10 @@
 {
   "development": {
     "username": "root",
-    "password": "",
-    "database": "database_",
+    "password": "Asd20902!!",
+    "database": "jeju_main",
     "host": "127.0.0.1",
-    "dialect": "mysql",
-    "port":""
+    "dialect": "mysql"
   },
   "test": {
     "username": "root",

@@ -42,6 +42,8 @@ app.set("view engine", "pug", "ejs");
 // app.get("/", (_, res) => res.render("home"));
 // app.get("/*", (_, res) => res.redirect("/"));
 
+
+
 app.listen(port, () => {
   console.log(port, "포트로 서버가 켜졌어요!");
 });
