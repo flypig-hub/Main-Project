@@ -3,10 +3,11 @@ const mysql = require("mysql");
 const path = require("path");
 const cors = require("cors"); // cors 패키지 연결
 const morgan = require("morgan");
-const UserRouter = require("./router/userRouter");
-const PostRouter = require("./router/postRouter");
-const LikeRouter = require("./router/likeRouter");
-const CommentRouter = require("./router/commentRouter");
+// const UserRouter = require("./router/userRouter");
+// const PostRouter = require("./router/postRouter");
+// const LikeRouter = require("./router/likeRouter");
+// const CommentRouter = require("./router/commentRouter");
+const { User, Post, Like, Comment, sequelize, Sequelize } = require("../models");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
@@ -32,9 +33,9 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello world</h1>");
 });
 
-app.use("/user", UserRouter);
+app.use("/user", User);
 
-app.use("/post", PostRouter, LikeRouter, CommentRouter);
+app.use("/post", Post, Like, Comment);
 
 app.set("view engine", "pug", "ejs");
 // app.set("views", __dirname + "/views");

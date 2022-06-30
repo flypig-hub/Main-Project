@@ -1,4 +1,5 @@
-const { Post, Comment, User, sequelize, Sequelize } = require("../models");
+const { Post, Comment, User, Images, sequelize, Sequelize } = require("../models");
+const AWS = require("aws-sdk");
 
 
 // 게시글 작성(S3 기능 추가 예정)
@@ -7,16 +8,17 @@ async function WritePosting (req, res) {
     try{
         const { title, postContent, tripLocation } = req.body;
         const { nickname } = req.locals;
+        const { image } = req.files;
+        const imageURL = image.map(file => file.location);
+        const imegeKey = image.map(file => file.key)  
 
         const unixTime = getUnixTimeStamp();
 
         const post = await Post.create({
-        nickname, title, postContent, tripLocation, unixTime,
-        imageURL: req.files.map(file=>file.location), 
-        imageKey: req.files.map(file=>file.key)        
+        nickname, title, postContent, tripLocation, unixTime,     
         })
         
-        res.status(201).send(post);
+        res.status(201).send(post, imageURL, imegeKey);
     }
     catch(e)
     {
@@ -39,6 +41,7 @@ async function GetPostingList (req, res) {
 async function GetPost (req, res) {
     const { nickname } = res.locals;
     const { postId } = req.params;
+    const { image } = req.files;
 
     const post = await Post.findOne({ where: { nickname }, 
         order : [[ "postId", "DESC" ]]
@@ -46,6 +49,10 @@ async function GetPost (req, res) {
 
     const comments = await Comment.findByPk({ where: { nickname, postId },
         order : [[ "commentId", "DESC" ]] 
+    });
+
+    const postImage = await Images.findByPk({ where : { postImageKEY, postImageURL },
+        order : [[ "postId", "DESC" ]]
     });
     
     const commentWriterIds = comments.map(
@@ -73,7 +80,7 @@ async function GetPost (req, res) {
         content: post.content,
         nickname: post.nickname,
         postContent: post.postContent,
-        postImage: post.postImage,
+        postImage: postImage.postImage,
         tripLocation: postWriter.tripLocation,
     }
 
@@ -92,11 +99,26 @@ async function GetPost (req, res) {
 
 // 게시글 수정 (S3 기능 추가 예정)
 async function ModifyPosting (req, res) {
-    const { nickname } = res.locals;
-    const { postId } = req.params;
-    const { title, postImage, postContent, tripLocation } = req.body;
-
     try {
+        const { nickname } = res.locals;
+        const { postId } = req.params;
+        const { title, postImage, postContent, tripLocation } = req.body;
+        const { image } = req.files;
+
+        const imageURLs = existPost.imageURLs.map(imageURL => imageURL.split('com/')[1]);
+        const s3 = new AWS.S3();
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Delete: { Objects: imageURLs.map(imageKey => ({ Key: imageKey })) }
+        };
+
+        s3.deleteObjects(params, function(err, data) {
+            if (err) console.log(err, err.stack);
+            else { console.log("삭제되었습니다.") }
+        })
+
+        const imageURL = image.map(imageURL => imageURL.location);
+    
         const existPost = await Post.findOne({
             where: { nickname, postId },
         });
@@ -110,6 +132,7 @@ async function ModifyPosting (req, res) {
             postImage, 
             postContent, 
             tripLocation,
+            imageURL,
             order: [["updatedAt", "DESC"]]
         })
         .save();
@@ -128,6 +151,29 @@ async function DeletePost (req, res) {
         const { postId } = req.params;
         const existPost = await Post.findById(postId);
 
+        // 이미지 삭제
+        const imageURL = existPost.imageURL.map(imageURL => imageURL.split('com/')[1]);
+        console.log(imageURL);
+
+        if (userId !== existPost.userId) {
+            res.status(400).send({ errorMessage: "접근 권한이 없습니다!" });
+        }
+
+        if (existPost) {
+            const s3 = new AWS.S3();
+            const params = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Delete: { Objects: imageURLs.map(imageKey => ({ Key: imageKey })) }
+            }
+            console.log(params.Delete);
+
+            s3.deleteObjects(params, function(err, data) {
+                if (err) console.log(err, err.stack);
+                else { console.log("삭제되었습니다.") }
+            })
+        };
+
+        // 댓글, 게시글 삭제
         if (userId === existPost.userId) {
             await Comment.destroy({ 
                 where: { postId } 

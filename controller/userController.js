@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const UserDB = require("../models/users");
+const UserDB = require("../models/user");
 
 //카카오 로그인
 
