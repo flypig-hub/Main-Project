@@ -30,7 +30,7 @@ module.exports = () => {
                         const newUser = await User.create({
                             userId: profile.id,
                             provider: 'kakao',
-                            nickName : profile._json.properties.nickname,
+                            nickname : profile._json.properties.nickname,
                             userImage : profile._json.properties.profile_image,
                             email : profile._json.properties,account_email
                         });

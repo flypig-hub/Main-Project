@@ -7,13 +7,13 @@ const kakaoCallback = (req, res, next) => {
     passport.authenticate('kakao',{ failureRedirect: '/' },(err, user) => {
             if (err) return next(err)
             console.log('콜백')
-            const { userId, nickName, userImage } = user;
+            const { userId, nickname, userImage } = user;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
                 token,
                 userId,
-                nickName,
+                nickname,
                 userImage,
                 email
             }
@@ -31,13 +31,13 @@ const googleCallback = (req, res, next) => {
       (err, user, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickName, userImg } = user
+          const { userId, nickname, userImg } = user
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               token,
               userId,
-              nickName,
+              nickname,
               userImg
           }
           console.log('구글 콜백 함수 결과', result)
@@ -58,13 +58,13 @@ const naverCallback = (req, res, next) => {
       (err, user, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickName, userImg } = user
+          const { userId, nickname, userImg } = user
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               token,
               userId,
-              nickName,
+              nickname,
               userImg
           }
           console.log('네이버 콜백 함수 결과', result)
@@ -74,7 +74,7 @@ const naverCallback = (req, res, next) => {
 }
 
 
-
+//로그인 인증 미들웨어
 async function checkMe(req, res) {
     const { user } = res.locals;
     res.send({
@@ -85,8 +85,16 @@ async function checkMe(req, res) {
     });
   };
 
+// 마이페이지
+async function mypage(req, res) {
+  const nickname = res.locals.nickname
+  const userImage = res.locals.userImage
+  
+}
+
+
 
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe
+  checkMe, mypage
 }
