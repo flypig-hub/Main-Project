@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const UserDB = require("../models/user");
+const UserDB = require("../models/users");
 
 //카카오 로그인
 
@@ -12,10 +12,8 @@ const kakaoCallback = (req, res, next) => {
 
             result = {
                 token,
-                userId,
                 nickname,
-                userImage,
-                email
+                userImage
             }
             console.log('카카오 콜백 함수 결과', result)
             res.send({ user: result })
@@ -31,14 +29,13 @@ const googleCallback = (req, res, next) => {
       (err, user, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImg } = user
+          const { userId, nickname, userImage } = user;
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               token,
-              userId,
               nickname,
-              userImg
+              userImage
           }
           console.log('구글 콜백 함수 결과', result)
           res.send({ user: result })
@@ -58,14 +55,13 @@ const naverCallback = (req, res, next) => {
       (err, user, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImg } = user
+          const { userId, nickname, userImage } = user;
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               token,
-              userId,
               nickname,
-              userImg
+              userImage
           }
           console.log('네이버 콜백 함수 결과', result)
           res.send({ user: result })
