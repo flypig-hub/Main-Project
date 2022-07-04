@@ -1,13 +1,14 @@
 const jwt = require("jsonwebtoken");
-const { Users, sequelize, Sequelize } = require("../models");
+const { users, sequelize, Sequelize } = require("../models");
 
 //카카오 로그인
 
 const kakaoCallback = (req, res, next) => {
-    passport.authenticate('kakao',{ failureRedirect: '/' },(err, user) => {
+    passport.authenticate('kakao',{ failureRedirect: '/' },
+    (err, users) => {
             if (err) return next(err)
             console.log('콜백')
-            const { userId, nickname, userImage } = user;
+            const { userId, nickname, userImage } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
@@ -29,10 +30,10 @@ const googleCallback = (req, res, next) => {
   passport.authenticate(
       'google',
       { failureRedirect: '/' },
-      (err, user, info) => {
+      (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage } = user
+          const { userId, nickname, userImage } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
@@ -41,7 +42,7 @@ const googleCallback = (req, res, next) => {
               userImage
           }
           console.log('구글 콜백 함수 결과', result)
-          res.send({ user: result })
+          res.send({ users: result })
       }
   )(req, res, next)
 }
@@ -55,10 +56,10 @@ const naverCallback = (req, res, next) => {
   passport.authenticate(
       'naver',
       { failureRedirect: '/' },
-      (err, user, info) => {
+      (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage } = user
+          const { userId, nickname, userImage } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
@@ -67,7 +68,7 @@ const naverCallback = (req, res, next) => {
               userImage
           }
           console.log('네이버 콜백 함수 결과', result)
-          res.send({ user: result })
+          res.send({ users: result })
       }
   )(req, res, next)
 }
@@ -75,11 +76,11 @@ const naverCallback = (req, res, next) => {
 
 
 async function checkMe(req, res) {
-    const { user } = res.locals;
+    const { users } = res.locals;
     res.send({
       user:{
-        nickname: user.nickname,
-        email: user.email
+        nickname: users.nickname,
+        email: users.email
       }
     });
   };

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-const Users = require('../models/users');
+const { users, sequelize, Sequelize } = require("../models");
 
 module.exports = () => {
     passport.use(
@@ -18,7 +18,7 @@ module.exports = () => {
             async (accessToken, refreshToken, profile, done) => {
                 console.log('카카오 엑세스, 파일', accessToken, profile);
                 try {
-                    const exUser = await Users.findOne({
+                    const exUser = await users.findOne({
                         // 카카오 플랫폼에서 로그인 했고 & snsId필드에 카카오 아이디가 일치할경우
                         where : {snsId: profile.id},
                     });
@@ -27,7 +27,7 @@ module.exports = () => {
                         done(null, exUser); // 로그인 인증 완료
                     } else {
                         // 가입되지 않는 유저면 회원가입 시키고 로그인을 시킨다
-                        const newUser = await Users.create({
+                        const newUser = await users.create({
                             snsId: profile.id,
                             provider: 'kakao',
                             nickname : profile._json.properties.nickname,
