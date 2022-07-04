@@ -1,8 +1,6 @@
 const ImageUploader = require("../middlewares/S3-middleware");
 const { images, sequelize, Sequelize } = require("../models");
 const path = require("path");
-const { array } = require("../middlewares/S3-middleware");
-
 
 //이미지 넣기
 async function PostImage(req, res) {

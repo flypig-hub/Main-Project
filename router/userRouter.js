@@ -6,7 +6,8 @@ const {
     kakaoCallback,
     naverCallback,
     googleCallback,
-    checkMe
+    checkMe,
+    mypage
 } = require("../controller/userController")
 
 
@@ -31,5 +32,9 @@ router.get('/naver/callback', passport.authenticate("naver"), naverCallback)
 // 내 정보 조회 API, 로그인 시 사용
 router.get('/me', authMiddleware, checkMe);
 
+
+//마이페이지
+
+router.get('/mypage', authMiddleware, mypage)
 
 module.exports = router;
