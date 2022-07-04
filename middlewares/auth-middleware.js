@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const UserDB = require('../models/users');
+const { Users, sequelize, Sequelize } = require("../models");
 
 module.exports = async (req, res, next) => {
     const { authorization } = req.headers;
@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
     }
     try {
         const { userId } = jwt.verify(tokenValue, 'my-secret-key');
-        const user = await UserDB.findById(userId);
+        const user = await Users.findById(userId);
         
         res.locals.user = user;
         next();

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const UserDB = require("../models/user");
+const { Users, sequelize, Sequelize } = require("../models");
 
 //카카오 로그인
 
@@ -22,6 +22,9 @@ const kakaoCallback = (req, res, next) => {
         }
     )(req, res, next)
 }
+
+
+
 // 구글 로그인
 
 const googleCallback = (req, res, next) => {

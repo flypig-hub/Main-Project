@@ -12,7 +12,7 @@ console.log(dolike);
     res.status(400).send({ errorMessage: "이미 좋아요를 클릭하셨습니다." });
     return;
   }
-  const likes = await Like.findAll({ postId });
+  const likes = await Like.findAll({ postId }); // {1}, {2}, {3}, ...
   const likeNum = likes.length;
 
   res.status(200).send({ likeNum, message: "좋아요 완료" });

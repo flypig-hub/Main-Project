@@ -2,7 +2,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('posts', {
-      postId: {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -25,6 +25,9 @@ module.exports = {
       },
       likeNum: {
         type: Sequelize.INTEGER
+      },
+      thumbnail: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

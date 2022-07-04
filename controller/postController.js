@@ -1,35 +1,30 @@
-const { Post, Comment, User, Images, sequelize, Sequelize } = require("../models");
-const AWS = require("aws-sdk");
+const { posts, Comment, User, images, sequelize, Sequelize } = require("../models");
 
 
 // 게시글 작성(S3 기능 추가 예정)
 async function WritePosting (req, res) {
-
     try{
         const { title, postContent, tripLocation } = req.body;
-        const { nickname } = req.locals;
-        const { image } = req.files;
-        const imageURL = image.map(file => file.location);
-        const imegeKey = image.map(file => file.key)  
-
-        const unixTime = getUnixTimeStamp();
-
-        const post = await Post.create({
-        nickname, title, postContent, tripLocation, unixTime,     
-        })
+        console.log(req.body)
         
-        res.status(201).send(post, imageURL, imegeKey);
+        const post = await posts.create({
+        title, postContent, tripLocation
+        });
+
+        console.log(post)
+        res.status(201).send({ post });
     }
     catch(e)
     {
-        res.status(402).send({ errorMessage : "게시글이 등록되지 않았습니다."});
+        res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
     }
 };
 
 
+
 // 게시글 전체 조회
 async function GetPostingList (req, res) {
-    const allPost = await Post.findAll({
+    const allPost = await posts.findAll({
         order: [[ "postId", "DESC" ]],
     })
 
@@ -43,7 +38,7 @@ async function GetPost (req, res) {
     const { postId } = req.params;
     const { image } = req.files;
 
-    const post = await Post.findOne({ where: { nickname }, 
+    const post = await posts.findOne({ where: { nickname }, 
         order : [[ "postId", "DESC" ]]
     });
 
@@ -178,7 +173,7 @@ async function DeletePost (req, res) {
             await Comment.destroy({ 
                 where: { postId } 
             });
-            await Post.destroy({
+            await posts.destroy({
                 where: { postId }
             });
         };

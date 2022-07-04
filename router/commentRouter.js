@@ -6,14 +6,14 @@ const commentController = require("../controller/commentController");
 
 
 //post
-router.post("/:contentId", authMiddleware, commentController.postcom);
+router.post("/:contentId", authMiddleware, commentController.writeComment);
 
 // get
-router.get("/:contentId", commentController.getcom);
+router.get("/:contentId", commentController.readComment);
 
 // patch
-router.patch("/:contentId/:commentId", authMiddleware, commentController.patchcom);
+router.patch("/:contentId/:commentId", authMiddleware, commentController.updateComment);
 
 // delete
-router.delete("/:contentId/:commentId", authMiddleware, commentController.delcom);
+router.delete("/:contentId/:commentId", authMiddleware, commentController.deleteComment);
 module.exports = router;
