@@ -14,18 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   posts.init({
-    postId: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
-    },
     content: DataTypes.STRING,
     title: DataTypes.STRING,
     tripLocation: DataTypes.STRING,
     commentId: DataTypes.INTEGER,
     commentNum: DataTypes.INTEGER,
-    likeNum: DataTypes.INTEGER
+    likeNum: DataTypes.INTEGER,
+    thumbnail: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'posts',
