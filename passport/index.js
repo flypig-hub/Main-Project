@@ -7,8 +7,8 @@ const naver = require('./naver');
 module.exports = () => {
     passport.serializeUser((user, done) => {
         // req.login(user, ...)의 user가 넘어와 값을 이용할수 있다.
-        console.log('직렬화', user[0].userId);
-        done(null, user.userId);
+        console.log('직렬화', user[0].snsId);
+        done(null, user.snsId);
     });
     passport.deserializeUser((user, done) => {
         // req.session에 저장된 사용자 아이디를 바탕으로 DB 조회로 사용자 정보를 얻어낸 후 req.user에 저장.

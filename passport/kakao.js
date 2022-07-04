@@ -1,7 +1,7 @@
 require('dotenv').config();
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-const User = require('../models/users');
+const Users = require('../models/users');
 
 module.exports = () => {
     passport.use(
@@ -18,19 +18,19 @@ module.exports = () => {
             async (accessToken, refreshToken, profile, done) => {
                 console.log('카카오 엑세스, 파일', accessToken, profile);
                 try {
-                    const exUser = await User.findOne({
+                    const exUser = await Users.findOne({
                         // 카카오 플랫폼에서 로그인 했고 & snsId필드에 카카오 아이디가 일치할경우
-                        where : {userId: profile.id},
+                        where : {snsId: profile.id},
                     });
                     // 이미 가입된 카카오 프로필이면 성공
                     if (exUser) {
                         done(null, exUser); // 로그인 인증 완료
                     } else {
                         // 가입되지 않는 유저면 회원가입 시키고 로그인을 시킨다
-                        const newUser = await User.create({
-                            userId: profile.id,
+                        const newUser = await Users.create({
+                            snsId: profile.id,
                             provider: 'kakao',
-                            nickName : profile._json.properties.nickname,
+                            nickname : profile._json.properties.nickname,
                             userImage : profile._json.properties.profile_image,
                             email : profile._json.properties,account_email
                         });
