@@ -11,7 +11,7 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 const corsOption = {
-  origin: ["http://localhost:3000", "http://choijireact.s3-website.ap-northeast-2.amazonaws.com"],
+  origin: ["http://localhost:3000"],
   credentials: true,
 };
 
