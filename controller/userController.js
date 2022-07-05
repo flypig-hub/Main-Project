@@ -12,6 +12,7 @@ const kakaoCallback = (req, res, next) => {
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
+                userId,
                 token,
                 nickname,
                 userImage,
@@ -37,6 +38,7 @@ const googleCallback = (req, res, next) => {
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
+              userId,
               token,
               nickname,
               userImage
@@ -63,6 +65,7 @@ const naverCallback = (req, res, next) => {
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
+              userId,
               token,
               nickname,
               userImage

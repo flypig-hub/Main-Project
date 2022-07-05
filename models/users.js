@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     userImage: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Users',
+    modelName: 'users',
   });
   return users;
 };
