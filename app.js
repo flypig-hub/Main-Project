@@ -4,6 +4,7 @@ const path = require("path");
 const cors = require("cors"); // cors 패키지 연결
 const morgan = require("morgan");
 const UserRouter = require("./router/userRouter");
+const passportConfig = require('./passport')
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
@@ -26,6 +27,7 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+passportConfig()
 
 //미들웨어 실행
 app.use(reqlogMiddleware);
