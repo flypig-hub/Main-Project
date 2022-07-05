@@ -11,7 +11,7 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 const corsOption = {
-  origin: ["http://localhost:3000", "*"],
+  origin: ["http://localhost:3000", "http://choijireact.s3-website.ap-northeast-2.amazonaws.com"],
   credentials: true,
 };
 
@@ -40,10 +40,10 @@ app.use("/user", UserRouter);
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
 
 app.set("view engine", "pug", "ejs");
-// app.set("views", __dirname + "/views");
-// app.use("/public", express.static(__dirname + "/public"));
-// app.get("/", (_, res) => res.render("home"));
-// app.get("/*", (_, res) => res.redirect("/"));
+app.set("views", __dirname + "/views");
+app.use("/public", express.static(__dirname + "/public"));
+app.get("/", (_, res) => res.render("home"));
+app.get("/*", (_, res) => res.redirect("/"));
 
 
 
