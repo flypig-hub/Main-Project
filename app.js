@@ -12,7 +12,7 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 const corsOption = {
-  origin: ["http://localhost:3000", "http://choijireact.s3-website.ap-northeast-2.amazonaws.com"],
+  origin: ["http://localhost:3000", "https://d2mgxh6fkzikn7.cloudfront.net"],
   credentials: true,
 };
 
@@ -35,7 +35,7 @@ app.use(cors(corsOption));
 
 // 라우터 등록
 app.get("/", (req, res) => {
-  res.send("<h1>Hello world</h1>");
+res.send("<h1>Hello world</h1>");
 });
 
 app.use("/user", UserRouter);
