@@ -11,15 +11,12 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 const corsOption = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "*"],
   credentials: true,
 };
 
 const app = express();
 
-//db등록
-// const db = require("./models") 
-// db.sequelize.sync();
 
 //body parser
 app.use(morgan("dev"));
@@ -27,9 +24,11 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+
 //미들웨어 실행
 app.use(reqlogMiddleware);
 app.use(cors(corsOption));
+
 
 // 라우터 등록
 app.get("/", (req, res) => {
@@ -39,12 +38,12 @@ app.get("/", (req, res) => {
 app.use("/user", UserRouter);
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
 
+
 app.set("view engine", "pug", "ejs");
 // app.set("views", __dirname + "/views");
 // app.use("/public", express.static(__dirname + "/public"));
 // app.get("/", (_, res) => res.render("home"));
 // app.get("/*", (_, res) => res.redirect("/"));
-
 
 
 app.listen(port, () => {
