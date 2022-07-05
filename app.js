@@ -12,7 +12,7 @@ const port = 8080;
 
 const corsOption = {
   origin: ["http://localhost:3000",
-  "http://choijireact.s3-website.ap-northeast-2.amazonaws.com"],
+  "https://d2mgxh6fkzikn7.cloudfront.net"],
   credentials: true,
 };
 
@@ -34,19 +34,19 @@ app.use(cors(corsOption));
 
 
 // 라우터 등록
-app.get("/", (req, res) => {
-  res.send("<h1>Hello world</h1>");
-});
+// app.get("/", (req, res) => {
+//   res.send("<h1>Hello world</h1>");
+// });
 
 app.use("/user", UserRouter);
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
 
 
 app.set("view engine", "pug", "ejs");
-app.set("views", __dirname + "/views");
-app.use("/public", express.static(__dirname + "/public"));
-app.get("/", (_, res) => res.render("home"));
-app.get("/*", (_, res) => res.redirect("/"));
+// app.set("views", __dirname + "/views");
+// app.use("/public", express.static(__dirname + "/public"));
+// app.get("/", (_, res) => res.render("home"));
+// app.get("/*", (_, res) => res.redirect("/"));
 
 
 app.listen(port, () => {
