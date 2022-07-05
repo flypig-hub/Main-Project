@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(reqlogMiddleware);
 app.use(cors(corsOption));
 
-라우터 등록
+// 라우터 등록
 app.get("/", (req, res) => {
 res.send("<h1>Hello world</h1>");
 });
