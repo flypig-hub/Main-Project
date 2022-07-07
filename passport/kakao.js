@@ -33,7 +33,6 @@ module.exports = () => {
                             provider: 'kakao',
                             nickname : profile._json.properties.nickname,
                             userImage : profile._json.properties.profile_image,
-                            email : profile._json.properties,account_email
                         });
                         done(null, newUser); // 회원가입하고 로그인 인증 완료
                         console.log("가입완료")
