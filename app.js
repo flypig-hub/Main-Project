@@ -10,6 +10,7 @@ const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
+const session = require("express-session")
 
 const corsOption = {
   origin: ["http://localhost:3000", "*", "https://choiji.shop"],
