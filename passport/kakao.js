@@ -18,6 +18,7 @@ module.exports = () => {
             async (accessToken, refreshToken, profile, done) => {
                 console.log('카카오 엑세스, 파일', accessToken, profile);
                 try {
+                    console.log(profile.id, "1" )
                     const exUser = await users.findOne({
                         // 카카오 플랫폼에서 로그인 했고 & snsId필드에 카카오 아이디가 일치할경우
                         where : {snsId: profile.id},
@@ -35,6 +36,7 @@ module.exports = () => {
                             email : profile._json.properties,account_email
                         });
                         done(null, newUser); // 회원가입하고 로그인 인증 완료
+                        console.log("가입완료")
                     }
                 } catch (error) {
                     console.error(error);

@@ -37,7 +37,7 @@ app.use(cors(corsOption));
 app.get("/", (req, res) => {
 res.send("<h1>Hello world</h1>");
 });
-
+app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.use("/user", UserRouter);
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
 
