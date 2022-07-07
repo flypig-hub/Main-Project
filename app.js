@@ -44,6 +44,12 @@ passportConfig()
 app.use(reqlogMiddleware);
 app.use(cors(corsOption));
 
+app.use(session({ 
+  secret: 'SECRET',
+  resave: true,
+  saveUninitialized: true
+}));
+
 // 라우터 등록
 app.get("/", (req, res) => {
 res.send("<h1>Hello world</h1>");
