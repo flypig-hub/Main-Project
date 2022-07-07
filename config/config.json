@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "Asd20902!!",
-    "database": "jeju_main",
-    "host": "127.0.0.1",
+    "username": "mendorong",
+    "password": "12345",
+    "database": "mendorong",
+    "host": "43.200.89.62",
     "dialect": "mysql"
   },
   "test": {

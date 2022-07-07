@@ -82,6 +82,7 @@ async function checkMe(req, res) {
     const { users } = res.locals;
     res.send({
       user:{
+        userId : users.userId,
         nickname: users.nickname,
         email: users.email
       }
