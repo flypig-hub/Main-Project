@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const passport = require('passport');
 const { users, sequelize, Sequelize } = require("../models");
 
 //카카오 로그인
