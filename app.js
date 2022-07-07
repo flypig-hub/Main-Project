@@ -12,7 +12,7 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 const corsOption = {
-  origin: ["http://localhost:3000", "*", "https://d2mgxh6fkzikn7.cloudfront.net"],
+  origin: ["http://localhost:3000", "*", "https://choiji.shop"],
   credentials: true,
 };
 
