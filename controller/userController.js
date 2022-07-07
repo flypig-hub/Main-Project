@@ -3,32 +3,27 @@ const passport = require('passport');
 const { users, sequelize, Sequelize } = require("../models");
 
 //카카오 로그인
-console.log('여기가 콜백 시작')
 const kakaoCallback = (req, res, next) => {
-  console.log('콜백인가')
-    passport.authenticate(
-    'kakao',
-    { failureRedirect: '/' },
-    (err, users, info) => {
-      console.log('콜백이다');
-            if (err) return next(err)
+  passport.authenticate(
+      'kakao',
+      { failureRedirect: '/' },
+      (err, users, info) => {
+          if (err) return next(err)
+          //----------------------------------------------------------------
+          console.log('콜백')
+          const { userId, nickname, userImage } = users;
+          const token = jwt.sign({ userId }, process.env.MY_KEY)
 
-            console.log('콜백')
-            const { snsId, nickname, userImage } = users;
-            console.log()
-            const token = jwt.sign({ snsId }, 'mendorong-jeju')
-
-            result = {
-                snsId,
-                userId,
-                token,
-                nickname,
-                userImage,
-            }
-            console.log('카카오 콜백 함수 결과', result)
-            res.send({ user: result })
-        }
-    )(req, res, next)
+          result = {
+              userId,
+              token,
+              nickname,
+              userImage
+          }
+          console.log('카카오 콜백 함수 결과', result)
+          res.send({ users: result })
+      }
+  )(req, res, next)
 }
 
 
