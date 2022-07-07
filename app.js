@@ -21,6 +21,17 @@ const app = express();
 //db등록
 // const db = require("./models") 
 // db.sequelize.sync();
+//MySQL
+const db = require("./models");
+db.sequelize
+  .sync()
+  .then(() => {
+     console.log("MySQL DB 연결 성공");
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
 
 //body parser
 app.use(morgan("dev"));

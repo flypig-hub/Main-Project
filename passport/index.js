@@ -3,7 +3,7 @@ const passport = require('passport');
 const google = require('./google');
 const kakao = require('./kakao');
 const naver = require('./naver');
-const { users, sequelize, Sequelize } = require("../models");
+const { users } = require('../models/index');
 
 module.exports = () => {
     passport.serializeUser((users, done) => {
