@@ -9,7 +9,7 @@ module.exports = () => {
     passport.serializeUser((users, done) => {
         // req.login(user, ...)의 user가 넘어와 값을 이용할수 있다.
         console.log('직렬화', users[0].snsId);
-        done(null, users.snsId);
+        done(null, users);
     });
     passport.deserializeUser((users, done) => {
         // req.session에 저장된 사용자 아이디를 바탕으로 DB 조회로 사용자 정보를 얻어낸 후 req.user에 저장.
