@@ -3,12 +3,15 @@ const passport = require('passport');
 const { users, sequelize, Sequelize } = require("../models");
 
 //카카오 로그인
-console.log('1')
+console.log('여기가 콜백 시작')
 const kakaoCallback = (req, res, next) => {
-  console.log('2')
-    passport.authenticate('kakao',{ failureRedirect: '/' },
-    (err, users) => {
+  console.log('콜백인가')
+    passport.authenticate(
+    'kakao',
+    { failureRedirect: '/' },
+    (err, users, info) => {
             if (err) return next(err)
+
             console.log('콜백')
             const { userId, nickname, userImage } = users;
             console.log()
