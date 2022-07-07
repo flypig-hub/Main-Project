@@ -2,20 +2,23 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('posts', {
-      id: {
+      postId: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
       },
-      content: {
+      userId: {
+        type: Sequelize.STRING
+      },
+      postContent: {
         type: Sequelize.STRING
       },
       title: {
         type: Sequelize.STRING
       },
       tripLocation: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING 
       },
       commentId: {
         type: Sequelize.INTEGER
@@ -26,7 +29,10 @@ module.exports = {
       likeNum: {
         type: Sequelize.INTEGER
       },
-      thumbnail: {
+      thumbnailKEY: {
+        type: Sequelize.STRING
+      },
+      thumbnailURL: {
         type: Sequelize.STRING
       },
       createdAt: {

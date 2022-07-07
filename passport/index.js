@@ -17,7 +17,6 @@ module.exports = () => {
         done(null, user);
     });
 
-    localStorage();
     naver();
     google();
     kakao();

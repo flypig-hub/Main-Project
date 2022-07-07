@@ -1,93 +1,72 @@
-const { posts, Comment, User, images, sequelize, Sequelize } = require("../models");
-
+const { posts, Comment, images, sequelize, Sequelize } = require("../models");
 
 // 게시글 작성(S3 기능 추가 예정)
 async function WritePosting (req, res) {
     try{
+        const { userId, snsId, nickname } = res.locals;
         const { title, postContent, tripLocation } = req.body;
-        console.log(req.body)
-        
-        const post = await posts.create({
-        title, postContent, tripLocation
-        });
+        const image  = req.files;
 
-        console.log(post)
-        res.status(201).send({ post });
-    }
-    catch(e)
-    {
+        const thumbnailKEY = image.map(thumbnail => thumbnail.key);
+        const thumbnailURL = image.map(thumbnail => thumbnail.location);
+        const postInfo = await posts.create({ 
+            title, postContent, tripLocation, 
+            thumbnailURL: thumbnailURL.toString(), 
+            thumbnailKEY: thumbnailKEY.toString(),
+        });
+        // console.log(postInfo);
+
+        res.status(201).send({ postInfo });
+    } catch(e) {
         res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
     }
 };
 
 
-
 // 게시글 전체 조회
 async function GetPostingList (req, res) {
-    const allPost = await posts.findAll({
-        order: [[ "postId", "DESC" ]],
+    const allPost = await posts.findAll({ 
+        order: [["createdAt", "DESC" ]],
     })
 
-    res.send.json({ allPost });
+    res.send({ allPost });
 }
 
 
 // 게시글 상세 조회(S3 기능 추가 예정)
 async function GetPost (req, res) {
-    const { nickname } = res.locals;
+    // const { nickname } = res.locals;
     const { postId } = req.params;
-    const { image } = req.files;
 
-    const post = await posts.findOne({ where: { nickname }, 
-        order : [[ "postId", "DESC" ]]
-    });
-
-    const comments = await Comment.findByPk({ where: { nickname, postId },
-        order : [[ "commentId", "DESC" ]] 
-    });
-
-    const postImage = await Images.findByPk({ where : { postImageKEY, postImageURL },
-        order : [[ "postId", "DESC" ]]
-    });
+    const post = await posts.findOne({ where: { postId }, });
+    const comments = await Comment.findOne({ where: { postId }, });
+    const postImage = await images.findOne({ where: { postId }, });
     
-    const commentWriterIds = comments.map(
-        (commentWriterId) => commentWriterId.nickname
-    );
-
-    // const postImage = req.files.map(file=>file.location);
-
-    const commentWriterInfoById = await User.find({
-        _id: { $in: commentWriterIds },
-    })
-        .exec()
-        .then((commentWriterId) => 
-            commentWriterId.reduce(
-                (prev,ca) => ({
-                    ...prev,
-                    [ca.nickname]: ca,
-                }),
-                {}
-            ));
-
-    const postsInfo = {
-        postId: post._id,
+    const postInfo = {
+        postId: post.postId,
+        userId: post.userId,
         title: post.title,
-        content: post.content,
-        nickname: post.nickname,
         postContent: post.postContent,
-        postImage: postImage.postImage,
-        tripLocation: postWriter.tripLocation,
+        tripLocation: post.tripLocation,
+        thumbnailKEY: post.thumbnailKEY,
+        thumbnailURL: post.thumbnailURL,
+        commentNum: post.commentNum,
+        likeNum: post.likeNum,
     }
 
-    const commentInfo = comments.map((comment) => ({
-        commentId : comment.commentId,
-        comment: comment.comment,
-        commentWriter: commentWriterInfoById[comment.nickname],
-    }));
+    // const commentInfo = {
+    //     commentId: comments.commentId,
+    //     comment: comments.comment,
+    // }
+
+    // const imageInfo = {
+    //     postImageKEY: postImage.postImageKEY,
+    //     postImageURL: postImage.postImageURL
+    // }
 
     res.send({
-        posts : postsInfo,
-        commentInfo: commentInfo
+        postInfo, 
+        // commentInfo, imageInfo
     });
 };
 
@@ -95,12 +74,21 @@ async function GetPost (req, res) {
 // 게시글 수정 (S3 기능 추가 예정)
 async function ModifyPosting (req, res) {
     try {
-        const { nickname } = res.locals;
+        // const { userId } = res.locals;
         const { postId } = req.params;
-        const { title, postImage, postContent, tripLocation } = req.body;
+        const { title, postContent, tripLocation } = req.body;
+        console.log(postId, req.body);
         const { image } = req.files;
 
-        const imageURLs = existPost.imageURLs.map(imageURL => imageURL.split('com/')[1]);
+        const existPost = await posts.findOne({ where: { postId }, });
+        const existImage = await images.findOne({ where: { postId }, });
+        console.log(existPost, existImage);
+    
+        if (userId !== existPost.userId) {
+                await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
+            };
+
+        const imageURLs = existImage.image.map(imageURL => imageURL.split('com/')[1]);
         const s3 = new AWS.S3();
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
@@ -114,20 +102,21 @@ async function ModifyPosting (req, res) {
 
         const imageURL = image.map(imageURL => imageURL.location);
     
-        const existPost = await Post.findOne({
-            where: { nickname, postId },
-        });
+        // const existPost = await posts.findOne({
+        //     where: { postId },
+        // });
+        // console.log(existPost);
     
-        if (nickname !== existPost.nickname) {
-                await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
-            };
+        // if (nickname !== existPost.nickname) {
+        //         await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
+        //     };
     
         const ModifyPost = await existPost.update({
             title, 
-            postImage, 
+            // postImage, 
             postContent, 
             tripLocation,
-            imageURL,
+            // imageURL,
             order: [["updatedAt", "DESC"]]
         })
         .save();
@@ -142,34 +131,38 @@ async function ModifyPosting (req, res) {
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost (req, res) {
     try {
-        const { userId } = res.locals;
+        // const { userId } = res.locals;
         const { postId } = req.params;
-        const existPost = await Post.findById(postId);
+        console.log(postId);
+        const existPost = await posts.findOne({
+            where: { postId },
+        });
+        console.log(existPost);
 
         // 이미지 삭제
-        const imageURL = existPost.imageURL.map(imageURL => imageURL.split('com/')[1]);
-        console.log(imageURL);
+        // const imageURL = existPost.imageURL.map(imageURL => imageURL.split('com/')[1]);
+        // console.log(imageURL);
 
-        if (userId !== existPost.userId) {
-            res.status(400).send({ errorMessage: "접근 권한이 없습니다!" });
-        }
+        // if (userId !== existPost.userId) {
+        //     res.status(400).send({ errorMessage: "접근 권한이 없습니다!" });
+        // }
 
-        if (existPost) {
-            const s3 = new AWS.S3();
-            const params = {
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Delete: { Objects: imageURLs.map(imageKey => ({ Key: imageKey })) }
-            }
-            console.log(params.Delete);
+        // if (existPost) {
+        //     const s3 = new AWS.S3();
+        //     const params = {
+        //         Bucket: process.env.AWS_BUCKET_NAME,
+        //         Delete: { Objects: imageURLs.map(imageKey => ({ Key: imageKey })) }
+        //     }
+        //     console.log(params.Delete);
 
-            s3.deleteObjects(params, function(err, data) {
-                if (err) console.log(err, err.stack);
-                else { console.log("삭제되었습니다.") }
-            })
-        };
+        //     s3.deleteObjects(params, function(err, data) {
+        //         if (err) console.log(err, err.stack);
+        //         else { console.log("삭제되었습니다.") }
+        //     })
+        // };
 
         // 댓글, 게시글 삭제
-        if (userId === existPost.userId) {
+        if (existPost) {
             await Comment.destroy({ 
                 where: { postId } 
             });
