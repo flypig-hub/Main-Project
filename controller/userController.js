@@ -10,6 +10,7 @@ const kakaoCallback = (req, res, next) => {
     'kakao',
     { failureRedirect: '/' },
     (err, users, info) => {
+      console.log('콜백이다');
             if (err) return next(err)
 
             console.log('콜백')
