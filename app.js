@@ -6,7 +6,6 @@ const cors = require("cors"); // cors 패키지 연결
 const morgan = require("morgan");
 const passport = require("passport");
 // const cookieParser = require('cookie-parser')
-const passportConfig = require('./passport')
 const UserRouter = require("./router/userRouter");
 const passportConfig = require('./passport')
 const PostRouter = require("./router/postRouter");
