@@ -8,6 +8,7 @@ const passport = require("passport");
 // const cookieParser = require('cookie-parser')
 const UserRouter = require("./router/userRouter");
 const passportConfig = require('./passport')
+
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
@@ -65,7 +66,7 @@ app.use(express.json());
 //미들웨어 실행
 app.use(reqlogMiddleware);
 app.use(cors(corsOption));
-// app.use(cookieParser('SECRET'))
+
 
 
 // 라우터 등록
