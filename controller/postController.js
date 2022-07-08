@@ -21,7 +21,7 @@ async function WritePosting (req, res) {
         const postInfo = await posts.create({ 
             title,
             // title, content, tripLocation, 
-            thumbnailString, postImageString,
+            // thumbnailString, postImageString,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
