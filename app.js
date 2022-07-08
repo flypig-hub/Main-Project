@@ -68,11 +68,11 @@ app.get('/', (req, res) => {
 
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
-// app.set("view engine", "ejs");
-// app.set("views", __dirname + "/views");
-// // app.use("/public", express.static(__dirname + "/public"));
-// // app.get("/", (_, res) => res.render("home"));
-// // app.get("/*", (_, res) => res.redirect("/"));
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
+// app.use("/public", express.static(__dirname + "/public"));
+// app.get("/", (_, res) => res.render("home"));
+// app.get("/*", (_, res) => res.redirect("/"));
 
 // app.set("view engine", "pug", "ejs");
 // app.set("views", __dirname + "/views");
