@@ -7,23 +7,24 @@ const multiparty = require("multiparty");
 async function WritePosting (req, res) {
     // try{
         // const { userId, snsId, nickname } = res.locals;
-        const { title, content, tripLocation, thumbnailString, postImageString } = req.body;
+        const { title } = req.body;
         // console.log(req.body);
-        const image = req.files;
-        console.log(req, req.body, req.files);
+        // const image = req.files;
+        // console.log(req, req.body, req.files);
 
-        const postImageKEY = image.map(postImageKEY => postImageKEY.key);
-        const postImageURL = image.map(postImageURL => postImageURL.location);
+        // const postImageKEY = image.map(postImageKEY => postImageKEY.key);
+        // const postImageURL = image.map(postImageURL => postImageURL.location);
 
-        const thumbnailKEY = postImageKEY[0];
-        const thumbnailURL = postImageURL[0];
+        // const thumbnailKEY = postImageKEY[0];
+        // const thumbnailURL = postImageURL[0];
 
         const postInfo = await posts.create({ 
-            title, content, tripLocation, thumbnailString, postImageString,
-            thumbnailURL: thumbnailURL.toString(),
-            thumbnailKEY: thumbnailKEY.toString(),
-            postImageURL: postImageURL.toString(),
-            postImageKEY: postImageKEY.toString(),
+            title
+            // title, content, tripLocation, thumbnailString, postImageString,
+            // thumbnailURL: thumbnailURL.toString(),
+            // thumbnailKEY: thumbnailKEY.toString(),
+            // postImageURL: postImageURL.toString(),
+            // postImageKEY: postImageKEY.toString(),
         });
 
         res.status(201).send({ postInfo });
