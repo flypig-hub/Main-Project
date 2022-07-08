@@ -9,11 +9,11 @@ async function WritePosting (req, res) {
         // const { userId, snsId, nickname } = res.locals;
         const { title } = req.body;
         // console.log(req.body);
-        const images = req.files;
-        console.log(req, req.body, req.files);
+        const image = req.files;
+        console.log(req.files);
 
-        const postImageKEY = images.map(postImageKEY => postImageKEY.key);
-        const postImageURL = images.map(postImageURL => postImageURL.location);
+        const postImageKEY = image.map(postImageKEY => postImageKEY.key);
+        const postImageURL = image.map(postImageURL => postImageURL.location);
 
         const thumbnailKEY = postImageKEY[0];
         const thumbnailURL = postImageURL[0];
