@@ -9,6 +9,7 @@ async function WritePosting (req, res) {
         // const { userId, snsId, nickname } = res.locals;
         const { title, postContent, tripLocation, thumbnailString, postImageString } = req.body;
         const image = req.files;
+        console.log(image);
 
         const postImageKEY = image.map(postImageKEY => postImageKEY.key);
         const postImageURL = image.map(postImageURL => postImageURL.location);
@@ -40,7 +41,7 @@ async function GetPostingList (req, res) {
         order: [[ "postId", "DESC" ]],
     })
 
-    res.send.json({ allPost });
+    res.send.send({ allPost });
 }
 
 
