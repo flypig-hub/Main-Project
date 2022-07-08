@@ -8,7 +8,7 @@ async function WritePosting (req, res) {
     // try{
         // const { userId, snsId, nickname } = res.locals;
         const { title } = req.body;
-        // console.log(req.body);
+        console.log(req.body);
         const image = req.files;
         console.log(req.files);
 
