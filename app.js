@@ -17,11 +17,12 @@ const port = 8080;
 // const session = require("express-session")
 
 const corsOption = {
-  origin: ["http://localhost:3000", "*", "https://choiji.shop"],
+  origin: ["http://localhost:3000", "*",
+  "https://choiji.shop"],
   credentials: true,
 };
 
-const app = express();
+// http://choijireact.s3-website.ap-northeast-2.amazonaws.com
 
 //MySql
 const db = require("./models");
@@ -83,6 +84,11 @@ app.set("views", __dirname + "/views");
 // app.get("/", (_, res) => res.render("home"));
 // app.get("/*", (_, res) => res.redirect("/"));
 
+app.set("view engine", "pug", "ejs");
+// app.set("views", __dirname + "/views");
+// app.use("/public", express.static(__dirname + "/public"));
+// app.get("/", (_, res) => res.render("home"));
+// app.get("/*", (_, res) => res.redirect("/"));
 
 
 app.listen(port, () => {
