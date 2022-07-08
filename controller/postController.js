@@ -37,9 +37,7 @@ async function WritePosting (req, res) {
 
 // 게시글 전체 조회
 async function GetPostingList (req, res) {
-    const allPost = await posts.findAll({
-        order: [[ "postId", "DESC" ]],
-    })
+    const allPost = await posts.findAll()
 
     res.send({ allPost });
 }
