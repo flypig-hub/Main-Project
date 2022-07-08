@@ -84,9 +84,9 @@ async function ModifyPosting (req, res) {
         const existImage = await images.findOne({ where: { postId }, });
         console.log(existPost, existImage);
     
-        if (userId !== existPost.userId) {
-                await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
-            };
+        // if (userId !== existPost.userId) {
+        //         await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
+        //     };
 
         const imageURLs = existImage.image.map(imageURL => imageURL.split('com/')[1]);
         const s3 = new AWS.S3();
