@@ -23,8 +23,8 @@ const upload = multer({
     metadata: function(req, file, cb) {
         cb(null, { fieldName: file.fieldname });
     },
-    key: function(req, images, cb) {
-      cb(null, `images/${Date.now()}_${images.originalname}`);
+    key: function(req, file, cb) {
+      cb(null, `images/${Date.now()}_${file.originalname}`);
     },
   }),
 });

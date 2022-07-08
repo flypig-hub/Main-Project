@@ -9,7 +9,7 @@ async function WritePosting (req, res) {
         // const { userId, snsId, nickname } = res.locals;
         const { title } = req.body;
         // console.log(req.body);
-        const image = req.images;
+        const image = req.file.images;
         console.log(req, req.body, req.files);
 
         const postImageKEY = image.map(postImageKEY => postImageKEY.key);
