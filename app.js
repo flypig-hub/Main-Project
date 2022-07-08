@@ -8,13 +8,13 @@ const passport = require("passport");
 // const cookieParser = require('cookie-parser')
 const UserRouter = require("./router/userRouter");
 const passportConfig = require('./passport')
-
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
-// const session = require("express-session")
+
+
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
@@ -38,19 +38,7 @@ db.sequelize
 
 passportConfig()
 
-//세션
-// app.use(session({
-//   resave: false,
-//   saveUninitialized:false,
-//   secret:'12345',
-//   cookie:{
-//       httpOnly: true,
-//       secure: false,
-//   },
-// }));
 
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 
 
