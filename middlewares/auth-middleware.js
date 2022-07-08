@@ -29,7 +29,7 @@ module.exports = (req, res, next) => {
         const { userId } = jwt.verify(tokenValue, process.env.MY_KEY);
         //검증 성공시 locals에 인증 정보 넣어주기//
         console.log('userId',userId);
-        users.findByPk({ userId }).then((users) => {
+        users.findOne({ userId }).then((users) => {
                 res.locals.users = users;
                 next();
             });

@@ -92,7 +92,7 @@ async function checkMe(req, res) {
       user:{
         userId : users.userId,
         nickname: users.nickname,
-        email: users.email
+        userImage : users.userImage
       }
     });
   };
