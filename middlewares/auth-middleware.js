@@ -1,26 +1,43 @@
 const jwt = require("jsonwebtoken");
 const { Users, sequelize, Sequelize } = require("../models");
 
-module.exports = async (req, res, next) => {
+module.exports = (req, res, next) => {
     const { authorization } = req.headers;
-    const [tokenType, tokenValue] = (authorization || "").split(' ');
-
-    if (!tokenValue || tokenType !== 'Bearer') {
+    if (!authorization) {
         res.status(401).send({
-            errorMessage: '로그인이 필요한 페이지 입니다.',
+            errorMEssage: '로그인 후 사용하세요',
         });
         return;
     }
-    try {
-        const { userId } = jwt.verify(tokenValue, 'my-secret-key');
-        const user = await Users.findById(userId);
-        
-        res.locals.user = user;
-        next();
+    if( authorization==='null' ){
+        res.status(401).send({
+            errorMEssage: '로그인 후 사용하세요!!',
+        });
+        return;
+    }
+    const [tokenType, tokenValue] = authorization.split(' ');
 
+    if (tokenType !== 'Bearer') {
+        res.status(401).send({
+            errorMessage: '로그인 후 사용하세요!',
+        });
+        return;
+    }
+
+    //jwt검증//
+    try {
+        const { userId } = jwt.verify(tokenValue, process.env.MY_KEY);
+        //검증 성공시 locals에 인증 정보 넣어주기//
+        console.log('userId',userId);
+        users.findOne({ userId }).then((users) => {
+                res.locals.users = users;
+                next();
+            });
     } catch (error) {
-        // 토큰이 없거나, 유효하지 않은 토큰인 경우 이쪽으로 접근.
-        res.status(401).send({ errorMessage: '로그인이 필요한 페이지 입니다.' });
+        console.error(error);
+        res.status(401).send({
+            errorMEssage: '로그인 하시고 사용하세요',
+        });
         return;
     }
 };

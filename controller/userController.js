@@ -1,12 +1,20 @@
+require('dotenv').config()
+
 const jwt = require("jsonwebtoken");
-const { users, sequelize, Sequelize } = require("../models");
+const passport = require('passport');
+const { users } = require('../models/index');
 
 //카카오 로그인
-
 const kakaoCallback = (req, res, next) => {
-    passport.authenticate('kakao',{ failureRedirect: '/' },
-    (err, users) => {
+  console.log(users,'이 친구는 지나가나요')  
+      passport.authenticate(
+        'kakao',
+        
+        { failureRedirect: '/' },
+        (err, users, info) => {
+          console.log(users,'여기서 문제가 발생하지요')
             if (err) return next(err)
+            //----------------------------------------------------------------
             console.log('콜백')
             const { userId, nickname, userImage } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
@@ -15,10 +23,10 @@ const kakaoCallback = (req, res, next) => {
                 userId,
                 token,
                 nickname,
-                userImage,
+                userImage
             }
             console.log('카카오 콜백 함수 결과', result)
-            res.send({ user: result })
+            res.send({ users: result })
         }
     )(req, res, next)
 }
@@ -83,7 +91,7 @@ async function checkMe(req, res) {
     res.send({
       user:{
         nickname: users.nickname,
-        email: users.email
+        userImage : users.userImage
       }
     });
   };
