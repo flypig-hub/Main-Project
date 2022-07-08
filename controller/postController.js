@@ -1,4 +1,6 @@
 const { posts, Comment, User, images, sequelize, Sequelize } = require("../models");
+const multiparty = require("multiparty");
+
 
 
 // 게시글 작성(S3 기능 추가 예정)

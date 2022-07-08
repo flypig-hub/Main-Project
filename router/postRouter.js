@@ -6,7 +6,7 @@ const ImageUploader = require("../middlewares/S3-middleware");
 const router = express.Router();
 
 // 게시글 작성 API
-router.post('/', ImageUploader.fields([{ name: 'images', maxCount: 5 }]), PostController.WritePosting);
+router.post('/', ImageUploader.array('images', 5), PostController.WritePosting);
 
 
 // 게시글 조회 API

@@ -10,14 +10,14 @@ async function PostImage(req, res) {
 
     const postImageKEY = image.map(postImageKEY => postImageKEY.key);
     const postImageURL = image.map(postImageURL => postImageURL.location);
-    console.log(postImageKEY, postImageURL);
+    // console.log(postImageKEY, postImageURL);
 
     const postImages = await images.create({ 
         postImageKEY: postImageKEY.toString(), 
         postImageURL: postImageURL.toString()
     });
 
-    console.log(postImages);
+    // console.log(postImages);
     res.status(200).send({ postImageKEY, postImageURL, msg: "성공" });
 };
 
