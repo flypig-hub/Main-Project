@@ -6,17 +6,19 @@ const cors = require("cors"); // cors 패키지 연결
 const morgan = require("morgan");
 const passport = require("passport");
 // const cookieParser = require('cookie-parser')
+const passportConfig = require('./passport')
 const UserRouter = require("./router/userRouter");
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
+
 // const session = require("express-session")
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
-  "https://d2mgxh6fkzikn7.cloudfront.net"],
+  "https://choiji.shop"],
   credentials: true,
 };
 
@@ -50,6 +52,8 @@ passportConfig()
 // app.use(passport.initialize());
 // app.use(passport.session());
 
+const app = express()
+
 
 
 //body parser
@@ -65,7 +69,7 @@ app.use(express.json());
 //미들웨어 실행
 app.use(reqlogMiddleware);
 app.use(cors(corsOption));
-// app.use(cookieParser('SECRET'))
+
 
 
 // 라우터 등록
@@ -76,13 +80,13 @@ app.get('/', (req, res) => {
 
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
-app.set("view engine", "ejs");
-app.set("views", __dirname + "/views");
-// app.use("/public", express.static(__dirname + "/public"));
-// app.get("/", (_, res) => res.render("home"));
-// app.get("/*", (_, res) => res.redirect("/"));
+// app.set("view engine", "ejs");
+// app.set("views", __dirname + "/views");
+// // app.use("/public", express.static(__dirname + "/public"));
+// // app.get("/", (_, res) => res.render("home"));
+// // app.get("/*", (_, res) => res.redirect("/"));
 
-app.set("view engine", "pug", "ejs");
+// app.set("view engine", "pug", "ejs");
 // app.set("views", __dirname + "/views");
 // app.use("/public", express.static(__dirname + "/public"));
 // app.get("/", (_, res) => res.render("home"));

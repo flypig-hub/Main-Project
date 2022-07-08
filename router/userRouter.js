@@ -1,6 +1,7 @@
 const express = require("express");
-const passport = require("passport")
+const passport = require("passport");
 const authMiddleware = require("../middlewares/auth-middleware");
+const { users, sequelize, Sequelize } = require("../models");
 const router = express.Router();
 const {
     kakaoCallback,

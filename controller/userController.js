@@ -43,7 +43,7 @@ const googleCallback = (req, res, next) => {
           if (err) return next(err)
           console.log('콜백')
           const { userId, nickname, userImage } = users
-          const token = jwt.sign({ userId }, process.env.MY_KEY)
+          const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
               userId,
@@ -90,6 +90,7 @@ async function checkMe(req, res) {
     const { users } = res.locals;
     res.send({
       user:{
+        userId : users.userId,
         nickname: users.nickname,
         userImage : users.userImage
       }

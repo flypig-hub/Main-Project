@@ -3,7 +3,7 @@ require('dotenv').config();
 const { access } = require('fs');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../schemas/user');
+const { users, sequelize, Sequelize } = require("../models");
 
 module.exports = () => {
     passport.use(
@@ -22,19 +22,19 @@ module.exports = () => {
                     accessToken
                 );
                 try {
-                    const exUser = await User.findOne({
+                    const exUser = await users.findOne({
                         // 구글 플랫폼에서 로그인 했고 & snsId필드에 구글 아이디가 일치할경우
-                        where : {userId: profile.id},
+                        where : {snsId: profile.id},
                     });
                     // 이미 가입된 구글 프로필이면 성공
                     if (exUser) {
                         done(null, exUser); // 로그인 인증 완료
                     } else {
                         // 가입되지 않는 유저면 회원가입 시키고 로그인을 시킨다
-                        const newUser = await User.create({
-                            nickName: profile.displayName,
-                            userImg : profile.photos[0].value,
-                            userId: profile.id,
+                        const newUser = await users.create({
+                            snsId: profile.id,
+                            nickname: profile.displayName,
+                            userImage : profile.photos[0].value,
                             provider: 'google',
                         });
                         done(null, newUser); // 회원가입하고 로그인 인증 완료

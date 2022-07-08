@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { Users, sequelize, Sequelize } = require("../models");
+const { users, sequelize, Sequelize } = require("../models");
 
 module.exports = (req, res, next) => {
     const { authorization } = req.headers;

@@ -13,23 +13,25 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  posts.init(
-    {
-      postId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        allowNull: false,
-        autoIncrement: true,
-      },
-    userId: DataTypes.STRING,
-    postContent: DataTypes.STRING,
+  posts.init({
+    postId: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    content: DataTypes.STRING,
     title: DataTypes.STRING,
     tripLocation: DataTypes.STRING,
     commentId: DataTypes.INTEGER,
     commentNum: DataTypes.INTEGER,
     likeNum: DataTypes.INTEGER,
+    thumbnailString: DataTypes.STRING,
     thumbnailKEY: DataTypes.STRING,
     thumbnailURL: DataTypes.STRING,
+    postImageString: DataTypes.STRING,
+    postImageKEY: DataTypes.STRING,
+    postImageURL: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'posts',
