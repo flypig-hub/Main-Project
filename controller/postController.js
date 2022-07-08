@@ -3,9 +3,9 @@ const { posts, Comment, images, sequelize, Sequelize } = require("../models");
 // 게시글 작성(S3 기능 추가 예정)
 async function WritePosting (req, res) {
     try{
-        const { userId, snsId, nickname } = res.locals;
+        // const { userId, snsId, nickname } = res.locals;
         const { title, postContent, tripLocation } = req.body;
-        const image  = req.files;
+        const image = req.files;
 
         const thumbnailKEY = image.map(thumbnail => thumbnail.key);
         const thumbnailURL = image.map(thumbnail => thumbnail.location);
