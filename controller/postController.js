@@ -7,7 +7,7 @@ const multiparty = require("multiparty");
 async function WritePosting (req, res) {
     // try{
         // const { userId, snsId, nickname } = res.locals;
-        const { title } = req.body;
+        const { title, content, tripLocation, category, type, link, houseTitle } = req.body;
         console.log(req.body);
         const image = req.files;
         console.log(req.files);
@@ -19,8 +19,7 @@ async function WritePosting (req, res) {
         const thumbnailURL = postImageURL[0];
 
         const postInfo = await posts.create({ 
-            title, 
-            // content, tripLocation, 
+            title, content, tripLocation, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
