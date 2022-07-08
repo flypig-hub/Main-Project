@@ -41,7 +41,7 @@ async function GetPostingList (req, res) {
         order: [[ "postId", "DESC" ]],
     })
 
-    res.send.send({ allPost });
+    res.send({ allPost });
 }
 
 
