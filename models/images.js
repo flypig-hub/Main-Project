@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
+    postNumber: DataTypes.STRING,
     postImageKEY: DataTypes.STRING,
     postImageURL: DataTypes.STRING
   }, {

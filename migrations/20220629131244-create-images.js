@@ -2,11 +2,14 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('images', {
-      postId: {
+      imageId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      postNumber : {
+        type: Sequelize.STRING
       },
       postImageKEY: {
         type: Sequelize.STRING

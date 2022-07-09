@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
     postImageString: DataTypes.STRING,
     postImageKEY: DataTypes.STRING,
     postImageURL: DataTypes.STRING,
+    category: DataTypes.STRING,
+    type: DataTypes.STRING,
+    link: DataTypes.STRING,
+    houseTitle: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'posts',

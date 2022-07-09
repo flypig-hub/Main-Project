@@ -1,16 +1,17 @@
 const { posts, Comment, User, images, sequelize, Sequelize } = require("../models");
 const multiparty = require("multiparty");
+const AWS = require("aws-sdk");
 
+// Node.js, MySQL
 
-
-// 게시글 작성(S3 기능 추가 예정)
+// 게시글 작성(유저)
 async function WritePosting (req, res) {
-    // try{
+    try {
         // const { userId, snsId, nickname } = res.locals;
-        const { title, content, tripLocation } = req.body;
-        console.log(req.body);
+        const { title, content, tripLocation, category, type, link, houseTitle } = req.body;
+        // console.log(req.body);
         const image = req.files;
-        console.log(req.files);
+        // console.log(req.files);
 
         const postImageKEY = image.map(postImageKEY => postImageKEY.key);
         const postImageURL = image.map(postImageURL => postImageURL.location);
@@ -19,7 +20,7 @@ async function WritePosting (req, res) {
         const thumbnailURL = postImageURL[0];
 
         const postInfo = await posts.create({ 
-            title, content, tripLocation, 
+            title, content, tripLocation, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
@@ -27,11 +28,9 @@ async function WritePosting (req, res) {
         });
 
         res.status(201).send({ postInfo });
-    // }
-    // catch(e)
-    // {
-        // res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
-    // }
+    } catch(e) {
+        res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+    }
 };
 
 
@@ -46,23 +45,25 @@ async function GetPostingList (req, res) {
 
 // 게시글 상세 조회(S3 기능 추가 예정)
 async function GetPost (req, res) {
-    const { nickname } = res.locals;
+    // const { nickname, userId } = res.locals;
     const { postId } = req.params;
-    const { image } = req.files;
+    const image = req.files;
 
-    const post = await posts.findOne({ where: { nickname }, 
-        order : [[ "postId", "DESC" ]]
+    const post = await posts.findAll({ where: { postId }, 
+        order : [[ "createdAt", "DESC" ]]
     });
+    console.log(post);
 
-    const comments = await Comment.findByPk({ where: { nickname, postId },
-        order : [[ "commentId", "DESC" ]] 
-    });
+    // const comments = await Comment.findOne({ where: { postId },
+    //     order : [[ "createdAt", "DESC" ]] 
+    // });
 
-    const postImage = await Images.findByPk({ where : { postImageKEY, postImageURL },
-        order : [[ "postId", "DESC" ]]
-    });
+    // const postImage = await images.findOne({ where : { postId, postImageKEY, postImageURL },
+    //     order : [[ "createdAt", "DESC" ]]
+    // });
+    // console.log(postImage);
     
-    const commentWriterIds = comments.map(
+    const commentWriterIds = Comment.map(
         (commentWriterId) => commentWriterId.nickname
     );
 
@@ -107,42 +108,43 @@ async function GetPost (req, res) {
 // 게시글 수정 (S3 기능 추가 예정)
 async function ModifyPosting (req, res) {
     try {
-        const { nickname } = res.locals;
+        // const { nickname } = res.locals;
         const { postId } = req.params;
-        const { title, postImage, postContent, tripLocation } = req.body;
-        const { image } = req.files;
+        const { title, content, tripLocation, category, type, link, houseTitle } = req.body;
+        const image = req.files;
 
-        const imageURLs = existPost.imageURLs.map(imageURL => imageURL.split('com/')[1]);
+        const postImageKEY = image.map(postImageKEY => postImageKEY.key);
+        const postImageURL = image.map(postImageURL => postImageURL.location);
+
         const s3 = new AWS.S3();
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
-            Delete: { Objects: imageURLs.map(imageKey => ({ Key: imageKey })) }
+            Delete: { Objects: postImageKEY.map(postImageKEY => ({ Key: postImageKEY })) }
         };
+        console.log(params);
 
         s3.deleteObjects(params, function(err, data) {
             if (err) console.log(err, err.stack);
             else { console.log("삭제되었습니다.") }
         })
-
-        const imageURL = image.map(imageURL => imageURL.location);
     
-        const existPost = await Post.findOne({
-            where: { nickname, postId },
+        const existPost = await posts.findOne({
+            where: { postId },
         });
     
-        if (nickname !== existPost.nickname) {
-                await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
-            };
+        // if (nickname !== existPost.nickname) {
+        //         await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
+        //     };
     
         const ModifyPost = await existPost.update({
             title, 
-            postImage, 
-            postContent, 
+            content, 
             tripLocation,
-            imageURL,
+            postImageKEY: postImageKEY.toString(),
+            postImageURL: postImageURL.toString(),
+            category, type, link, houseTitle,
             order: [["updatedAt", "DESC"]]
-        })
-        .save();
+        });
     
         res.send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
     } catch (e) {
