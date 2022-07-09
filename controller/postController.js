@@ -6,7 +6,7 @@ const AWS = require("aws-sdk");
 
 // 게시글 작성(유저)
 async function WritePosting (req, res) {
-    try {
+    // try {
         // const { userId, snsId, nickname } = res.locals;
         const { title, content, tripLocation, category, type, link, houseTitle } = req.body;
         // console.log(req.body);
@@ -27,10 +27,10 @@ async function WritePosting (req, res) {
             postImageKEY: postImageKEY.toString(),
         });
 
-        res.status(201).send({ postInfo });
-    } catch(e) {
-        res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
-    }
+        res.status(201).send({ postInfo, postImageKEY, postImageURL });
+    // } catch(e) {
+    //     res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+    // }
 };
 
 
