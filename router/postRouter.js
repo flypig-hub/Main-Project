@@ -17,7 +17,7 @@ router.get('/', PostController.GetPostingList);
 router.get('/:postId', PostController.GetPost);
 
 
-// 게시글 수정 API(put)
+// 게시글 수정 API
 router.patch('/:postId', upload.array('images', 8), PostController.ModifyPosting);
 
 
