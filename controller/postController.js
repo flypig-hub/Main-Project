@@ -1,5 +1,5 @@
 const { posts, Comment, User, images, sequelize, Sequelize } = require("../models");
-const multiparty = require("multiparty");
+// const multiparty = require("multiparty");
 
 
 
