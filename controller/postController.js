@@ -164,17 +164,17 @@ async function DeletePost (req, res) {
         const existPost = await posts.findOne({ where:{ postId }});
         console.log(existPost);
 
-        const s3 = new AWS.S3();
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Delete: { Objects: postImageKEY.map(postImageKEY => ({ Key: postImageKEY })) }
-        };
-        console.log(params);
+        // const s3 = new AWS.S3();
+        // const params = {
+        //     Bucket: process.env.AWS_BUCKET_NAME,
+        //     Delete: { Objects: postImageKEY.map(postImageKEY => ({ Key: postImageKEY })) }
+        // };
+        // console.log(params);
 
-        s3.deleteObjects(params, function(err, data) {
-            if (err) console.log(err, err.stack);
-            else { console.log("삭제되었습니다.") }
-        })
+        // s3.deleteObjects(params, function(err, data) {
+        //     if (err) console.log(err, err.stack);
+        //     else { console.log("삭제되었습니다.") }
+        // })
 
         // 댓글, 게시글 삭제
         if (existPost) {
