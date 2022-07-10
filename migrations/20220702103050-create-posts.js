@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      postNumber : {
+        type: Sequelize.STRING
+      },
       content: {
         type: Sequelize.STRING
       },
@@ -42,6 +45,18 @@ module.exports = {
         type: Sequelize.STRING
       },
       postImageURL: {
+        type: Sequelize.STRING
+      },
+      category: {
+        type: Sequelize.STRING
+      },
+      type: {
+        type: Sequelize.STRING
+      },
+      link: {
+        type: Sequelize.STRING
+      },
+      houseTitle: {
         type: Sequelize.STRING
       },
       createdAt: {
