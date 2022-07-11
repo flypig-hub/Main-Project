@@ -83,7 +83,7 @@ async function GetPost (req, res) {
     //         ));
 
     const postsInfo = {
-        postId: post._id,
+        postId: post.postId,
         nickname: post.nickname,
         title: post.title,
         content: post.content,
