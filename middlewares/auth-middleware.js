@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { users, sequelize, Sequelize } = require("../models");
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
     const { authorization } = req.headers;
     if (!authorization) {
         res.status(401).send({
@@ -29,10 +29,11 @@ module.exports = (req, res, next) => {
         const { userId } = jwt.verify(tokenValue, process.env.MY_KEY);
         //검증 성공시 locals에 인증 정보 넣어주기//
         console.log('userId',userId);
-        users.findOne({ userId }).then((users) => {
-                res.locals.users = users;
-                next();
-            });
+       const loginuser =  await users.findOne({ where: { userId } });
+        res.locals.userId = loginuser.userId
+        res.locals.nickname = loginuser.nickname
+        res.locals.userImage = loginuser.userImage
+        next()
     } catch (error) {
         console.error(error);
         res.status(401).send({
