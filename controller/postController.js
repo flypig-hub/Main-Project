@@ -49,7 +49,7 @@ async function GetPost (req, res) {
     const { postId } = req.params;
     const image = req.files;
 
-    const post = await posts.findAll({ where: { postId }, 
+    const post = await posts.findOne({ where: { postId }, 
         order : [[ "createdAt", "DESC" ]]
     });
     console.log(post);
@@ -63,44 +63,51 @@ async function GetPost (req, res) {
     // });
     // console.log(postImage);
     
-    const commentWriterIds = Comment.map(
-        (commentWriterId) => commentWriterId.nickname
-    );
+    // const commentWriterIds = Comment.map(
+    //     (commentWriterId) => commentWriterId.nickname
+    // );
 
     // const postImage = req.files.map(file=>file.location);
 
-    const commentWriterInfoById = await User.find({
-        _id: { $in: commentWriterIds },
-    })
-        .exec()
-        .then((commentWriterId) => 
-            commentWriterId.reduce(
-                (prev,ca) => ({
-                    ...prev,
-                    [ca.nickname]: ca,
-                }),
-                {}
-            ));
+    // const commentWriterInfoById = await User.find({
+    //     _id: { $in: commentWriterIds },
+    // })
+    //     .exec()
+    //     .then((commentWriterId) => 
+    //         commentWriterId.reduce(
+    //             (prev,ca) => ({
+    //                 ...prev,
+    //                 [ca.nickname]: ca,
+    //             }),
+    //             {}
+    //         ));
 
     const postsInfo = {
         postId: post._id,
+        nickname: post.nickname,
         title: post.title,
         content: post.content,
-        nickname: post.nickname,
-        postContent: post.postContent,
-        postImage: postImage.postImage,
-        tripLocation: postWriter.tripLocation,
+        thumbnailKEY: post.thumbnailKEY,
+        thumbnailURL: post.thumbnailURL,
+        postImageKEY: post.postImageKEY,
+        postImageURL: post.postImageURL,
+        tripLocation: post.tripLocation,
+        category: post.category, 
+        type: post.type, 
+        link: post.link, 
+        houseTitle: post.houseTitle,
     }
+    console.log(post);
 
-    const commentInfo = comments.map((comment) => ({
-        commentId : comment.commentId,
-        comment: comment.comment,
-        commentWriter: commentWriterInfoById[comment.nickname],
-    }));
+    // const commentInfo = comments.map((comment) => ({
+    //     commentId : comment.commentId,
+    //     comment: comment.comment,
+    //     commentWriter: commentWriterInfoById[comment.nickname],
+    // }));
 
     res.send({
         posts : postsInfo,
-        commentInfo: commentInfo
+        // commentInfo: commentInfo
     });
 };
 
