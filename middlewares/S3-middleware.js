@@ -24,7 +24,7 @@ const upload = multer({
   storage: multerS3({
     s3: new AWS.S3(),
     bucket: process.env.AWS_BUCKET_NAME,
-    // acl: 'public-read',
+    acl: 'public-read',
     limits: { fileSize: 5 * 1024 * 1024 },
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function(req, file, cb) {
@@ -35,7 +35,7 @@ const upload = multer({
       
       file.newName = fileName;
 
-      cb(null, `images/${Date.now()}_${fileName}`);
+      cb(null, `images/${fileName}`);
     },
   }),
 });
