@@ -2,6 +2,7 @@ const path = require("path");
 const multerS3 = require("multer-s3");
 const multer = require("multer");
 const AWS = require("aws-sdk");
+const { v4: uuidv4 } = require('uuid');
 
 require("dotenv").config();
 
@@ -11,6 +12,12 @@ AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
 });
+
+const getUniqFileName = (originalname) => {
+  const name = uuidv4();
+  const ext = originalname.split('.').pop();
+  return `${name}.${ext}`;
+}
 
 // multer를 사용하여 이미지를 업로드하는 미들웨어
 const upload = multer({
@@ -24,7 +31,11 @@ const upload = multer({
         cb(null, { fieldName: file.fieldname });
     },
     key: function(req, file, cb) {
-      cb(null, `images/${Date.now()}_${file.originalname}`);
+      const fileName = getUniqFileName(file.originalname);
+      
+      file.newName = fileName;
+
+      cb(null, `images/${Date.now()}_${fileName}`);
     },
   }),
 });

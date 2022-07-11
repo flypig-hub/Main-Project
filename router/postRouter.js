@@ -29,6 +29,6 @@ router.delete('/:postId', PostController.DeletePost);
 router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
 // 이미지 가져오기
-router.get('/images/:key', ImageController.GetImages)
+router.get('/images', ImageController.GetImages)
 
 module.exports = router;

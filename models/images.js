@@ -14,12 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   images.init({
-    postId: {
+    imageId: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER
     },
+    postId: DataTypes.INTEGER,
     postNumber: DataTypes.STRING,
     postImageKEY: DataTypes.STRING,
     postImageURL: DataTypes.STRING
