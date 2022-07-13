@@ -7,7 +7,10 @@ const AWS = require("aws-sdk");
 // 게시글 작성(유저)
 async function WritePosting (req, res) {
     // try {
-        const { userId, userImage, nickname } = res.locals;
+        const { userId } = res.locals.userId;
+        const { nickname } = res.locals.nickname;
+        const { userImage } = res.locals.userImage;
+        // const { userId, nickname, userImage } = req.locals;
         const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
         console.log(req.body);
         const image = req.files;
@@ -135,7 +138,7 @@ async function DeletePost (req, res) {
         const { postId } = req.params;
 
         const existPost = await posts.findOne({ where:{ postId }});
-        console.log(existPost);
+        // console.log(existPost);
 
         // const s3 = new AWS.S3();
         // const params = {
@@ -150,12 +153,12 @@ async function DeletePost (req, res) {
         // })
 
         // 댓글, 게시글 삭제
-        if (userId !== existPost.userId) {
-            res.send({msg: "삭제할 수 없습니다."})
-        };
-        if (nickname !== existPost.nickname) {
-            res.send({msg: "삭제할 수 없습니다."})
-        };
+        // if (userId !== existPost.userId) {
+        //     res.send({msg: "삭제할 수 없습니다."})
+        // };
+        // if (nickname !== existPost.nickname) {
+        //     res.send({msg: "삭제할 수 없습니다."})
+        // };
         const dastroyPost = await posts.destroy({ where: { postId } });
         console.log(dastroyPost);
         // await Comment.destroy({ 

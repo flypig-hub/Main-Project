@@ -67,7 +67,7 @@ async function PostImage(req, res) {
     });
 
     // console.log(postImages);
-    res.status(200).send({ postImageKEY, postImageURL, msg: "성공" });
+    res.status(200).send({ postImages, postImageKEY, postImageURL, msg: "성공" });
 };
 
 
