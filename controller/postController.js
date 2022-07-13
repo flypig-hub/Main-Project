@@ -8,7 +8,7 @@ const AWS = require("aws-sdk");
 async function WritePosting (req, res) {
     // try {
         const { userId, userImage, nickname } = res.locals;
-        const { title, content, mainAddress, subAddress, category, type, link, houseTitle } = req.body;
+        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle } = req.body;
         // console.log(req.body);
         const image = req.files;
         // console.log(req.files);
@@ -21,14 +21,14 @@ async function WritePosting (req, res) {
 
         const postInfo = await posts.create({ 
             userId, userImage, nickname,
-            title, content, mainAddress, subAddress, category, type, link, houseTitle,
+            title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
-            // postImageURL: postImageURL.toString(),
+            postImageURL: postImageURL.toString(),
             postImageKEY: postImageKEY.toString(),
         });
 
-        res.status(201).send({ postInfo, postImageKEY });
+        res.status(201).send({ postInfo, postImageKEY, postImageURL });
     // } catch(e) {
     //     res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
     // }
