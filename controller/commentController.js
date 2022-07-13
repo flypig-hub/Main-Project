@@ -24,7 +24,7 @@ async function readComment(req, res) {
 // 댓글 작성 API
 async function writeComment(req, res) {
   const { postId } = req.params;
-  const { nickname ,userId} = res.locals;
+  const { nickname ,userId, userImg} = res.locals;
   const { comment } = req.body;
   
   if (!userId) {
@@ -43,6 +43,7 @@ try {
   const comment_c = await Comment.create({
     postId,
     userId,
+    userImg,
     comment,
     nickname,
   });
