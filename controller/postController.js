@@ -7,8 +7,8 @@ const AWS = require("aws-sdk");
 // 게시글 작성(유저)
 async function WritePosting (req, res) {
     // try {
-        // const { userId, snsId, nickname } = res.locals;
-        const { title, content, tripLocation, category, type, link, houseTitle } = req.body;
+        const { userId, userImage, nickname } = res.locals;
+        const { title, content, mainAddress, subAddress, category, type, link, houseTitle } = req.body;
         // console.log(req.body);
         const image = req.files;
         // console.log(req.files);
@@ -20,7 +20,8 @@ async function WritePosting (req, res) {
         const thumbnailURL = postImageURL[0];
 
         const postInfo = await posts.create({ 
-            title, content, tripLocation, category, type, link, houseTitle,
+            userId, userImage, nickname,
+            title, content, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
