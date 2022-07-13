@@ -131,7 +131,7 @@ async function ModifyPosting (req, res) {
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost (req, res) {
     // try {
-        // const { userId } = res.locals;
+        const { userId, nickname } = res.locals;
         const { postId } = req.params;
 
         const existPost = await posts.findOne({ where:{ postId }});
