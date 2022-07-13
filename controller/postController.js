@@ -8,8 +8,8 @@ const AWS = require("aws-sdk");
 async function WritePosting (req, res) {
     // try {
         const { userId, userImage, nickname } = res.locals;
-        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle } = req.body;
-        // console.log(req.body);
+        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
+        console.log(req.body);
         const image = req.files;
         // console.log(req.files);
 
