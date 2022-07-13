@@ -14,7 +14,7 @@ router.get('/', PostController.GetPostingList);
 
 
 // 게시글 상세 조회 API
-router.get('/:postId', authMiddleware, PostController.GetPost);
+router.get('/:postId', PostController.GetPost);
 
 
 // 게시글 수정 API
