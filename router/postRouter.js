@@ -29,7 +29,7 @@ router.patch('/:postId', upload.array('images', 8), PostController.ModifyPosting
 router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
 // 이미지 가져오기
-router.get('/images', upload.array('images', 8), ImageController.GetImages)
+// router.get('/images', ImageController.GetImages)
 
 // 이미지 삭제
 // router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
