@@ -49,7 +49,7 @@ async function GetPostingList (req, res) {
 
 // 게시글 상세 조회(S3 기능 추가 예정)
 async function GetPost (req, res) {
-    // const { nickname, userId } = res.locals;
+    const { nickname, userId } = res.locals;
     const { postId } = req.params;
 
     const post = await posts.findAll({ where: { postId }, 
@@ -73,7 +73,7 @@ async function GetPost (req, res) {
     // }));
 
     res.send({
-        post,
+        nickname, userId, post,
         // commentInfo: commentInfo
     });
 };
