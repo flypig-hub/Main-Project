@@ -9,7 +9,7 @@ async function WritePosting (req, res) {
     // try {
         const { userId, nickname, userImage } = res.locals;
         console.log(res.locals);
-        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
+        const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
         // console.log(req.body);
         const image = req.files;
         // console.log(req.files);
@@ -70,7 +70,7 @@ async function GetPost (req, res) {
     //     commentWriter: commentWriterInfoById[comment.nickname],
     // }));
 
-    res.send({
+    res.status(200).send({
         nickname, userId, userImage, post,
         // commentInfo: commentInfo
     });
@@ -83,7 +83,7 @@ async function ModifyPosting (req, res) {
         const { userId, userImage, nickname } = res.locals;
         console.log(res.locals);
         const { postId } = req.params;
-        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
+        const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
         const image = req.files;
 
         const existPost = await posts.findOne({
@@ -128,14 +128,14 @@ async function ModifyPosting (req, res) {
 
         const ModifyPost = await existPost.update({ 
             userId, userImage, nickname,
-            title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle,
+            title, content, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
             postImageKEY: postImageKEY.toString(),
         });
     
-        res.send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
+        res.status(200).send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
     // } catch (e) {
     //     res.status(400).send({ errorMessage: "게시글을 수정을 할 수 없습니다." });
     // }
@@ -145,7 +145,7 @@ async function ModifyPosting (req, res) {
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost (req, res) {
     // try {
-        const { userId, nickname } = res.locals;
+        const { userId, nickname, userImage } = res.locals;
         const { postId } = req.params;
 
         const existPost = await posts.findOne({ where:{ postId }});
@@ -175,7 +175,7 @@ async function DeletePost (req, res) {
         // await Comment.destroy({ 
             //     where: { postId } 
             // });
-        res.send({ msg: "게시글이 삭제되었습니다!" });
+        res.status(200).send({ msg: "게시글이 삭제되었습니다!" });
     // } catch (e) {
     //     res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
     // }
