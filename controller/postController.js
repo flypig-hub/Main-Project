@@ -164,10 +164,8 @@ async function DeletePost (req, res) {
     // }
 };
 
-exports = module.exports = {
-    WritePosting,
-    GetPostingList,
-    GetPost,
-    ModifyPosting,
-    DeletePost
-}
+module.exports.WritePosting = WritePosting;
+module.exports.GetPostingList = GetPostingList;
+module.exports.GetPost = GetPost;
+module.exports.ModifyPosting = ModifyPosting;
+module.exports.DeletePost = DeletePost;
