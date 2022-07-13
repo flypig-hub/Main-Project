@@ -32,6 +32,6 @@ router.post('/images', upload.array('images', 8), ImageController.PostImage)
 router.get('/images', upload.array('images', 8), ImageController.GetImages)
 
 // 이미지 삭제
-router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
+// router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
 
 module.exports = router;
