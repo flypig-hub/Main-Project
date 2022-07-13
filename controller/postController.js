@@ -47,10 +47,9 @@ async function GetPostingList (req, res) {
 async function GetPost (req, res) {
     // const { nickname, userId } = res.locals;
     const { postId } = req.params;
-    const image = req.files;
 
     const post = await posts.findAll({ where: { postId }, 
-        order : [[ "createdAt", "DESC" ]]
+        // order : [[ "createdAt", "DESC" ]]
     });
     console.log(post);
 
@@ -62,45 +61,16 @@ async function GetPost (req, res) {
     //     order : [[ "createdAt", "DESC" ]]
     // });
     // console.log(postImage);
-    
-    const commentWriterIds = Comment.map(
-        (commentWriterId) => commentWriterId.nickname
-    );
 
-    // const postImage = req.files.map(file=>file.location);
-
-    const commentWriterInfoById = await User.find({
-        _id: { $in: commentWriterIds },
-    })
-        .exec()
-        .then((commentWriterId) => 
-            commentWriterId.reduce(
-                (prev,ca) => ({
-                    ...prev,
-                    [ca.nickname]: ca,
-                }),
-                {}
-            ));
-
-    const postsInfo = {
-        postId: post._id,
-        title: post.title,
-        content: post.content,
-        nickname: post.nickname,
-        postContent: post.postContent,
-        postImage: postImage.postImage,
-        tripLocation: postWriter.tripLocation,
-    }
-
-    const commentInfo = comments.map((comment) => ({
-        commentId : comment.commentId,
-        comment: comment.comment,
-        commentWriter: commentWriterInfoById[comment.nickname],
-    }));
+    // const commentInfo = comments.map((comment) => ({
+    //     commentId : comment.commentId,
+    //     comment: comment.comment,
+    //     commentWriter: commentWriterInfoById[comment.nickname],
+    // }));
 
     res.send({
-        posts : postsInfo,
-        commentInfo: commentInfo
+        post,
+        // commentInfo: commentInfo
     });
 };
 
@@ -125,7 +95,9 @@ async function ModifyPosting (req, res) {
         const s3 = new AWS.S3();
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
-            Delete: { Objects: imageURL.map(imageKey => ({ Key: imageKey })) }
+            Delete: { 
+                Objects: image.map((imageKey) => ({ Key: imageKey })) 
+            }
         };
         console.log(params);
 
@@ -192,10 +164,8 @@ async function DeletePost (req, res) {
     // }
 };
 
-exports = module.exports = {
-    WritePosting,
-    GetPostingList,
-    GetPost,
-    ModifyPosting,
-    DeletePost
-}
+module.exports.WritePosting = WritePosting;
+module.exports.GetPostingList = GetPostingList;
+module.exports.GetPost = GetPost;
+module.exports.ModifyPosting = ModifyPosting;
+module.exports.DeletePost = DeletePost;
