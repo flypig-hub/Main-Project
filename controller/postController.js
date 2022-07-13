@@ -24,11 +24,11 @@ async function WritePosting (req, res) {
             title, content, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
-            postImageURL: postImageURL.toString(),
+            // postImageURL: postImageURL.toString(),
             postImageKEY: postImageKEY.toString(),
         });
 
-        res.status(201).send({ postInfo, postImageKEY, postImageURL });
+        res.status(201).send({ postInfo, postImageKEY });
     // } catch(e) {
     //     res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
     // }
