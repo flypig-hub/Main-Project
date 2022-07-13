@@ -1,7 +1,7 @@
 const ImageUploader = require("../middlewares/S3-middleware");
 const { images, sequelize, Sequelize } = require("../models");
 const path = require("path");
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+// const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const client = new S3Client({ region: "REGION" });
 const AWS = require('aws-sdk');
 const upload = require("../middlewares/S3-middleware");
