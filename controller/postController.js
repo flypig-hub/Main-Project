@@ -150,15 +150,17 @@ async function DeletePost (req, res) {
         // })
 
         // 댓글, 게시글 삭제
-        if (existPost) {
-            await Comment.destroy({ 
-                where: { postId } 
-            });
-            await posts.destroy({
-                where: { postId }
-            });
+        if (userId !== existPost.userId) {
+            res.send({msg: "삭제할 수 없습니다."})
         };
-
+        if (nickname !== existPost.nickname) {
+            res.send({msg: "삭제할 수 없습니다."})
+        };
+        const dastroyPost = await posts.destroy({ where: { postId } });
+        console.log(dastroyPost);
+        // await Comment.destroy({ 
+            //     where: { postId } 
+            // });
         res.send({ msg: "게시글이 삭제되었습니다!" });
     // } catch (e) {
     //     res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});

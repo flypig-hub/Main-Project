@@ -23,7 +23,7 @@ router.patch('/:postId', authMiddleware, upload.array('images', 8), PostControll
 
 // ******************************************************************
 // 게시글 삭제 API(email, articleId 같이 맞으면 삭제)
-router.delete('/:postId', authMiddleware, PostController.DeletePost);
+router.delete('/:postId', PostController.DeletePost);
 
 // 이미지 업로드
 router.post('/images', authMiddleware, upload.array('images', 8), ImageController.PostImage)
