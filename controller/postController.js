@@ -10,9 +10,10 @@ async function WritePosting (req, res) {
         const { userId } = res.locals.userId;
         const { nickname } = res.locals.nickname;
         const { userImage } = res.locals.userImage;
+        console.log(userId, nickname, userImage);
         // const { userId, nickname, userImage } = req.locals;
         const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
-        console.log(req.body);
+        // console.log(req.body);
         const image = req.files;
         // console.log(req.files);
 
