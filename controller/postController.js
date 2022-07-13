@@ -80,9 +80,10 @@ async function GetPost (req, res) {
 // 게시글 수정 (S3 기능 추가 예정)
 async function ModifyPosting (req, res) {
     // try {
-        // const { nickname } = res.locals;
+        const { userId, userImage, nickname } = res.locals;
+        console.log(res.locals);
         const { postId } = req.params;
-        const { title, content, tripLocation, category, type, link, houseTitle } = req.body;
+        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
         const image = req.files;
 
         const existPost = await posts.findOne({
@@ -92,34 +93,46 @@ async function ModifyPosting (req, res) {
         const postImageKEY = image.map(postImageKEY => postImageKEY.key);
         const postImageURL = image.map(postImageURL => postImageURL.location);
 
-        const imageURL = existPost.postImageURL.map(imageURL => imageURL.split('com/')[1]);
+        const thumbnailKEY = postImageKEY[0];
+        const thumbnailURL = postImageURL[0];
 
-        const s3 = new AWS.S3();
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Delete: { 
-                Objects: image.map((imageKey) => ({ Key: imageKey })) 
-            }
-        };
-        console.log(params);
+        // const imageURL = existPost.postImageURL.map(imageURL => imageURL.split('com/')[1]);
 
-        s3.deleteObjects(params, function(err, data) {
-            if (err) console.log(err, err.stack);
-            else { console.log("삭제되었습니다.") }
-        })
+        // const s3 = new AWS.S3();
+        // const params = {
+        //     Bucket: process.env.AWS_BUCKET_NAME,
+        //     Delete: { 
+        //         Objects: image.map((imageKey) => ({ Key: imageKey })) 
+        //     }
+        // };
+        // console.log(params);
+
+        // s3.deleteObjects(params, function(err, data) {
+        //     if (err) console.log(err, err.stack);
+        //     else { console.log("삭제되었습니다.") }
+        // })
     
         // if (nickname !== existPost.nickname) {
         //         await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
         //     };
     
-        const ModifyPost = await existPost.update({
-            title, 
-            content, 
-            tripLocation,
-            postImageKEY: postImageKEY.toString(),
+        // const ModifyPost = await existPost.update({
+        //     title, 
+        //     content, 
+        //     tripLocation,
+        //     postImageKEY: postImageKEY.toString(),
+        //     postImageURL: postImageURL.toString(),
+        //     category, type, link, houseTitle,
+        //     order: [["updatedAt", "DESC"]]
+        // });
+
+        const ModifyPost = await existPost.update({ 
+            userId, userImage, nickname,
+            title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle,
+            thumbnailURL: thumbnailURL.toString(),
+            thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
-            category, type, link, houseTitle,
-            order: [["updatedAt", "DESC"]]
+            postImageKEY: postImageKEY.toString(),
         });
     
         res.send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
