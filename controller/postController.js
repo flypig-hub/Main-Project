@@ -12,7 +12,7 @@ async function WritePosting (req, res) {
         const { userImage } = res.locals.userImage;
         console.log(userId, nickname, userImage);
         // const { userId, nickname, userImage } = req.locals;
-        const { title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
+        const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
         // console.log(req.body);
         const image = req.files;
         // console.log(req.files);
@@ -25,7 +25,7 @@ async function WritePosting (req, res) {
 
         const postInfo = await posts.create({ 
             userId, userImage, nickname,
-            title, content, tripLocation, mainAddress, subAddress, category, type, link, houseTitle,
+            title, content,  mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
