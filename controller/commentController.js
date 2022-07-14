@@ -48,12 +48,12 @@ try {
     nickname,
   });
 
-  res.status(201).json({ comment_c, msg: "댓글이 등록 되었습니다." });
+  res.status(201).send({ comment_c, msg: "댓글이 등록 되었습니다." });
 } catch (err) {
   console.log(err);
   res
     .status(400)
-    .json({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
+    .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
 }
 }
 
@@ -86,10 +86,10 @@ async function updateComment(req, res) {
      const updateComment = await existsComment.save();
   
 
-      res.status(200).json({ updateComment, message: "댓글 수정 완료" });
+      res.status(200).send({ updateComment, message: "댓글 수정 완료" });
     }
     catch (err) {
-      res.status(400).json({ errorMessage: "댓글 수정을 할 수 없습니다." });
+      res.status(400).send({ errorMessage: "댓글 수정을 할 수 없습니다." });
     }
   }
 
@@ -125,9 +125,9 @@ async function deleteComment(req, res) {
         );
         return;
     }
-      res.status(200).json({ message: "댓글 삭제 완료" });
+      res.status(200).send({ message: "댓글 삭제 완료" });
   } catch (err) {
-    res.status(400).json({ errorMessage: "댓글 삭제를 할 수 없습니다." });
+    res.status(400).send({ errorMessage: "댓글 삭제를 할 수 없습니다." });
   }
 }
 
