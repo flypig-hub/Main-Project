@@ -100,19 +100,22 @@ async function updateComment(req, res) {
 async function deleteComment(req, res) {
   const { userId } = res.locals;
   const { commentId } = req.params;
-
+console.log(commentId);
   try {
     const existsComment = await Comments.findOne({
       where: {
-        commentId,
+        commentId: commentId,
       },
     });
+    console.log(userId,  existsComment.userId);
      if (!userId) {
     res.status(400).send({
       errorMessage: "로그인이 필요한 서비스 입니다.-댓글삭제-",
     });
-    return;
-  }else if (userId !== existsComment.userId) {
+       return;
+       
+     }
+     else if (userId != existsComment.userId) {
     res.status(400).send({
       errorMessage: "이 글의 작성자만 글을 삭제할 수 있습니다.",
     });
