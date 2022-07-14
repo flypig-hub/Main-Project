@@ -131,7 +131,7 @@ async function ModifyPosting (req, res) {
         const ModifyPost = await existPost.update({ 
             userId, userImage, nickname,
             title, content, mainAddress, subAddress, category, type, link, houseTitle,
-            thumbnailURL: thumbnailURL.toString(),
+            thumbnailURL,
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
             postImageKEY: postImageKEY.toString(),
