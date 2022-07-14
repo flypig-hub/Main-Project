@@ -1,4 +1,4 @@
-const { posts, Comment, User, images, sequelize, Sequelize } = require("../models");
+const { posts, Comment, users, images, sequelize, Sequelize } = require("../models");
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
 
