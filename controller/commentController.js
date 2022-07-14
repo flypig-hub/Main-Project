@@ -25,11 +25,18 @@ async function readComment(req, res) {
 async function writeComment(req, res) {
   const { postId } = req.params;
 
-  console.log(res.locals);
-  
+  console.log("파람스 =",postId);
+
   const { nickname, userId, userImage } = res.locals;
   
-  console.log("res.locals =",nicknamenickname, userId, userImage);
+  console.log(
+    "레스로컬스 닉 =",
+    nickname,
+    "레스로컬스 아이디 =",
+    userId,
+    "레스로컬스 이미지 =",
+    userImage
+  );
   const { comment } = req.body;
   
   if (!userId) {
@@ -46,16 +53,16 @@ try {
     return;
   }
   const comment_c = await Comment.create({
-    postId,
-    // userId,
-    // userImage,
-    comment,
-    nickname,
+   where:{postId: postId,
+    userId: userId,
+    userImage: userImage,
+    comment: comment,
+    nickname: nickname,}
   });
 
-  res.status(201).send({ comment_c, msg: "댓글이 등록 되었습니다." });
+  res.status(201).send({ msg: "댓글이 등록 되었습니다." });
 } catch (err) {
-  console.log(err);
+  // console.log(err);
   res
     .status(400)
     .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
