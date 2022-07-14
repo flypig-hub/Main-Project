@@ -11,7 +11,7 @@ router.post("/:postId", authMiddleware, commentController.writeComment);
 router.get("/:postId/comment", commentController.readComment);
 
 // patch
-router.patch("/:postId/:commentId", authMiddleware, commentController.updateComment);
+router.put("/:postId/:commentId", authMiddleware, commentController.updateComment);
 
 // delete
 router.delete("/:postId/:commentId", authMiddleware, commentController.deleteComment);
