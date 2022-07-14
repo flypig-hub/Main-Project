@@ -85,10 +85,10 @@ async function GetPost (req, res) {
 async function ModifyPosting (req, res) {
     // try {
         const { userId, userImage, nickname } = res.locals;
-        console.log(res.locals);
+        // console.log(res.locals);
         const { postId } = req.params;
         const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
-        console.log(req.body);
+        // console.log(req.body);
         const image = req.files;
         console.log(image);
 
