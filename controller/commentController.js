@@ -114,7 +114,7 @@ console.log(commentId);
     });
        return;
        
-  }else if (userId !== existsComment.userId) {
+  }else if (userId != existsComment.userId) {
     res.status(400).send({
       errorMessage: "이 글의 작성자만 글을 삭제할 수 있습니다.",
     });
