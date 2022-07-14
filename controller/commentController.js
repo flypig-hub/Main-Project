@@ -76,7 +76,7 @@ async function updateComment(req, res) {
         errorMessage: "로그인이 필요한 서비스 입니다.-댓글수정-",
       });
       return;
-    } else if (existsComment.userId !== userId) {
+    } else if (existsComment.userId != userId) {
       res.status(400).send({
         errorMessage: "댓글 작성자만 댓글을 수정할 수 있습니다.",
       });
