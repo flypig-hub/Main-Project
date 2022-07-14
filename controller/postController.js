@@ -105,7 +105,7 @@ async function ModifyPosting (req, res) {
         const thumbnailKEY = postImageKEY[0];
         const thumbnailURL = postImageURL[0];
 
-        if (image === null) {
+        if (image.length === 0) {
             await posts.findOne({ where:{ thumbnailURL } });
             res.send({ thumbnailURL });
         };
