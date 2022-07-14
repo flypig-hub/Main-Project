@@ -4,12 +4,11 @@ const router = express.Router();
 const commentController = require("../controller/commentController");
 
 
-
 //post
-router.post("/:contentId", authMiddleware, commentController.writeComment);
+router.post("/:postId", authMiddleware, commentController.writeComment);
 
 // get
-router.get("/:contentId", commentController.readComment);
+router.get("/:postId", commentController.readComment);
 
 // patch
 router.patch("/:contentId/:commentId", authMiddleware, commentController.updateComment);

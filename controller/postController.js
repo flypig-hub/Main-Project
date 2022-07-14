@@ -25,7 +25,7 @@ async function WritePosting (req, res) {
 
         const postInfo = await posts.create({ 
             userId, userImage, nickname,
-            title, content,  mainAddress, subAddress, category, type, link, houseTitle,
+            title, content, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL.toString(),
