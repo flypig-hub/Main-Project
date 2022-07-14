@@ -26,6 +26,7 @@ async function readComment(req, res) {
 async function writeComment(req, res) {
   const { postId } = req.params;
   const { nickname, userId, userImage } = res.locals;
+  console.log(res.locals,"여기는 지날꺼고");
   const { comment } = req.body;
   
   if (!userId) {
@@ -41,7 +42,7 @@ try {
     });
     return;
   }
- 
+  console.log(res.locals,"여기도 지나는가?");
   const comment_c = await Comments.create({
     postId: postId,
     userId: userId,
@@ -49,6 +50,7 @@ try {
     comment: comment,
     nickname: nickname,
   });
+  console.log(comment_c , "너는 나오니?")
 
   res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
 } catch (err) {
