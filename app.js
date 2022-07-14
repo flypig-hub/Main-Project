@@ -1,5 +1,5 @@
 require('dotenv').config()
-const express = require("express")
+const express = require("express");
 const mysql = require("mysql");
 const path = require("path");
 const cors = require("cors"); // cors 패키지 연결
@@ -7,14 +7,14 @@ const morgan = require("morgan");
 const passport = require("passport");
 // const cookieParser = require('cookie-parser')
 const UserRouter = require("./router/userRouter");
-const passportConfig = require('./passport')
+const passportConfig = require('./passport');
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
-const { server } = require("./socket");
 // const session = require("express-session")
+const webSocket = require("./socket");
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
@@ -84,5 +84,8 @@ app.set("views", __dirname + "/views");
 // app.listen(port, () => {
 //   console.log(port, "포트로 서버가 켜졌어요!");
 // });
+const httpserver = app.listen(port, () => {
+  console.log(port, "포트로 서버가 켜졌어요!");
+});
 
-module.exports = app;
+webSocket(httpserver, app);
