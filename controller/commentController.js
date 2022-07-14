@@ -25,19 +25,7 @@ async function readComment(req, res) {
 // 댓글 작성 API
 async function writeComment(req, res) {
   const { postId } = req.params;
-
-  console.log("파람스 =",postId);
-
   const { nickname, userId, userImage } = res.locals;
-  
-  console.log(
-    "레스로컬스 닉 =",
-    nickname,
-    "레스로컬스 아이디 =",
-    userId,
-    "레스로컬스 이미지 =",
-    userImage
-  );
   const { comment } = req.body;
   
   if (!userId) {
@@ -55,16 +43,9 @@ try {
   }
  
   const comment_c = await Comments.create({
-    // where: {
-    //   // postId: postId,
-    //   // userId: userId,
-    //   // userImage: userImage,
-    //   // comment: comment,
-    //   // nickname: nickname,
-    // },
     postId: postId,
     userId: userId,
-    // userImage:"이미지",
+    userImage: userImage,
     comment: comment,
     nickname: nickname,
   });
