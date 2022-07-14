@@ -6,7 +6,7 @@ const upload = require("../middlewares/S3-middleware");
 const router = express.Router();
 
 // 게시글 작성 API
-router.post('/', upload.array('images', 8), PostController.WritePosting);
+router.post('/', authMiddleware, upload.array('images', 8), PostController.WritePosting);
 
 
 // 게시글 조회 API
@@ -18,7 +18,7 @@ router.get('/:postId', PostController.GetPost);
 
 
 // 게시글 수정 API
-router.patch('/:postId', upload.array('images', 8), PostController.ModifyPosting);
+router.patch('/:postId', authMiddleware, upload.array('images', 8), PostController.ModifyPosting);
 
 
 // ******************************************************************
@@ -26,12 +26,12 @@ router.patch('/:postId', upload.array('images', 8), PostController.ModifyPosting
 router.delete('/:postId', PostController.DeletePost);
 
 // 이미지 업로드
-router.post('/images', upload.array('images', 8), ImageController.PostImage)
+router.post('/images', authMiddleware, upload.array('images', 8), ImageController.PostImage)
 
 // 이미지 가져오기
-router.get('/images/:key', ImageController.GetImages)
+// router.get('/images', ImageController.GetImages)
 
 // 이미지 삭제
-router.delete('/images/:key', ImageController.DeleteImages)
+// router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
 
 module.exports = router;
