@@ -1,78 +1,81 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('posts', {
+    await queryInterface.createTable("posts", {
       postId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      userId : {
-        type: Sequelize.STRING
+      userId: {
+        type: Sequelize.STRING,
       },
       userImage: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
-      nickname : {
-        type: Sequelize.STRING
+      nickname: {
+        type: Sequelize.STRING,
       },
-      postNumber : {
-        type: Sequelize.STRING
+      postNumber: {
+        type: Sequelize.STRING,
       },
       content: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       commentId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       commentNum: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       likeNum: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+      },
+      islike: {
+        type: Sequelize.INTEGER,
       },
       thumbnailKEY: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       thumbnailURL: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       postImageKEY: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       postImageURL: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       mainAddress: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       subAddress: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       category: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       type: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       link: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       houseTitle: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
