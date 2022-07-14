@@ -24,7 +24,9 @@ async function readComment(req, res) {
 // 댓글 작성 API
 async function writeComment(req, res) {
   const { postId } = req.params;
+
   console.log(res.locals);
+  
   const { nickname, userId, userImage } = res.locals;
   
   console.log("res.locals =",nicknamenickname, userId, userImage);
