@@ -7,11 +7,10 @@ const AWS = require("aws-sdk");
 // 게시글 작성(유저)
 async function WritePosting (req, res) {
     // try {
-        const { userId } = res.locals.userId;
-        const { nickname } = res.locals.nickname;
-        const { userImage } = res.locals.userImage;
-        console.log(userId, nickname, userImage);
-        // const { userId, nickname, userImage } = req.locals;
+        // const { userId } = res.locals.userId;
+        // const { nickname } = res.locals.nickname;
+        // const { userImage } = res.locals.userImage;
+        const { userId, nickname, userImage } = req.locals;
         const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
         // console.log(req.body);
         const image = req.files;
