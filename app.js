@@ -13,6 +13,7 @@ const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
+
 // const session = require("express-session")
 const webSocket = require("./socket");
 
@@ -81,11 +82,6 @@ app.set("views", __dirname + "/views");
 // app.get("/*", (_, res) => res.redirect("/"));
 
 
-// app.listen(port, () => {
-//   console.log(port, "포트로 서버가 켜졌어요!");
-// });
-const httpserver = app.listen(port, () => {
-  console.log(port, "포트로 서버가 켜졌어요!");
-});
 
-webSocket(httpserver, app);
+ app.listen(port, () => {
+   console.log(port, "포트로 서버가 켜졌어요!"); });

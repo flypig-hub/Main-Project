@@ -4,7 +4,6 @@ const router = express.Router();
 const commentController = require("../controller/commentController");
 
 
-
 //post
 router.post("/:postId", authMiddleware, commentController.writeComment);
 

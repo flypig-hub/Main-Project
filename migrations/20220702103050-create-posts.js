@@ -8,6 +8,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      userId : {
+        type: Sequelize.STRING
+      },
+      userImage: {
+        type: Sequelize.STRING
+      },
+      nickname : {
+        type: Sequelize.STRING
+      },
       postNumber : {
         type: Sequelize.STRING
       },
@@ -15,9 +24,6 @@ module.exports = {
         type: Sequelize.STRING
       },
       title: {
-        type: Sequelize.STRING
-      },
-      tripLocation: {
         type: Sequelize.STRING
       },
       commentId: {
@@ -29,22 +35,22 @@ module.exports = {
       likeNum: {
         type: Sequelize.INTEGER
       },
-      thumbnailString: {
-        type: Sequelize.STRING
-      },
       thumbnailKEY: {
         type: Sequelize.STRING
       },
       thumbnailURL: {
         type: Sequelize.STRING
       },
-      postImageString: {
-        type: Sequelize.STRING
-      },
       postImageKEY: {
         type: Sequelize.STRING
       },
       postImageURL: {
+        type: Sequelize.STRING
+      },
+      mainAddress: {
+        type: Sequelize.STRING
+      },
+      subAddress: {
         type: Sequelize.STRING
       },
       category: {
