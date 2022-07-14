@@ -132,9 +132,9 @@ async function ModifyPosting (req, res) {
             userId, userImage, nickname,
             title, content, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL,
-            thumbnailKEY: thumbnailKEY.toString(),
-            postImageURL: postImageURL.toString(),
-            postImageKEY: postImageKEY.toString(),
+            thumbnailKEY,
+            postImageURL,
+            postImageKEY,
         });
         
         res.status(200).send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
