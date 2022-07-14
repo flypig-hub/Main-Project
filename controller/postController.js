@@ -100,10 +100,10 @@ async function ModifyPosting (req, res) {
             await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
         };
 
-        // const postImageKEY = image.map(postImageKEY => postImageKEY.key);
-        // const postImageURL = image.map(postImageURL => postImageURL.location);
-        // const thumbnailKEY = postImageKEY[0];
-        // const thumbnailURL = postImageURL[0];
+        const postImageKEY = image.map(postImageKEY => postImageKEY.key);
+        const postImageURL = image.map(postImageURL => postImageURL.location);
+        const thumbnailKEY = postImageKEY[0];
+        const thumbnailURL = postImageURL[0];
 
         if (image === null) {
             await posts.findOne({ where:{ thumbnailURL } });
@@ -133,8 +133,8 @@ async function ModifyPosting (req, res) {
             title, content, mainAddress, subAddress, category, type, link, houseTitle,
             thumbnailURL,
             thumbnailKEY,
-            postImageURL,
-            postImageKEY,
+            postImageURL: postImageURL.toString(),
+            postImageKEY: postImageKEY.toString(),
         });
         
         res.status(200).send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
