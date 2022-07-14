@@ -15,7 +15,7 @@ async function readComment(req, res) {
         
       ],
     });
-        res.status(200).send({ comments, msg : "댓글을 읽었습니다."});
+        res.status(200).send({ postId,comments, msg : "댓글을 읽었습니다."});
       
   } catch (error) {
     res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
