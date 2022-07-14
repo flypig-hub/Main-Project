@@ -42,12 +42,12 @@ db.Sequelize = Sequelize;
 
 db.posts = require("./posts")(sequelize, Sequelize);
 db.users = require("./users")(sequelize, Sequelize);
-db.Comment = require("./comment")(sequelize, Sequelize);
+db.Comments = require("./comments")(sequelize, Sequelize);
 db.images = require("./images")(sequelize, Sequelize);
 db.like = require("./like")(sequelize, Sequelize);
 
-db.posts.hasMany(db.Comment, { as: "Comment" });
-db.Comment.belongsTo(db.posts, {
+db.posts.hasMany(db.Comments, { as: "Comments" });
+db.Comments.belongsTo(db.posts, {
   foreignKey: "postId",
   as: "posts"
 });

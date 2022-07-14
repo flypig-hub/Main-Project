@@ -1,11 +1,12 @@
-const { Comment, sequelize, Sequelize } = require("../models");
+const { Comments, sequelize, Sequelize } = require("../models");
+const comments = require("../models/comments");
 
 //댓글 불러오기 API
 async function readComment(req, res) {
   try {
     const { postId } = req.params;
     
-    const comments = await Comment.findAll({
+    const comments = await Comments.findAll({
       where: {
         postId,
       },
@@ -52,15 +53,23 @@ try {
     });
     return;
   }
-  const comment_c = await Comment.create({
-   where:{postId: postId,
+ 
+  const comment_c = await Comments.create({
+    // where: {
+    //   // postId: postId,
+    //   // userId: userId,
+    //   // userImage: userImage,
+    //   // comment: comment,
+    //   // nickname: nickname,
+    // },
+    postId: postId,
     userId: userId,
-    userImage: userImage,
+    // userImage:"이미지",
     comment: comment,
-    nickname: nickname,}
+    nickname: nickname,
   });
 
-  res.status(201).send({ msg: "댓글이 등록 되었습니다." });
+  res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
 } catch (err) {
   // console.log(err);
   res
@@ -77,7 +86,7 @@ async function updateComment(req, res) {
   const { comment } = req.body;
 
   try {
-    const existsComment = await Comment.findOne({
+    const existsComment = await Comments.findOne({
       where: { commentId },
     });
     
@@ -112,7 +121,7 @@ async function deleteComment(req, res) {
   const { commentId } = req.params;
 
   try {
-    const existsComment = await Comment.findOne({
+    const existsComment = await Comments.findOne({
       where: {
         commentId,
       },
@@ -129,7 +138,7 @@ async function deleteComment(req, res) {
     return;
   }
     
-      const deleteComment = await Comment.destroy(
+      const deleteComment = await Comments.destroy(
         { where: { commentId } });
       if (!deleteComment) {
         res.status(400).send(
