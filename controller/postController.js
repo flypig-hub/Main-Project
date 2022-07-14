@@ -101,7 +101,7 @@ async function ModifyPosting (req, res) {
 
         if (image.length === 0) {
             await posts.findOne({ where:{ thumbnailURL } });
-            res.send({ thumbnailURL });
+            return res.send({ thumbnailURL });
         };
         
         // const imageURL = existPost.postImageURL.map(imageURL => imageURL.split('com/')[1]);
