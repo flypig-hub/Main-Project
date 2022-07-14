@@ -88,7 +88,9 @@ async function ModifyPosting (req, res) {
         console.log(res.locals);
         const { postId } = req.params;
         const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
+        console.log(req.body);
         const image = req.files;
+        console.log(image);
 
         const existPost = await posts.findOne({
             where: { postId },
