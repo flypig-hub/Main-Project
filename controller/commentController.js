@@ -1,12 +1,13 @@
-const { Comments, sequelize, Sequelize } = require("../models");
-const comments = require("../models/comments");
+const { Comments,posts, sequelize, Sequelize } = require("../models");
 
 //댓글 불러오기 API
 async function readComment(req, res) {
   try {
     const { postId } = req.params;
-    
-    const comments = await Comments.findAll({
+   
+    const comments = await Comments.findAll();
+    console.log(comments);
+      ({
       where: {
         postId,
       },
@@ -15,10 +16,10 @@ async function readComment(req, res) {
         
       ],
     });
-        res.status(200).send({ comments, msg : "댓글을 읽었습니다."});
+        res.status(200).send({ comments, msg: "댓글을 읽었습니다." });
       
   } catch (error) {
-    res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
+    res.status(401).send({ errorMessage: "댓글 조회에 실패하였습니다." });
   }
 }
 
@@ -26,7 +27,7 @@ async function readComment(req, res) {
 async function writeComment(req, res) {
   const { postId } = req.params;
   const { nickname, userId, userImage } = res.locals;
-  console.log(res.locals,"여기는 지날꺼고");
+  
   const { comment } = req.body;
   
   if (!userId) {
@@ -42,7 +43,6 @@ try {
     });
     return;
   }
-  console.log(res.locals,"여기도 지나는가?");
   const comment_c = await Comments.create({
     postId: postId,
     userId: userId,
@@ -50,8 +50,6 @@ try {
     comment: comment,
     nickname: nickname,
   });
-  console.log(comment_c , "너는 나오니?")
-
   res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
 } catch (err) {
   // console.log(err);
