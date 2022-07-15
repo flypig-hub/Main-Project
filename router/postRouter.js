@@ -1,6 +1,7 @@
 const express = require("express");
 const PostController = require("../controller/postController");
 const authMiddleware = require("../middlewares/auth-middleware");
+const ImageController = require("../controller/ImageController");
 const upload = require("../middlewares/S3-middleware");
 const router = express.Router();
 
@@ -22,5 +23,8 @@ router.patch('/:postId', authMiddleware, upload.array('images', 8), PostControll
 
 // 게시글 삭제 API(email, articleId 같이 맞으면 삭제)
 router.delete('/:postId', PostController.DeletePost);
+
+
+router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
 module.exports = router;
