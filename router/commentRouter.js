@@ -8,11 +8,11 @@ const commentController = require("../controller/commentController");
 router.post("/:postId", authMiddleware, commentController.writeComment);
 
 // get
-router.get("/:postId", commentController.readComment);
+router.get("/:postId/comment", commentController.readComment);
 
 // patch
-router.patch("/:contentId/:commentId", authMiddleware, commentController.updateComment);
+router.put("/:postId/:commentId", authMiddleware, commentController.updateComment);
 
 // delete
-router.delete("/:contentId/:commentId", authMiddleware, commentController.deleteComment);
+router.delete("/:postId/:commentId", authMiddleware, commentController.deleteComment);
 module.exports = router;

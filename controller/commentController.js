@@ -1,13 +1,14 @@
-const { Comment, sequelize, Sequelize } = require("../models");
+const { Comments, sequelize, Sequelize } = require("../models");
+const comments = require("../models/comments");
 
 //댓글 불러오기 API
 async function readComment(req, res) {
   try {
     const { postId } = req.params;
     
-    const comments = await Comment.findAll({
+    const comments = await Comments.findAll({
       where: {
-        postId,
+        postId:postId,
       },
       order: [
         ["commentid", "DESC"],
@@ -40,20 +41,21 @@ try {
     });
     return;
   }
-  const comment_c = await Comment.create({
-    postId,
-    userId,
-    userImage,
-    comment,
-    nickname,
+ 
+  const comment_c = await Comments.create({
+    postId: postId,
+    userId: userId,
+    userImage: userImage,
+    comment: comment,
+    nickname: nickname,
   });
 
-  res.status(201).json({ comment_c, msg: "댓글이 등록 되었습니다." });
+  res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
 } catch (err) {
-  console.log(err);
+  // console.log(err);
   res
     .status(400)
-    .json({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
+    .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
 }
 }
 
@@ -65,7 +67,7 @@ async function updateComment(req, res) {
   const { comment } = req.body;
 
   try {
-    const existsComment = await Comment.findOne({
+    const existsComment = await Comments.findOne({
       where: { commentId },
     });
     
@@ -74,7 +76,7 @@ async function updateComment(req, res) {
         errorMessage: "로그인이 필요한 서비스 입니다.-댓글수정-",
       });
       return;
-    } else if (existsComment.userId !== userId) {
+    } else if (existsComment.userId != userId) {
       res.status(400).send({
         errorMessage: "댓글 작성자만 댓글을 수정할 수 있습니다.",
       });
@@ -86,10 +88,10 @@ async function updateComment(req, res) {
      const updateComment = await existsComment.save();
   
 
-      res.status(200).json({ updateComment, message: "댓글 수정 완료" });
+      res.status(200).send({comment, updateComment, message: "댓글 수정 완료" });
     }
     catch (err) {
-      res.status(400).json({ errorMessage: "댓글 수정을 할 수 없습니다." });
+      res.status(400).send({ errorMessage: "댓글 수정을 할 수 없습니다." });
     }
   }
 
@@ -98,26 +100,28 @@ async function updateComment(req, res) {
 async function deleteComment(req, res) {
   const { userId } = res.locals;
   const { commentId } = req.params;
-
+console.log(commentId);
   try {
-    const existsComment = await Comment.findOne({
+    const existsComment = await Comments.findOne({
       where: {
-        commentId,
+        commentId:commentId,
       },
     });
+    // console.log(existsComment);
      if (!userId) {
     res.status(400).send({
       errorMessage: "로그인이 필요한 서비스 입니다.-댓글삭제-",
     });
-    return;
-  }else if (userId !== existsComment.userId) {
+       return;
+       
+  }else if (userId != existsComment.userId) {
     res.status(400).send({
       errorMessage: "이 글의 작성자만 글을 삭제할 수 있습니다.",
     });
     return;
   }
     
-      const deleteComment = await Comment.destroy(
+      const deleteComment = await Comments.destroy(
         { where: { commentId } });
       if (!deleteComment) {
         res.status(400).send(
@@ -125,9 +129,9 @@ async function deleteComment(req, res) {
         );
         return;
     }
-      res.status(200).json({ message: "댓글 삭제 완료" });
+      res.status(200).send({ message: "댓글 삭제 완료" });
   } catch (err) {
-    res.status(400).json({ errorMessage: "댓글 삭제를 할 수 없습니다." });
+    res.status(400).send({ errorMessage: "댓글 삭제를 할 수 없습니다." });
   }
 }
 
