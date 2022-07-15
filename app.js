@@ -19,7 +19,7 @@ const webSocket = require("./socket");
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
-  "https://choiji.shop"],
+  "https://mendorong-jeju.co.kr/"],
   credentials: true,
 };
 
