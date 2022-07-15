@@ -46,14 +46,15 @@ const googleCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage } = users
+          const { userId, nickname, userImage, host } = users
           const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
               userId,
               token,
               nickname,
-              userImage
+              userImage,
+              host
           }
           console.log('구글 콜백 함수 결과', result)
           res.send({ users: result })
@@ -73,14 +74,15 @@ const naverCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage } = users
+          const { userId, nickname, userImage, host } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               userId,
               token,
               nickname,
-              userImage
+              userImage,
+              host
           }
           console.log('네이버 콜백 함수 결과', result)
           res.send({ users: result })
@@ -109,6 +111,7 @@ async function checkMe(req, res) {
   // const {userId} = req.params;
   const nickname = res.locals.nickname;
   const userImage = res.locals.userImage;
+  const host = res.locals.host
   // const myposts = await posts.findOne({where : {nickname}});
   // const mypostlist = myposts.map((a) => ({
   //     postId : a.postId
@@ -118,6 +121,7 @@ async function checkMe(req, res) {
       result : true,
       nickname,
       userImage,
+      host
       // mypostlist,  //DB 수정이 필요
       // likelist     //DB 수정이 필요 
     })
@@ -181,7 +185,7 @@ async function CNU_CK (req, res, next) {
         if (result !== '국세청에 등록되지 않은 사업자등록번호입니다.'){
           const userId = res.locals.userId
           await users.update({host:true}, {where:{userId}})
-          res.send(true)
+          res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
         }
           console.log(result)
         }
