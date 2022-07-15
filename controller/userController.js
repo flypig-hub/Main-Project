@@ -101,7 +101,8 @@ async function checkMe(req, res) {
       success:true,
       userId,
       nickname,
-      userImage
+      userImage,
+      host
 
     });
   };
@@ -112,6 +113,7 @@ async function checkMe(req, res) {
   const nickname = res.locals.nickname;
   const userImage = res.locals.userImage;
   const host = res.locals.host
+  const email = res.locals.email
   // const myposts = await posts.findOne({where : {nickname}});
   // const mypostlist = myposts.map((a) => ({
   //     postId : a.postId
@@ -121,7 +123,8 @@ async function checkMe(req, res) {
       result : true,
       nickname,
       userImage,
-      host
+      host,
+      email
       // mypostlist,  //DB 수정이 필요
       // likelist     //DB 수정이 필요 
     })

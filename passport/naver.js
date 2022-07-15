@@ -29,7 +29,8 @@ module.exports = () => {
                      nickname: profile.name,
                      userImage : profile.profileImage,
                      provider: 'naver',
-                     host : false
+                     host : false,
+                     email : profile.email
                   });
                   done(null, newUser);
                }
