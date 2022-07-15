@@ -93,16 +93,15 @@ const naverCallback = (req, res, next) => {
 
 //로그인 인증
 async function checkMe(req, res) {
-    const userId  = res.locals.userId
-    const nickname = res.locals.nickname
-    const userImage = res.locals.userImage
+    const {userId, nickname, userImage, email, host}  = res.locals
     
     res.send({
       success:true,
       userId,
       nickname,
       userImage,
-      host
+      host,
+      email
 
     });
   };
