@@ -115,16 +115,8 @@ async function ModifyPosting (req, res) {
         // if (nickname !== existPost.nickname) {
         //         await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
         //     };
-    
-        // const ModifyPost = await existPost.update({
-        //     title, 
-        //     content, 
-        //     tripLocation,
-        //     postImageKEY: postImageKEY.toString(),
-        //     postImageURL: postImageURL.toString(),
-        //     category, type, link, houseTitle,
-        //     order: [["updatedAt", "DESC"]]
-        // });
+
+        // 수정할 때 
 
         const ModifyPost = await existPost.update({ 
             userId, userImage, nickname,
