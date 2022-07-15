@@ -1,7 +1,7 @@
 const {
   posts,
-  comment,
-  like,
+  Comments,
+  Like,
   users,
   images,
   sequelize,
@@ -9,6 +9,7 @@ const {
 } = require("../models");
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
+const { post } = require("../router/likeRouter");
 
 
 // 게시글 작성(유저)
@@ -40,7 +41,7 @@ async function WritePosting(req, res) {
 
   const thumbnailKEY = postImageKEY[0];
   const thumbnailURL = postImageURL[0];
-
+  let isLike= false;
   const postInfo = await posts.create({
     userId,
     userImage,
@@ -55,7 +56,7 @@ async function WritePosting(req, res) {
     houseTitle,
     commentNum: 0,
     likeNum: 0,
-    isLike: false,
+    isLike: isLike,
     thumbnailURL: thumbnailURL.toString(),
     thumbnailKEY: thumbnailKEY.toString(),
     postImageURL: postImageURL.toString(),
@@ -74,10 +75,14 @@ async function GetPostingList(req, res) {
 
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
-    console.log(post);
-    const postComments = await comment.findAll({where: { postId: post.postId },});
-    const postLikes = await like.findAll({ where: { postId: post.postId } });
-    let islike = await like.findOne({ where: { userId: post.userId, postId: post.postId } });
+    console.log(post.postId);
+    const postComments = await Comments.findAll({
+      where: { postId: post.postId },
+    });
+    const postLikes = await Like.findAll({ where: { postId: post.postId } });
+    let islike = await Like.findOne({
+      where: { userId: post.userId, postId: post.postId },
+    });
     const likeNum = postLikes.length;
     const commentNum = postComments.length;
     if (islike) {
@@ -88,7 +93,7 @@ async function GetPostingList(req, res) {
     Object.assign(post, { likeNum: likeNum, commentNum: commentNum, islike:islike });
     // return
   }
-  console.log(allPost);
+  
 
   res.send({ allPost });
 }
@@ -97,29 +102,34 @@ async function GetPostingList(req, res) {
 async function GetPost(req, res) {
   const { nickname, userId } = res.locals;
   const { postId } = req.params;
-
-  const post = await posts.findAll({
-    where: { postId },
-    // order : [[ "createdAt", "DESC" ]]
-  });
-    const postComments = await comment.findAll({
-      where: { postId: post.postId },
+let post = await posts.findAll({ where: { postId: postId } });
+  
+  
+    const postComments = await Comments.findAll({
+      where: { postId: post[0].postId },
     });
-      let islike = await like.findOne({
-        where: { userId: post.userId, postId: post.postId },
-      });
-    const postLikes = await like.findAll({ where: { postId: post.postId } });
+    const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
+    let islike = await Like.findOne({
+      where: { userId: post[0].userId, postId: post[0].postId },
+    });
     const likeNum = postLikes.length;
-      const commentNum = postComments.length;
-      if (islike) {
-        islike = true;
-      } else {
-        islike = false;
-      }
-    Object.assign(post, { likeNum: likeNum, commentNum: commentNum, islike:islike });
+    const commentNum = postComments.length;
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
+    }
+  Object.assign(post[0], {
+    likeNum: likeNum,
+    commentNum: commentNum,
+    islike: islike,
+  });
     // return
   
-  console.log(post);
+    
+    // return
+  
+  
 
   // const comments = await Comment.findOne({ where: { postId },
   //     order : [[ "createdAt", "DESC" ]]
