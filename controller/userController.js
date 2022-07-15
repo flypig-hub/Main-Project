@@ -19,7 +19,7 @@ const kakaoCallback = (req, res, next) => {
             if (err) return next(err)
             //----------------------------------------------------------------
             console.log('콜백')
-            const { userId, nickname, userImage, host } = users;
+            const { userId, nickname, userImage, host, email } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
@@ -27,7 +27,8 @@ const kakaoCallback = (req, res, next) => {
                 token,
                 nickname,
                 userImage,
-                host
+                host,
+                email
             }
             console.log('카카오 콜백 함수 결과', result)
             res.send({ users: result })
@@ -46,7 +47,7 @@ const googleCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host } = users
+          const { userId, nickname, userImage, host, email } = users
           const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
@@ -54,7 +55,8 @@ const googleCallback = (req, res, next) => {
               token,
               nickname,
               userImage,
-              host
+              host,
+              email
           }
           console.log('구글 콜백 함수 결과', result)
           res.send({ users: result })
@@ -74,7 +76,7 @@ const naverCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host } = users
+          const { userId, nickname, userImage, host, email } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
@@ -82,7 +84,8 @@ const naverCallback = (req, res, next) => {
               token,
               nickname,
               userImage,
-              host
+              host,
+              email
           }
           console.log('네이버 콜백 함수 결과', result)
           res.send({ users: result })
@@ -93,15 +96,15 @@ const naverCallback = (req, res, next) => {
 
 //로그인 인증
 async function checkMe(req, res) {
-    const userId  = res.locals.userId
-    const nickname = res.locals.nickname
-    const userImage = res.locals.userImage
+    const {userId, nickname, userImage, email, host}  = res.locals
     
     res.send({
       success:true,
       userId,
       nickname,
-      userImage
+      userImage,
+      host,
+      email
 
     });
   };
@@ -109,20 +112,19 @@ async function checkMe(req, res) {
 // 마이페이지 정보
  async function Mypage (req, res) {
   // const {userId} = req.params;
-  const nickname = res.locals.nickname;
-  const userImage = res.locals.userImage;
-  const host = res.locals.host
-  // const myposts = await posts.findOne({where : {nickname}});
-  // const mypostlist = myposts.map((a) => ({
-  //     postId : a.postId
-  //   }));
+  const {nickname, userImage, host, email} = res.locals;
+  const myposts = await posts.findOne({where : {nickname}});
+  const mypostlist = myposts.map((a) => ({
+      postId : a.postId
+     }));
   // const likelist = await like.findOne({where : {nickname}});
    res.json({
       result : true,
       nickname,
       userImage,
-      host
-      // mypostlist,  //DB 수정이 필요
+      host,
+      email,
+      mypostlist,  //DB 수정이 필요
       // likelist     //DB 수정이 필요 
     })
  }

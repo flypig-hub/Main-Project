@@ -48,6 +48,6 @@ router.put('/mypage/:userId/nick', authMiddleware, MypagePutname)
 // router.put('/mypage/:userId/img', authMiddleware, MypagePutImage)
 
 //사업자 등록번호 조회
-router.put('/checkCNU', authMiddleware, CNU_CK)
+router.put('/mypage/checkCNU', authMiddleware, CNU_CK)
 
 module.exports = router;
