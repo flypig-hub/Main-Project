@@ -5,7 +5,7 @@ const commentController = require("../controller/commentController");
 
 
 //post
-router.post("/:postId", authMiddleware, commentController.writeComment);
+router.post("/:postId/comment", authMiddleware, commentController.writeComment);
 
 // get
 router.get("/:postId/comment", commentController.readComment);
