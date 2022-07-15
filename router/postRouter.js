@@ -21,17 +21,10 @@ router.get('/:postId', PostController.GetPost);
 router.patch('/:postId', authMiddleware, upload.array('images', 8), PostController.ModifyPosting);
 
 
-// ******************************************************************
 // 게시글 삭제 API(email, articleId 같이 맞으면 삭제)
 router.delete('/:postId', PostController.DeletePost);
 
-// 이미지 업로드
-router.post('/images', authMiddleware, upload.array('images', 8), ImageController.PostImage)
 
-// 이미지 가져오기
-// router.get('/images', ImageController.GetImages)
-
-// 이미지 삭제
-// router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
+router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
 module.exports = router;

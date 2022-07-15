@@ -1,4 +1,3 @@
-require('dotenv').config()
 const express = require("express");
 const mysql = require("mysql");
 const path = require("path");
@@ -11,6 +10,7 @@ const passportConfig = require('./passport');
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
+// const ImageRouter = require("./router/imageRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
@@ -68,6 +68,7 @@ app.get('/', (req, res) => {
 
 
 app.use("/post", PostRouter, CommentRouter, LikeRouter);
+// app.use("/images", ImageRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");

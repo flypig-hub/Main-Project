@@ -1,4 +1,4 @@
-const { images, sequelize, Sequelize } = require("../models");
+const { images, posts, sequelize, Sequelize } = require("../models");
 const path = require("path");
 const multerS3 = require("multer-s3");
 const multer = require("multer");
@@ -32,7 +32,7 @@ const upload = multer({
   storage: multerS3({
     s3: new AWS.S3(),
     bucket: process.env.AWS_BUCKET_NAME,
-    acl: 'public-read',
+    // acl: 'public-read',
     limits: { fileSize: 5 * 1024 * 1024 },
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function(req, file, cb) {
@@ -103,38 +103,47 @@ async function GetImages(req, res) {
 
 // 이미지 삭제
 async function DeleteImages(req, res) {
-    const Key = req.body;
-    const fileName = fileName.split('images/')[1];
+    const image = req.body;
+    console.log(image);
+    const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
     console.log(fileName);
+    // const fileName = () => {
+    //     if (image) {
+    //       data.image = [];
+    //       return data;
+    //     }
+    //       for (let i = 0; i < data.length; i++) {
+    //           image[i] = `images/${fileName}`
+    //     }
+    // };
+    // console.log(image);
 
-    // const s3 = new AWS.S3();
-    const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: fileName
-    };
-    console.log(params.Key);
-    // const s3 = new AWS.S3();
-    s3.deleteObject(params, (err, data) => {
-        if (err) console.log(err, err.stack);
-        console.log(err, err.stack)
-    });
-    
-    res.send({ msg: "사진이 삭제되었습니다!" });
-}
+      s3.deleteObject(
+        {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: `images/${fileName}`
+        }, function (err, data) {
+          if (err) console.log(err, err.stack);
+          else console.log(data);
+        }
+      );
+      //s3 버킷 내의 기존 이미지 삭제
+    //   if (posts.dataValues.image !== null) {
+    //     fileName = posts.dataValues.image.split("/").reverse()[0];
+    //   } else fileName = null;
 
-// const DeleteImages = (fileName) => {
-// 	fileName = fileName.split('images/')[1];
-// 	s3.deleteObject(
-// 		{
-// 			Bucket: process.env.AWS_BUCKET_NAME,
-// 			Key: fileName
-// 		},
-// 		// eslint-disable-next-line no-unused-vars
-// 		(err, data) => {
-// 			if (err) console.log('s3에 지울 이미지 없음');
-// 		}
-// 	);
-// };
+	// s3.deleteObject(
+	// 	{
+	// 		Bucket: process.env.AWS_BUCKET_NAME,
+  //     Key: `images/${fileName}`
+	// 	}, function (err, data) {
+  //     if (err) console.log(err, err.stack);
+  //     else console.log(data);
+  //   }
+	// );
+  res.send({ msg: "사진이 삭제되었습니다!" });
+};
+
 
 // const DeleteImages = function(s3, key) {
 //     // const body = {
@@ -161,5 +170,11 @@ async function DeleteImages(req, res) {
 // }
 
 module.exports.PostImage = PostImage;
-// module.exports.GetImages = GetImages;
-// module.exports.DeleteImages = DeleteImages;
+module.exports.GetImages = GetImages;
+module.exports.DeleteImages = DeleteImages;
+
+// module.exports = {
+//   PostImage,
+//   GetImages,
+//   DeleteImages
+// }

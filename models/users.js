@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     snsId: DataTypes.STRING,
     nickname: DataTypes.STRING,
-    userImage: DataTypes.STRING
+    userImage: DataTypes.STRING,
+    host:DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'users',
