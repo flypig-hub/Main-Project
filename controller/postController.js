@@ -71,10 +71,10 @@ async function WritePosting(req, res) {
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
   let allPost = await posts.findAll();
-
+  const user = res.locals;
+  console.log("불린 전", user);
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
-    console.log(post.postId);
     const postComments = await Comments.findAll({
       where: { postId: post.postId },
     });
@@ -82,13 +82,16 @@ async function GetPostingList(req, res) {
     let islike = await Like.findOne({
       where: { userId: post.userId, postId: post.postId },
     });
+    // console.log(post, islike);
     const likeNum = postLikes.length;
     const commentNum = postComments.length;
+      // console.log("불린 전", userId, post.postId, i, "번째값입니다");
     if (islike) {
       islike = true;
     } else {
       islike = false;
     }
+    console.log(islike);
     Object.assign(post, {
       likeNum: likeNum,
       commentNum: commentNum,
@@ -105,16 +108,16 @@ async function GetPost(req, res) {
   const { nickname, userId } = res.locals;
   const { postId } = req.params;
   let post = await posts.findAll({ where: { postId: postId } });
-
   const postComments = await Comments.findAll({
     where: { postId: post[0].postId },
   });
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
-  let islike = await Like.findOne({
-    where: { userId: post[0].userId, postId: post[0].postId },
+  let islike = await Like.findAll({
+    userId: post[0].userId, postId: post[0].postId
   });
   const likeNum = postLikes.length;
   const commentNum = postComments.length;
+ 
   if (islike) {
     islike = true;
   } else {
