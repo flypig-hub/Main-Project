@@ -17,6 +17,9 @@ module.exports = {
       userImage: {
         type: Sequelize.STRING
       },
+      host: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

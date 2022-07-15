@@ -10,7 +10,8 @@ const {
     checkMe,
     Mypage,
     MypagePutname,
-    MypagePutImage
+    MypagePutImage,
+    CNU_CK
 } = require("../controller/userController")
 
 
@@ -45,5 +46,8 @@ router.put('/mypage/:userId/nick', authMiddleware, MypagePutname)
 
 // //프로필 이미지 수정
 // router.put('/mypage/:userId/img', authMiddleware, MypagePutImage)
+
+//사업자 등록번호 조회
+router.put('/checkCNU', authMiddleware, CNU_CK)
 
 module.exports = router;

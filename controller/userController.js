@@ -154,7 +154,39 @@ async function checkMe(req, res) {
 //   }
 //  }
 
+// 사업자등록번호 검증
+
+async function CNU_CK (req, res, next) {
+  const CNU = req.body.CNU;   //사업자 등록번호
+  var data = {
+    "b_no": [CNU] // 사업자번호 "xxxxxxx" 로 조회 시,
+   }; 
+  const CNU_CK = await postCRN(CNU);
+  
+
+  // Company Number check
+  async function postCRN(crn){
+    const postUrl = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=hsmMPV8Yvh7MAswqXiCCcM%2BlWTuetywv5slb0C2xYqLlwk1Qrqp%2BbChwrRIEvBHmVzPxy%2BR9%2FYcZ08ZUa65rHQ%3D%3D"
+
+        const result  = await axios.post(postUrl,JSON.stringify(data),{ headers: { 'Content-Type': 'application/json' } }
+        ).then((res) => { 
+          return res.data.data[0].tax_type
+
+          
+        }).catch((err)=> {
+          console.log(err)
+        });
+        if (result !== '국세청에 등록되지 않은 사업자등록번호입니다.'){
+          const userId = res.locals.userId
+          await users.update({host:true}, {where:{userId}})
+          res.send(true)
+        }
+          console.log(result)
+        }
+        next();
+  };
+
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, //MypagePutImage
+  checkMe, Mypage, MypagePutname, CNU_CK //MypagePutImage
 }
