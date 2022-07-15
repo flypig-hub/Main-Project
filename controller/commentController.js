@@ -88,7 +88,7 @@ async function updateComment(req, res) {
      const updateComment = await existsComment.save();
   
 
-      res.status(200).send({ updateComment, message: "댓글 수정 완료" });
+      res.status(200).send({comment, updateComment, message: "댓글 수정 완료" });
     }
     catch (err) {
       res.status(400).send({ errorMessage: "댓글 수정을 할 수 없습니다." });
@@ -114,7 +114,7 @@ console.log(commentId);
     });
        return;
        
-  }else if (userId !== existsComment.userId) {
+  }else if (userId != existsComment.userId) {
     res.status(400).send({
       errorMessage: "이 글의 작성자만 글을 삭제할 수 있습니다.",
     });

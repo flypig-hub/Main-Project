@@ -1,4 +1,4 @@
-const { images, sequelize, Sequelize } = require("../models");
+const { images, posts, sequelize, Sequelize } = require("../models");
 const path = require("path");
 const multerS3 = require("multer-s3");
 const multer = require("multer");
@@ -104,13 +104,22 @@ async function GetImages(req, res) {
 // 이미지 삭제
 async function DeleteImages(req, res) {
     const Key = req.body;
+    const image = req.file;
     const fileName = fileName.split('images/')[1];
     console.log(fileName);
+
+    if (req.file) {
+      image = req.file.location;
+      //s3 버킷 내의 기존 이미지 삭제
+      if (posts.dataValues.postImageURL !== null) {
+        fileName = posts.dataValues.postImageURL.split("/").reverse()[0];
+      } else fileName = null;
+    }
 
     // const s3 = new AWS.S3();
     const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: fileName
+        Key: `images/${fileName}`
     };
     console.log(params.Key);
     // const s3 = new AWS.S3();
@@ -162,4 +171,4 @@ async function DeleteImages(req, res) {
 
 module.exports.PostImage = PostImage;
 // module.exports.GetImages = GetImages;
-// module.exports.DeleteImages = DeleteImages;
+module.exports.DeleteImages = DeleteImages;

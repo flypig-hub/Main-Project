@@ -85,29 +85,23 @@ async function GetPost (req, res) {
 async function ModifyPosting (req, res) {
     // try {
         const { userId, userImage, nickname } = res.locals;
-        // console.log(res.locals);
         const { postId } = req.params;
         const { title, content, mainAddress, subAddress, category, type, link, houseTitle, imageKEY } = req.body;
-        // console.log(req.body);
         const image = req.files;
-        console.log(image);
 
         const existPost = await posts.findOne({
             where: { postId },
         });
 
-        if (userId !== existPost.userId) {
-            await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
+        if (nickname !== existPost.nickname) {
+            return res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
         };
 
-        const postImageKEY = image.map(postImageKEY => postImageKEY.key);
-        const postImageURL = image.map(postImageURL => postImageURL.location);
-        const thumbnailKEY = postImageKEY[0];
-        const thumbnailURL = postImageURL[0];
+        const thumbnailURL = image.map(thumbnailURL => thumbnailURL.location);
 
         if (image.length === 0) {
             await posts.findOne({ where:{ thumbnailURL } });
-            res.send({ thumbnailURL });
+            return res.send({ thumbnailURL });
         };
         
         // const imageURL = existPost.postImageURL.map(imageURL => imageURL.split('com/')[1]);
@@ -123,18 +117,14 @@ async function ModifyPosting (req, res) {
         //     if (err) console.log(err, err.stack);
         //     else { console.log("삭제되었습니다.") }
         // })
-    
-        // if (nickname !== existPost.nickname) {
-        //     await res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
-        // };
 
         const ModifyPost = await existPost.update({ 
             userId, userImage, nickname,
             title, content, mainAddress, subAddress, category, type, link, houseTitle,
-            thumbnailURL,
-            thumbnailKEY,
-            postImageURL: postImageURL.toString(),
-            postImageKEY: postImageKEY.toString(),
+            thumbnailURL: thumbnailURL.toString(),
+            // thumbnailKEY,
+            // postImageURL: postImageURL.toString(),
+            // postImageKEY: postImageKEY.toString(),
         });
         
         res.status(200).send({ ModifyPost, msg: "게시글이 수정되었습니다!"});
