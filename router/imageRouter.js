@@ -10,7 +10,7 @@ router.post('/', upload.array('images', 8), ImageController.PostImage)
 
 
 // 이미지 가져오기
-router.get('/', ImageController.GetImages)
+router.get('/images/:Key', ImageController.GetImages)
 
 
 // 이미지 삭제

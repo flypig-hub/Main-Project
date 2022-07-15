@@ -74,13 +74,9 @@ async function PostImage(req, res) {
 // 이미지 불러오기
 async function GetImages(req, res) {
     const key = req.params;
-    console.log(key);
-    const data = await client.send(new GetObjectCommand(key));
-    // return data; // For unit tests.
-
-    const bodyContents = await streamToString(data.Body);
-    console.log(bodyContents);
-    return bodyContents;
+    console.log(req.params);
+    // const fileName = JSON.stringify(key).slice(0, -2).split('images/')[1];
+    res.send({});
 }
 
 // // Key값을 배열로 만드는 함수
@@ -104,43 +100,23 @@ async function GetImages(req, res) {
 // 이미지 삭제
 async function DeleteImages(req, res) {
     const image = req.body;
-    console.log(image);
+    // console.log(image);
     const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
     console.log(fileName);
-    // const fileName = () => {
-    //     if (image) {
-    //       data.image = [];
-    //       return data;
-    //     }
-    //       for (let i = 0; i < data.length; i++) {
-    //           image[i] = `images/${fileName}`
-    //     }
-    // };
-    // console.log(image);
-
-      s3.deleteObject(
-        {
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Key: `images/${fileName}`
-        }, function (err, data) {
-          if (err) console.log(err, err.stack);
-          else console.log(data);
-        }
-      );
-      //s3 버킷 내의 기존 이미지 삭제
-    //   if (posts.dataValues.image !== null) {
-    //     fileName = posts.dataValues.image.split("/").reverse()[0];
-    //   } else fileName = null;
-
-	// s3.deleteObject(
-	// 	{
-	// 		Bucket: process.env.AWS_BUCKET_NAME,
-  //     Key: `images/${fileName}`
-	// 	}, function (err, data) {
-  //     if (err) console.log(err, err.stack);
-  //     else console.log(data);
-  //   }
-	// );
+    s3.getObject(
+      {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `images/${fileName}`,
+      }),
+      console.log("지나가나요?");
+    s3.deleteObject({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `images/${fileName}`
+    }, function (err, data) {
+      if (err) { throw err; }
+      console.log('s3 deleteObject', data);
+    });
+      
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
 
