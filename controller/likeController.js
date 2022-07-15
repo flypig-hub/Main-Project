@@ -9,7 +9,7 @@ async function onlike(req, res) {
   const islike = await Like.findAll({
     where: { userId: userId, postId: postId },
   });
-  console.log("00000=", islike[0]);
+ 
   if (islike[0] !== undefined) {
     res.status(400).send({ errorMessage: "이미 좋아요를 클릭하셨습니다." });
     return
