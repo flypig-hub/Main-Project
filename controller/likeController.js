@@ -3,7 +3,7 @@ const { Like, sequelize, Sequelize } = require("../models");
 
 
 async function onlike(req, res) {
-  const { userId } = res.locals.user;
+  const { userId } = res.locals;
   const { postId } = req.params;
 
   const dolike = await Like.create({ userId, postId });
@@ -20,7 +20,7 @@ console.log(dolike);
 
 //좋아요 취소
 async function unlike(req, res) {
-  const { userId } = res.locals.user;
+  const { userId } = res.locals;
   const { postId } = req.params;
   
   const delmylike = await Like.destroy({ where: { postId, userId } });
