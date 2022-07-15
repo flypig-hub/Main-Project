@@ -36,7 +36,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       islike: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BOOLEAN,
       },
       thumbnailKEY: {
         type: Sequelize.STRING,

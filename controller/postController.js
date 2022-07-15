@@ -52,10 +52,10 @@ async function WritePosting(req, res) {
     category,
     type,
     link,
-      houseTitle,
-      commentNum: 0,
-      likeNum: 0,
-    isLike:0,
+    houseTitle,
+    commentNum: 0,
+    likeNum: 0,
+    isLike: false,
     thumbnailURL: thumbnailURL.toString(),
     thumbnailKEY: thumbnailKEY.toString(),
     postImageURL: postImageURL.toString(),
@@ -77,10 +77,14 @@ async function GetPostingList(req, res) {
     console.log(post);
     const postComments = await comment.findAll({where: { postId: post.postId },});
     const postLikes = await like.findAll({ where: { postId: post.postId } });
-      let islike = await like.findOne({ where: { userId: post.userId, postId: post.postId } });
+    let islike = await like.findOne({ where: { userId: post.userId, postId: post.postId } });
     const likeNum = postLikes.length;
-      const commentNum = postComments.length;
-      islike = islike.length;
+    const commentNum = postComments.length;
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
+    }
     Object.assign(post, { likeNum: likeNum, commentNum: commentNum, islike:islike });
     // return
   }
@@ -107,7 +111,11 @@ async function GetPost(req, res) {
     const postLikes = await like.findAll({ where: { postId: post.postId } });
     const likeNum = postLikes.length;
       const commentNum = postComments.length;
-      islike = islike.length;
+      if (islike) {
+        islike = true;
+      } else {
+        islike = false;
+      }
     Object.assign(post, { likeNum: likeNum, commentNum: commentNum, islike:islike });
     // return
   
