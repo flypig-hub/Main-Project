@@ -4,6 +4,7 @@ const multerS3 = require("multer-s3");
 const multer = require("multer");
 const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require('uuid');
+const upload = require("../middlewares/S3-middleware")
 
 require("dotenv").config();
 
@@ -21,34 +22,34 @@ const s3 = new AWS.S3({
 //     secretAccessKey: process.env.AWS_SECRET_KEY,
 // });
 
-const getUniqFileName = (originalname) => {
-  const name = uuidv4();
-  const ext = originalname.split('.').pop();
-  return `${name}.${ext}`;
-}
+// const getUniqFileName = (originalname) => {
+//   const name = uuidv4();
+//   const ext = originalname.split('.').pop();
+//   return `${name}.${ext}`;
+// }
 
-// multer를 사용하여 이미지를 업로드하는 미들웨어
-const upload = multer({
-  storage: multerS3({
-    s3: new AWS.S3(),
-    bucket: process.env.AWS_BUCKET_NAME,
-    // acl: 'public-read',
-    limits: { fileSize: 5 * 1024 * 1024 },
-    contentType: multerS3.AUTO_CONTENT_TYPE,
-    metadata: function(req, file, cb) {
-        cb(null, { fieldName: file.fieldname });
-    },
-    key: function(req, file, cb) {
-      const fileName = getUniqFileName(file.originalname);
+// // multer를 사용하여 이미지를 업로드하는 미들웨어
+// const upload = multer({
+//   storage: multerS3({
+//     s3: new AWS.S3(),
+//     bucket: process.env.AWS_BUCKET_NAME,
+//     // acl: 'public-read',
+//     limits: { fileSize: 5 * 1024 * 1024 },
+//     contentType: multerS3.AUTO_CONTENT_TYPE,
+//     metadata: function(req, file, cb) {
+//         cb(null, { fieldName: file.fieldname });
+//     },
+//     key: function(req, file, cb) {
+//       const fileName = getUniqFileName(file.originalname);
       
-      file.newName = fileName;
+//       file.newName = fileName;
 
-      cb(null, `images/${fileName}`);
-    },
-  }),
-});
+//       cb(null, `images/${fileName}`);
+//     },
+//   }),
+// });
 
-module.exports = upload;
+// module.exports = upload;
 
 // ==============================================================
 
@@ -99,17 +100,19 @@ async function GetImages(req, res) {
 
 // 이미지 삭제
 async function DeleteImages(req, res) {
-    const image = req.body;
+    // const image = req.body;
+    const { image } = req.params
     // console.log(image);
     const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
     console.log(fileName);
-    if (image)
+
     s3.getObject(
       {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: `images/${fileName}`,
       }),
       console.log("지나가나요?");
+
     // 이미지 1개 삭제할 때
     s3.deleteObject({
       Bucket: process.env.AWS_BUCKET_NAME,

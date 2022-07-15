@@ -19,7 +19,7 @@ const webSocket = require("./socket");
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
-  "https://mendorong-jeju.co.kr/"],
+  "https://mendorong-jeju.co.kr"],
   credentials: true,
 };
 
@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
 
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
-app.use("/images", ImageRouter);
+app.use("/image", ImageRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");

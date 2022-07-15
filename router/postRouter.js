@@ -28,7 +28,7 @@ router.delete('/:postId', PostController.DeletePost);
 router.get('/', ImageController.GetImages)
 
 
-router.delete('/', upload.array('images', 8), ImageController.DeleteImages)
+// router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
 
 router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
