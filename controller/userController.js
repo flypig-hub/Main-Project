@@ -5,6 +5,7 @@ const passport = require('passport');
 const { users } = require('../models/index');
 const posts = require('../models/posts');
 const like = require('../models/like');
+const axios = require('axios');
 
 //카카오 로그인
 const kakaoCallback = (req, res, next) => {
@@ -18,14 +19,15 @@ const kakaoCallback = (req, res, next) => {
             if (err) return next(err)
             //----------------------------------------------------------------
             console.log('콜백')
-            const { userId, nickname, userImage } = users;
+            const { userId, nickname, userImage, host } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
                 userId,
                 token,
                 nickname,
-                userImage
+                userImage,
+                host
             }
             console.log('카카오 콜백 함수 결과', result)
             res.send({ users: result })
