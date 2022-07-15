@@ -120,9 +120,9 @@ async function GetPost(req, res) {
   const commentNum = postComments.length;
  
   if (islike) {
-    islike = true;
-  } else {
     islike = false;
+  } else {
+    islike = true;
   }
   Object.assign(post[0], {
     likeNum: likeNum,
