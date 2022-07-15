@@ -40,8 +40,8 @@ async function unlike(req, res) {
   //   return;
   // } 
     const dellike = await Like.destroy({
-      userId: userId,
-      postId: postId,
+     where: {userId: userId,
+    postId: postId},
     });
  
   const likes = await Like.findAll({ postId });
