@@ -13,6 +13,7 @@ const kakaoCallback = (req, res, next) => {
       passport.authenticate(
         'kakao',
         
+        
         { failureRedirect: '/' },
         (err, users, info) => {
           console.log(users,'여기서 문제가 발생하지요')
