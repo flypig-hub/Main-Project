@@ -23,7 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     snsId: DataTypes.STRING,
     nickname: DataTypes.STRING,
     userImage: DataTypes.STRING,
-    host:DataTypes.BOOLEAN
+    email:DataTypes.STRING,
+    host:DataTypes.BOOLEAN,
+    postId: DataTypes.STRING,
+    likeid: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'users',

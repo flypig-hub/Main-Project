@@ -17,8 +17,17 @@ module.exports = {
       userImage: {
         type: Sequelize.STRING
       },
+      email : {
+        type: Sequelize.STRING
+      },
       host: {
         type: Sequelize.BOOLEAN
+      },
+      postId : {
+        type: Sequelize.STRING
+      },
+      likeid : {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
