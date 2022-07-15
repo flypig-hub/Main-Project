@@ -164,12 +164,13 @@ async function checkMe(req, res) {
 
 async function CNU_CK (req, res, next) {
   const CNU = req.body.CNU;   //사업자 등록번호
+
   var data = {
-    "b_no": [CNU] // 사업자번호 "xxxxxxx" 로 조회 시,
+    "b_no": [CNU], // 사업자번호 "xxxxxxx" 로 조회 시,
    }; 
   const CNU_CK = await postCRN(CNU);
   
-
+   console.log(data)
   // Company Number check
   async function postCRN(crn){
     const postUrl = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=hsmMPV8Yvh7MAswqXiCCcM%2BlWTuetywv5slb0C2xYqLlwk1Qrqp%2BbChwrRIEvBHmVzPxy%2BR9%2FYcZ08ZUa65rHQ%3D%3D"
