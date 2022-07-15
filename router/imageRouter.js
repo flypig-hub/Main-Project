@@ -6,7 +6,7 @@ const upload = require("../middlewares/S3-middleware");
 
 
 // 이미지 업로드
-router.post('/', authMiddleware, upload.array('images', 8), ImageController.PostImage)
+router.post('/', upload.array('images', 8), ImageController.PostImage)
 
 
 // 이미지 가져오기
