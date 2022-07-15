@@ -19,7 +19,7 @@ const kakaoCallback = (req, res, next) => {
             if (err) return next(err)
             //----------------------------------------------------------------
             console.log('콜백')
-            const { userId, nickname, userImage, host } = users;
+            const { userId, nickname, userImage, host, email } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
@@ -27,7 +27,8 @@ const kakaoCallback = (req, res, next) => {
                 token,
                 nickname,
                 userImage,
-                host
+                host,
+                email
             }
             console.log('카카오 콜백 함수 결과', result)
             res.send({ users: result })
@@ -46,7 +47,7 @@ const googleCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host } = users
+          const { userId, nickname, userImage, host, email } = users
           const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
@@ -54,7 +55,8 @@ const googleCallback = (req, res, next) => {
               token,
               nickname,
               userImage,
-              host
+              host,
+              email
           }
           console.log('구글 콜백 함수 결과', result)
           res.send({ users: result })
@@ -74,7 +76,7 @@ const naverCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host } = users
+          const { userId, nickname, userImage, host, email } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
@@ -82,7 +84,8 @@ const naverCallback = (req, res, next) => {
               token,
               nickname,
               userImage,
-              host
+              host,
+              email
           }
           console.log('네이버 콜백 함수 결과', result)
           res.send({ users: result })
