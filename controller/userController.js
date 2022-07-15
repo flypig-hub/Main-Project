@@ -109,22 +109,19 @@ async function checkMe(req, res) {
 // 마이페이지 정보
  async function Mypage (req, res) {
   // const {userId} = req.params;
-  const nickname = res.locals.nickname;
-  const userImage = res.locals.userImage;
-  const host = res.locals.host
-  const email = res.locals.email
-  // const myposts = await posts.findOne({where : {nickname}});
-  // const mypostlist = myposts.map((a) => ({
-  //     postId : a.postId
-  //   }));
+  const {nickname, userImage, host, email} = res.locals;
+  const myposts = await posts.findOne({where : {nickname}});
+  const mypostlist = myposts.map((a) => ({
+      postId : a.postId
+     }));
   // const likelist = await like.findOne({where : {nickname}});
    res.json({
       result : true,
       nickname,
       userImage,
       host,
-      email
-      // mypostlist,  //DB 수정이 필요
+      email,
+      mypostlist,  //DB 수정이 필요
       // likelist     //DB 수정이 필요 
     })
  }
