@@ -5,6 +5,7 @@ const passport = require('passport');
 const { users } = require('../models/index');
 const posts = require('../models/posts');
 const like = require('../models/like');
+const axios = require('axios');
 
 //카카오 로그인
 const kakaoCallback = (req, res, next) => {
@@ -18,14 +19,15 @@ const kakaoCallback = (req, res, next) => {
             if (err) return next(err)
             //----------------------------------------------------------------
             console.log('콜백')
-            const { userId, nickname, userImage } = users;
+            const { userId, nickname, userImage, host } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
                 userId,
                 token,
                 nickname,
-                userImage
+                userImage,
+                host
             }
             console.log('카카오 콜백 함수 결과', result)
             res.send({ users: result })
@@ -44,14 +46,15 @@ const googleCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage } = users
+          const { userId, nickname, userImage, host } = users
           const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
               userId,
               token,
               nickname,
-              userImage
+              userImage,
+              host
           }
           console.log('구글 콜백 함수 결과', result)
           res.send({ users: result })
@@ -71,14 +74,15 @@ const naverCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage } = users
+          const { userId, nickname, userImage, host } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               userId,
               token,
               nickname,
-              userImage
+              userImage,
+              host
           }
           console.log('네이버 콜백 함수 결과', result)
           res.send({ users: result })
@@ -107,6 +111,7 @@ async function checkMe(req, res) {
   // const {userId} = req.params;
   const nickname = res.locals.nickname;
   const userImage = res.locals.userImage;
+  const host = res.locals.host
   // const myposts = await posts.findOne({where : {nickname}});
   // const mypostlist = myposts.map((a) => ({
   //     postId : a.postId
@@ -116,6 +121,7 @@ async function checkMe(req, res) {
       result : true,
       nickname,
       userImage,
+      host
       // mypostlist,  //DB 수정이 필요
       // likelist     //DB 수정이 필요 
     })
@@ -154,7 +160,39 @@ async function checkMe(req, res) {
 //   }
 //  }
 
+// 사업자등록번호 검증
+
+async function CNU_CK (req, res, next) {
+  const CNU = req.body.CNU;   //사업자 등록번호
+  var data = {
+    "b_no": [CNU] // 사업자번호 "xxxxxxx" 로 조회 시,
+   }; 
+  const CNU_CK = await postCRN(CNU);
+  
+
+  // Company Number check
+  async function postCRN(crn){
+    const postUrl = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=hsmMPV8Yvh7MAswqXiCCcM%2BlWTuetywv5slb0C2xYqLlwk1Qrqp%2BbChwrRIEvBHmVzPxy%2BR9%2FYcZ08ZUa65rHQ%3D%3D"
+
+        const result  = await axios.post(postUrl,JSON.stringify(data),{ headers: { 'Content-Type': 'application/json' } }
+        ).then((res) => { 
+          return res.data.data[0].tax_type
+
+          
+        }).catch((err)=> {
+          console.log(err)
+        });
+        if (result !== '국세청에 등록되지 않은 사업자등록번호입니다.'){
+          const userId = res.locals.userId
+          await users.update({host:true}, {where:{userId}})
+          res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
+        }
+          console.log(result)
+        }
+        next();
+  };
+
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, //MypagePutImage
+  checkMe, Mypage, MypagePutname, CNU_CK //MypagePutImage
 }

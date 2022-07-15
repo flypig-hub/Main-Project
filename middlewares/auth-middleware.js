@@ -33,6 +33,7 @@ module.exports = async (req, res, next) => {
         res.locals.userId = loginuser.userId
         res.locals.nickname = loginuser.nickname
         res.locals.userImage = loginuser.userImage
+        res.locals.host = loginuser.host
         next()
     } catch (error) {
         console.error(error);

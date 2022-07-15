@@ -38,6 +38,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "axios": "^0.27.2",
     "sequelize-cli": "^6.4.1"
   }
 }
