@@ -37,7 +37,7 @@ module.exports = () => {
                             userImage : profile.photos[0].value,
                             provider: 'google',
                             host : false,
-                            email : profile[0].email.value
+                            email : profile.email[0].value
                         });
                         done(null, newUser); // 회원가입하고 로그인 인증 완료
                     }
