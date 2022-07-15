@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
 
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
-app.use("/images", ImageRouter);
+app.use("/image", ImageRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
