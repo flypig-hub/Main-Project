@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       commentId: DataTypes.INTEGER,
       commentNum: DataTypes.INTEGER,
       likeNum: DataTypes.INTEGER,
-      islike: DataTypes.INTEGER,
+      islike: DataTypes.BOOLEAN,
       thumbnailKEY: DataTypes.STRING,
       thumbnailURL: DataTypes.STRING,
       postImageKEY: DataTypes.STRING,
