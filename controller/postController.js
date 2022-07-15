@@ -114,7 +114,7 @@ async function GetPost(req, res) {
   });
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
   let islike = await Like.findAll({
-    userId: post[0].userId, postId: post[0].postId
+    where: { userId: post[0].userId, postId: post[0].postId }
   });
   const likeNum = postLikes.length;
   const commentNum = postComments.length;

@@ -111,27 +111,29 @@ async function DeleteImages(req, res) {
       }),
       console.log("지나가나요?");
     // 이미지 1개 삭제할 때
-    // s3.deleteObject({
-    //   Bucket: process.env.AWS_BUCKET_NAME,
-    //   Key: `images/${fileName}`
-    // }, function (err, data) {
-    //   if (err) { throw err; }
-    //   console.log('s3 deleteObject', data);
-    // });
-      
-    // 이미지 여러개 삭제할 때
-    s3.deleteObjects({
+    s3.deleteObject({
       Bucket: process.env.AWS_BUCKET_NAME,
-      Delete: {
-      Objects: [
-        { Key: `images/${fileName}` },
-    ],
-      Quiet: false
-    }
+      Key: `images/${fileName}`
     }, function (err, data) {
       if (err) { throw err; }
       console.log('s3 deleteObject', data);
     });
+      
+    // 이미지 여러개 삭제할 때
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Delete: {
+        Objects: [
+          { Key: `images/${fileName}`}
+        ],
+        Quiet: false
+      }
+    };
+    // const s3 = new AWS.S3();
+    s3.deleteObjects(params, (err, data) => {
+        if (err) return reject(err);
+        return resolve(true);
+      });
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
 
