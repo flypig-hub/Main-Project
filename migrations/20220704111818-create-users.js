@@ -23,6 +23,12 @@ module.exports = {
       host: {
         type: Sequelize.BOOLEAN
       },
+      postId : {
+        type: Sequelize.STRING
+      },
+      likeid : {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
