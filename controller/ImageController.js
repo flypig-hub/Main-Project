@@ -126,10 +126,7 @@ async function DeleteImages(req, res) {
     s3.deleteObjects({
       Bucket: process.env.AWS_BUCKET_NAME,
       Delete: {
-        Objects: [
-          { Key: `images/${JSON.stringify(image).slice(0, -2).split('images/')[1]}`}
-      ],
-        Quiet: false
+           Objects: `images/${JSON.stringify(image).slice(0, -2).split('images/')[1]}`
       }
     }, function (err, data) {
       if (err) { throw err; }

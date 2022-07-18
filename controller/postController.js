@@ -238,22 +238,30 @@ async function ModifyPosting(req, res) {
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost(req, res) {
   // try {
-
-  const { userId, nickname, userImage } = res.locals;
+  // const { userId, nickname, userImage } = res.locals;
   const { postId } = req.params;
 
   const existPost = await posts.findOne({ where: { postId } });
-  // console.log(existPost);
-  // const s3 = new AWS.S3();
-  // const params = {
-  //     Bucket: process.env.AWS_BUCKET_NAME,
-  //     Delete: { Objects: postImageKEY.map(postImageKEY => ({ Key: postImageKEY })) }
-  // };
-  // console.log(params);
-  // s3.deleteObjects(params, function(err, data) {
-  //     if (err) console.log(err, err.stack);
-  //     else { console.log("삭제되었습니다.") }
-  // })
+  console.log(existPost);
+
+  const postImageKEY = existPost.postImageKEY.split(',')
+  console.log(postImageKEY);
+
+  if (existPost) {
+    const s3 = new AWS.S3();
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: { Objects: ({ Key: postImageKEY }) }
+    };
+    console.log(params.Delete);
+
+    s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, 's3 deleteObject', data);
+        else { console.log("삭제되었습니다.") }
+    })
+  }
+  
+
   // 댓글, 게시글 삭제
   // if (userId !== existPost.userId) {
   //     res.send({msg: "삭제할 수 없습니다."})
@@ -261,8 +269,8 @@ async function DeletePost(req, res) {
   // if (nickname !== existPost.nickname) {
   //     res.send({msg: "삭제할 수 없습니다."})
   // };
-  const dastroyPost = await posts.destroy({ where: { postId } });
-  console.log(dastroyPost);
+  const destroyPost = await posts.destroy({ where: { postId } });
+  console.log(destroyPost);
   // await Comment.destroy({
   //     where: { postId }
   // });
