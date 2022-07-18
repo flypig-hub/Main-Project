@@ -38,18 +38,6 @@ module.exports = {
       islike: {
         type: Sequelize.BOOLEAN,
       },
-      thumbnailKEY: {
-        type: Sequelize.STRING,
-      },
-      thumbnailURL: {
-        type: Sequelize.STRING,
-      },
-      postImageKEY: {
-        type: Sequelize.STRING,
-      },
-      postImageURL: {
-        type: Sequelize.STRING,
-      },
       mainAddress: {
         type: Sequelize.STRING,
       },
