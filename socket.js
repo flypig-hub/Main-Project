@@ -8,9 +8,9 @@ const { Op } = sequelize;
 
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 
-socket.on("connect_error", (err) => {
-  console.log(`connect_error due to ${err.message}`);
-});
+// socket.on("connect_error", (err) => {
+//   console.log(`connect_error due to ${err.message}`);
+// });
 
 const server = require("http").createServer(app);
 // app.get("/*", (req, res) => res.redirect("/ "));
