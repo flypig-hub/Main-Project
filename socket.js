@@ -8,7 +8,7 @@ const port = 3000;
 // };
 
 const server = require("http").createServer(app);
-app.get("/*", (req, res) => res.redirect("/ "));
+// app.get("/*", (req, res) => res.redirect("/ "));
 // https 실제 배포 시 연결
 // const https = require("https").createServer(options, app);
 
