@@ -59,3 +59,13 @@ db.Sequelize = Sequelize;
 // });
 
 module.exports = db;
+
+// =====================================
+// MySQL DB Join Query
+// SELECT
+// 	posts.postId,
+//     images.postNumber,
+// 	images.postImageURL
+// FROM posts LEFT OUTER JOIN images
+// ON posts.postId = images.postNumber
+// =====================================

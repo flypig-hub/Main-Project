@@ -54,22 +54,22 @@ async function WritePosting(req, res) {
     commentNum: 0,
     likeNum: 0,
     isLike: isLike,
-    thumbnailURL: thumbnailURL.toString(),
-    thumbnailKEY: thumbnailKEY.toString(),
+    // thumbnailURL: thumbnailURL.toString(),
+    // thumbnailKEY: thumbnailKEY.toString(),
+    // postImageURL: postImageURL.toString(),
+    // postImageKEY: postImageKEY.toString(),
+  });
+
+  const imagesInfo = await images.create({
+    postNumber: postInfo.postId,
+    thumbnailURL: thumbnailURL[i].toString(),
+    thumbnailKEY: thumbnailKEY[i].toString(),
     postImageURL: postImageURL.toString(),
     postImageKEY: postImageKEY.toString(),
-  });
-  console.log(postInfo);
+  })
+  console.log(imagesInfo);
 
-  // const imagesInfo = await images.create({
-  //   thumbnailURL: thumbnailURL.toString(),
-  //   thumbnailKEY: thumbnailKEY.toString(),
-  //   postImageURL: postImageURL.toString(),
-  //   postImageKEY: postImageKEY.toString(),
-  // })
-  // console.log(imagesInfo);
-
-  res.status(201).send({ postInfo });
+  res.status(201).send({ postInfo, imagesInfo });
   // } catch(e) {
   //     res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   // }
@@ -197,6 +197,12 @@ async function ModifyPosting(req, res) {
     where: { postId },
   });
 
+  if (image) {
+    // 이미지가 들어오면 수정해준다
+  } else {
+    // 이미지가 없으면 existPost에서 찾은 이미지를 가져다 쓴다
+  }
+
   const existImage = await images.findOne({
     where: {  }
   })
@@ -242,7 +248,7 @@ async function DeletePost(req, res) {
   const { postId } = req.params;
 
   const existPost = await posts.findOne({ where: { postId } });
-  console.log(existPost);
+  // console.log(existPost);
 
   const postImageKEY = existPost.postImageKEY.split(',')
   console.log(postImageKEY);
@@ -251,13 +257,13 @@ async function DeletePost(req, res) {
     const s3 = new AWS.S3();
     const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Delete: { Objects: ({ Key: postImageKEY }) }
+        Delete: { Objects: [{ Key: postImageKEY.toString() }] }
     };
     console.log(params.Delete);
 
     s3.deleteObjects(params, function(err, data) {
         if (err) console.log(err, 's3 deleteObject', data);
-        else { console.log("삭제되었습니다.") }
+        else { console.log("삭제되었습니다.", data) }
     })
   }
   
