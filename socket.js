@@ -2,10 +2,15 @@ const app = require("./app");
 const fs = require("fs");
 const sequelize = require("sequelize");
 const { Op } = sequelize;
-const port = 3000;
 // const options = {
 //   letsencrypt로 받은 인증서 경로를 입력
 // };
+
+const socket = require("socket.io-client")("https://mendorong-jeju.com");
+
+socket.on("connect_error", (err) => {
+  console.log(`connect_error due to ${err.message}`);
+});
 
 const server = require("http").createServer(app);
 app.get("/*", (req, res) => res.redirect("/ "));
@@ -18,7 +23,7 @@ module.exports = (server, app) => {
   // const io = require("socket.io")(https, {
   const io = require("socket.io")(server, {
     cors: {
-      origin: "*",
+      origin: ["http://localhost:3000","*"],
       credentials: true,
     },
   });
@@ -149,9 +154,6 @@ app.set("io", io);
     });
   });
 
-  server.listen(port, () => {
-    console.log("Server listening at port %d", port);
-  });
   // https 연결 시
   // module.exports = { server, https };
 
