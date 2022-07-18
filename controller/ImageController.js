@@ -101,42 +101,57 @@ async function GetImages(req, res) {
 // 이미지 삭제
 async function DeleteImages(req, res) {
     // const image = req.body;
-    const { image } = req.params
-    // console.log(image);
-    const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
-    console.log(fileName);
+    const { image } = req.body
+    console.log(image);
+    // const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
+    // console.log(fileName);
 
     s3.getObject(
       {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `images/${fileName}`,
+        Key: `images/${JSON.stringify(image).slice(0, -2).split('images/')[1]}`,
       }),
       console.log("지나가나요?");
 
     // 이미지 1개 삭제할 때
-    s3.deleteObject({
+    // s3.deleteObject({
+    //   Bucket: process.env.AWS_BUCKET_NAME,
+    //   Key: `images/${fileName}`
+    // }, function (err, data) {
+    //   if (err) { throw err; }
+    //   console.log('s3 deleteObject', data);
+    // });
+
+    // 이미지 1개 삭제할 때
+    s3.deleteObjects({
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `images/${fileName}`
+      Delete: {
+        Objects: [
+          { Key: `images/${JSON.stringify(image).slice(0, -2).split('images/')[1]}`}
+      ],
+        Quiet: false
+      }
     }, function (err, data) {
       if (err) { throw err; }
       console.log('s3 deleteObject', data);
     });
       
     // 이미지 여러개 삭제할 때
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Delete: {
-        Objects: [
-          { Key: `images/${fileName}`}
-        ],
-        Quiet: false
-      }
-    };
+    // const params = {
+    //   Bucket: process.env.AWS_BUCKET_NAME,
+    //   Delete: {
+    //     Objects: [
+    //       { Key: `images/${fileName}`}
+    //     ],
+    //     Quiet: false
+    //   }
+    // };
     // const s3 = new AWS.S3();
-    s3.deleteObjects(params, (err, data) => {
-        if (err) return reject(err);
-        return resolve(true);
-      });
+    // s3.deleteObjects(params, (err, data) => {
+    //     if (err) return reject(err);
+    //     return resolve(true);
+    //   });
+    console.log("지나가나요?");
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
 

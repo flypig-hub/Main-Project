@@ -22,13 +22,13 @@ router.patch('/:postId', authMiddleware, upload.array('images', 8), PostControll
 
 
 // 게시글 삭제 API(email, articleId 같이 맞으면 삭제)
-router.delete('/:postId', PostController.DeletePost);
+// router.delete('/:postId', PostController.DeletePost);
 
 // 이미지 조회
 router.get('/', ImageController.GetImages)
 
 
-// router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
+router.delete('/images', upload.array('images', 8), ImageController.DeleteImages)
 
 router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
