@@ -1,5 +1,5 @@
 
-const { Like, sequelize, Sequelize } = require("../models");
+const { posts, Like, sequelize, Sequelize } = require("../models");
 
 
 async function onlike(req, res) {
@@ -19,10 +19,8 @@ async function onlike(req, res) {
         userId:userId, postId:postId
       
     });
-    console.log(userId, postId, dolike);
-  
- 
-  const likes = await Like.findAll({ postId:postId }); // {1}, {2}, {3}, ...
+    
+  const likes = await Like.findAll({ where: { postId:postId } });
   const likeNum = likes.length;
 
   res.status(200).send({ likeNum, message: "좋아요 완료" });
@@ -40,11 +38,13 @@ async function unlike(req, res) {
   //   return;
   // } 
     const dellike = await Like.destroy({
-     where: {userId: userId,
-    postId: postId},
+      where: {
+        userId: userId,
+        postId: postId
+      },
     });
- 
-  const likes = await Like.findAll({ postId });
+ console.log(dellike);
+  const likes = await Like.findAll({ where: { postId:postId } });
   const likeNum = likes.length;
 
   res.status(200).send({ likeNum, msg: "좋아요 취소완료" });

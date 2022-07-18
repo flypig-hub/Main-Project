@@ -116,40 +116,27 @@ async function GetPost(req, res) {
   const { nickname, userId } = res.locals;
   const { postId } = req.params;
   let post = await posts.findAll({ where: { postId: postId } });
-
   const postComments = await Comments.findAll({
     where: { postId: post[0].postId },
   });
-
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
   let islike = await Like.findAll({
-    where: { userId: post[0].userId, postId: post[0].postId }
+    where: { userId: post[0].userId, postId: post[0].postId}
   });
-
-  // const postImages = await posts.findAll({
-  //   include: [{
-  //     model: images,
-  //     as: 'images',
-  //     attributes: ['postId']
-  //   }],
-  //   // where: { postImageKEY }
-  // });
 
   const likeNum = postLikes.length;
   const commentNum = postComments.length;
  
-  if (islike) {
-    islike = false;
-  } else {
+  if (islike[0]) {
     islike = true;
+  } else {
+    islike = false;
   }
   Object.assign(post[0], {
     likeNum: likeNum,
     commentNum: commentNum,
     islike: islike,
   });
-
-  // return
 
   // const comments = await Comment.findOne({ where: { postId },
   //     order : [[ "createdAt", "DESC" ]]
