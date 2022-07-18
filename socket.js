@@ -23,11 +23,12 @@ module.exports = (server, app) => {
   // const io = require("socket.io")(https, {
   const io = require("socket.io")(server, {
     cors: {
-      origin: ["http://localhost:3000", "*"],
+      origin: "*",
       credentials: true,
       methods: ["GET", "POST"],
     },
-    path: "/my-custom-path/",
+    allowEIO3: true,
+    // path: "/my-custom-path/",
   });
   console.log(io);
 app.set("io", io);
