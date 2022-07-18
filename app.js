@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
   res.status(200).render('index');
 })
 
-
+app.use("/socket", webSocket)
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
 // app.use("/image", ImageRouter);
