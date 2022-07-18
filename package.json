@@ -25,6 +25,7 @@
     "passport-local": "^1.0.0",
     "passport-naver-v2": "^2.0.8",
     "sequelize": "^6.21.2",
+    "socket.io-client": "^4.5.1",
     "strategy": "^1.1.1",
     "util": "^0.12.4"
   },
