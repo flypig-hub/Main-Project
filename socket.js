@@ -6,6 +6,12 @@ const { Op } = sequelize;
 //   letsencrypt로 받은 인증서 경로를 입력
 // };
 
+const socket = require("socket.io-client")("https://mendorong-jeju.com");
+
+socket.on("connect_error", (err) => {
+  console.log(`connect_error due to ${err.message}`);
+});
+
 const server = require("http").createServer(app);
 // app.get("/*", (req, res) => res.redirect("/ "));
 // https 실제 배포 시 연결
