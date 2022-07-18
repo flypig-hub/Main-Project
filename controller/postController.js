@@ -54,10 +54,6 @@ async function WritePosting(req, res) {
     commentNum: 0,
     likeNum: 0,
     isLike: isLike,
-    // thumbnailURL: thumbnailURL.toString(),
-    // thumbnailKEY: thumbnailKEY.toString(),
-    // postImageURL: postImageURL.toString(),
-    // postImageKEY: postImageKEY.toString(),
   });
 
   const imagesInfo = await images.create({
