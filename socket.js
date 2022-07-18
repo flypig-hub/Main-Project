@@ -13,7 +13,7 @@ socket.on("connect_error", (err) => {
 });
 
 const server = require("http").createServer(app);
-app.get("/*", (req, res) => res.redirect("/ "));
+// app.get("/*", (req, res) => res.redirect("/ "));
 // https 실제 배포 시 연결
 // const https = require("https").createServer(options, app);
 
@@ -25,6 +25,7 @@ module.exports = (server, app) => {
     cors: {
       origin: ["http://localhost:3000", "*"],
       credentials: true,
+      methods: ["GET", "POST"],
     },
     path: "/my-custom-path/",
   });
