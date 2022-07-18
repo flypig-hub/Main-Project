@@ -83,10 +83,20 @@ async function updateComment(req, res) {
       return;
     }
     
-    existsComment.comment = comment;
-    existsComment.updateAt = { updateAt: Date() };
-     const updateComment = await existsComment.save();
-  
+    // existsComment.comment = comment;
+    // existsComment.updateAt = { updateAt: Date() };
+    //  const updateComment = await existsComment.save();
+    
+    const updateComment = await existsComment.update({
+      commentId,
+      userId,
+      nickname,
+      comment: comment,
+      postId,
+      userImage,
+      createdAt,
+      updatedAt: Date(),
+    });
 
       res.status(200).send({comment, updateComment, message: "댓글 수정 완료" });
     }
