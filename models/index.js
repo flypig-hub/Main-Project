@@ -40,10 +40,10 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.posts = require("./posts")(sequelize, Sequelize);
+// db.posts = require("./posts")(sequelize, Sequelize);
 // db.users = require("./users")(sequelize, Sequelize);
 // db.Comments = require("./comments")(sequelize, Sequelize);
-db.images = require("./images")(sequelize, Sequelize);
+// db.images = require("./images")(sequelize, Sequelize);
 // db.like = require("./like")(sequelize, Sequelize);
 
 // db.posts.hasMany(db.Comments, { as: "Comments" });
@@ -52,10 +52,10 @@ db.images = require("./images")(sequelize, Sequelize);
 //   as: "posts"
 // });
 
-db.posts.hasMany(db.images, { as: "images" });
-db.images.belongsTo(db.posts, {
-  foreignKey: "postId",
-  as: "posts"
-});
+// db.posts.hasMany(db.images, { as: "images" });
+// db.images.belongsTo(db.posts, {
+//   foreignKey: "postId",
+//   as: "posts"
+// });
 
 module.exports = db;
