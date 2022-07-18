@@ -25,6 +25,7 @@ module.exports = (server, app) => {
     cors: {
       origin: ["http://localhost:3000", "*"],
       credentials: true,
+      methods: ["GET", "POST"],
     },
     path: "/my-custom-path/",
   });
