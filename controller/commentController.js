@@ -84,12 +84,11 @@ async function updateComment(req, res) {
       return;
     }
  
-     const updateComment = async () => {
-        await models.Users.update(
-          { comment: comment },{updatedAt: Date()},
-          { where: { commentId: commentId } }
-        );
-      };
+     const updateComment = await existsComment.update(
+       { comment: comment },
+       { updatedAt: Date() }
+     );
+      ;
 
       res
         .status(200)
