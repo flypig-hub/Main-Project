@@ -70,35 +70,30 @@ async function updateComment(req, res) {
     const existsComment = await Comments.findOne({
       where: { commentId },
     });
-    
+   
     if (!userId) {
       res.status(400).send({
         errorMessage: "로그인이 필요한 서비스 입니다.-댓글수정-",
       });
       return;
-    } else if (existsComment.userId != userId) {
+    }
+     else if (existsComment.userId != userId) {
       res.status(400).send({
         errorMessage: "댓글 작성자만 댓글을 수정할 수 있습니다.",
       });
       return;
     }
-    
-    // existsComment.comment = comment;
-    // existsComment.updateAt = { updateAt: Date() };
-    //  const updateComment = await existsComment.save();
-    
-    const updateComment = await existsComment.update({
-      commentId,
-      userId,
-      nickname,
-      comment: comment,
-      postId,
-      userImage,
-      createdAt,
-      updatedAt: Date(),
-    });
+ 
+     const updateComment = async () => {
+        await models.Users.update(
+          { comment: comment },{updatedAt: Date()},
+          { where: { commentId: commentId } }
+        );
+      };
 
-      res.status(200).send({comment, updateComment, message: "댓글 수정 완료" });
+      res
+        .status(200)
+        .send({ comment, updateComment, message: "댓글 수정 완료" });
     }
     catch (err) {
       res.status(400).send({ errorMessage: "댓글 수정을 할 수 없습니다." });
