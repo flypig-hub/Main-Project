@@ -84,6 +84,8 @@ app.set("views", __dirname + "/views");
 // app.get("/*", (_, res) => res.redirect("/"));
 
 
+const server = app.listen(port, () => {
+  console.log("8000번 포트에서 대기 중");
+});
 
- app.listen(port, () => {
-   console.log(port, "포트로 서버가 켜졌어요!"); });
+webSocket(server, app)
