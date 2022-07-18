@@ -62,8 +62,8 @@ async function WritePosting(req, res) {
 
   const imagesInfo = await images.create({
     postNumber: postInfo.postId,
-    thumbnailURL: thumbnailURL[i].toString(),
-    thumbnailKEY: thumbnailKEY[i].toString(),
+    thumbnailURL: thumbnailURL.toString(),
+    thumbnailKEY: thumbnailKEY.toString(),
     postImageURL: postImageURL.toString(),
     postImageKEY: postImageKEY.toString(),
   })
