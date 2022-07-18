@@ -126,14 +126,14 @@ async function GetPost(req, res) {
     where: { userId: post[0].userId, postId: post[0].postId }
   });
 
-  const postImages = await posts.findAll({
-    include: [{
-      model: images,
-      as: 'images',
-      attributes: ['postId']
-    }],
-    // where: { postImageKEY }
-  });
+  // const postImages = await posts.findAll({
+  //   include: [{
+  //     model: images,
+  //     as: 'images',
+  //     attributes: ['postId']
+  //   }],
+  //   // where: { postImageKEY }
+  // });
 
   const likeNum = postLikes.length;
   const commentNum = postComments.length;
@@ -170,7 +170,6 @@ async function GetPost(req, res) {
     nickname,
     userId,
     post,
-    postImages
     // commentInfo: commentInfo
   });
 }
