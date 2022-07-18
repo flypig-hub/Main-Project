@@ -18,7 +18,6 @@ async function WritePosting(req, res) {
   // try {
   console.log(res.locals);
   const { userId, nickname, userImage } = res.locals;
-
   const {
     title,
     content,
@@ -30,7 +29,6 @@ async function WritePosting(req, res) {
     houseTitle,
     imageKEY,
   } = req.body;
-
   const image = req.files;
   // console.log(req.files);
 
@@ -61,6 +59,7 @@ async function WritePosting(req, res) {
     postImageURL: postImageURL.toString(),
     postImageKEY: postImageKEY.toString(),
   });
+  console.log(postInfo);
 
   // const imagesInfo = await images.create({
   //   thumbnailURL: thumbnailURL.toString(),

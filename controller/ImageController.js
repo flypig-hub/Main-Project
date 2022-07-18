@@ -156,36 +156,6 @@ async function DeleteImages(req, res) {
 };
 
 
-// const DeleteImages = function(s3, key) {
-//     // const body = {
-//     //     Key: 'images/11d128ca-085b-422f-bd37-d9ef8564e5eb.png' 
-//     // }
-//     // const s3 = new AWS.S3();
-//     const params = {
-//       Bucket: process.env.AWS_BUCKET_NAME,
-//       Key: key
-//     };
-//     // const s3 = new AWS.S3();
-//     s3.deleteObject(params, (err, data) => {
-//         if (err) return reject(err);
-//         return resolve(true);
-//       });
-
-//     // s3.deleteObject({
-//     // }, (err, data) => {
-//     //     if (err) console.log(err, err.stack);
-//     //     else { console.log("삭제되었습니다.") }
-//     // })
-
-//     res.send({ msg: "사진이 삭제되었습니다!" });
-// }
-
 module.exports.PostImage = PostImage;
 module.exports.GetImages = GetImages;
 module.exports.DeleteImages = DeleteImages;
-
-// module.exports = {
-//   PostImage,
-//   GetImages,
-//   DeleteImages
-// }
