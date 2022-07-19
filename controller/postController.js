@@ -180,43 +180,44 @@ async function GetPost(req, res) {
     where: { postId },
   });
 
-  const postComments = await Comments.findAll({
-    where: { postId: post[0].postId },
+  const postComments = await posts.findOne({
+    where: { postId },
+    include: [{
+      model: Comments,
+      required: true,
+    }],
+  })
+  console.log(postComments);
+
+  const postLikes = await Like.findAll({ 
+    where: { postId },
+    include: [{
+      model: users,
+      required: true,
+    }], 
   });
-
-  // const postComment = await posts.findOne({
-  //   where: { postId },
-  //   include: [{
-  //     model: Comments,
-  //     required: true,
-  //     attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
-  //   }],
-  // })
-
-  // const postCommentRes = { 
-  //   postId: postComment.postId,
-  //   Comments: postComment.Comments
-  // }
-
-  const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
 
   let islike = await Like.findAll({
-    where: { userId: post[0].userId, postId: post[0].postId}
+    where: { postId },
+    include: [{
+      model: users,
+      required: true,
+    }],
   });
 
-  const likeNum = postLikes.length;
-  const commentNum = postComments.length;
+  // const likeNum = postLikes.length;
+  // const commentNum = postComments.length;
  
-  if (islike[0]) {
-    islike = true;
-  } else {
-    islike = false;
-  }
-  Object.assign(post[0], {
-    likeNum: likeNum,
-    commentNum: commentNum,
-    islike: islike,
-  });
+  // if (islike[0]) {
+  //   islike = true;
+  // } else {
+  //   islike = false;
+  // }
+  // Object.assign(post[0], {
+  //   likeNum: likeNum,
+  //   commentNum: commentNum,
+  //   islike: islike,
+  // });
 
   // const comments = await Comment.findOne({ where: { postId },
   //     order : [[ "createdAt", "DESC" ]]

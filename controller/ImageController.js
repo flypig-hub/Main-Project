@@ -57,6 +57,7 @@ const s3 = new AWS.S3({
 // 이미지 넣기
 async function PostImage(req, res) {
     const image = req.files;
+    console.log(image);
 
     const postImageKEY = image.map(postImageKEY => postImageKEY.key);
     const postImageURL = image.map(postImageURL => postImageURL.location);
