@@ -23,6 +23,12 @@ module.exports = {
       postNumber : {
         type: Sequelize.STRING
       },
+      userImageKEY: {
+        type: Sequelize.STRING,
+      },
+      userImageURL: {
+        type: Sequelize.STRING,
+      },
       thumbnailKEY: {
         type: Sequelize.STRING
       },
