@@ -10,6 +10,7 @@ const passportConfig = require('./passport');
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
+const RommRouter = require("./router/roomRouter");
 // const ImageRouter = require("./router/imageRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
@@ -66,7 +67,7 @@ app.get('/', (req, res) => {
   res.status(200).render('index');
 })
 
-app.use("/socket", webSocket)
+app.use("/room", webSocket)
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
 // app.use("/image", ImageRouter);

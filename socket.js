@@ -1,6 +1,6 @@
 const app = require("./app");
 const fs = require("fs");
-const { posts, Like, sequelize, Sequelize } = require("./models");
+const { chats, rooms, users, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 // const options = {
 //   letsencrypt로 받은 인증서 경로를 입력
@@ -17,7 +17,7 @@ const server = require("http").createServer(app);
 // const https = require("https").createServer(options, app);
 
 
-module.exports = (server, app) => {
+// module.exports = (server, app) => {
   // https 설정 시
   // const io = require("socket.io")(https, {
   const io = require("socket.io")(server, {
@@ -32,131 +32,65 @@ module.exports = (server, app) => {
   console.log(io);
 app.set("io", io);
   io.on("connection", (socket) => {
-  //   let roomID;
-  //   let peerID;
-  //   let userID;
-  // socket["nickName"] = "";
-  //   let streamID;
-  //   let statusMsg;
+    //   let roomID;
+    //   let peerID;
+    //   let userID;
+    // socket["nickName"] = "";
+    //   let streamID;
+    //   let statusMsg;
 
-    socket.on("join-room", (roomName, nickName) => {
-      //socket.on = emit한 event"enter_room"를 프론트에서 받음.
-      //roomName, done = enter_room의 첫번쨰 인자(input_value), 마지막인자(함수-showroom)
-      socket.join(roomName);
-      //roomName이름을 가진 방을 만들거나 들어감.
-      // socket.nickName = nickName
-      console.log(roomName, nickName);
-      let roomName = roomName
-      let nickName = nickName;
-      // socket.emit("welcome", socket.nickname, roomName);
-      socket.emit("welcome", nickName, roomName, "3번째인자");
-      // io.sockets.emit("room_change");
-    });
+    socket.on(
+      "join-room",
+      async (
+        roomId
+        // roomName,
+        // nickName
+        //,userImg
+        //,hashTag //룸 생성 시 max, titile
+      ) => {
+        const enterRoom = await rooms.findOne({
+          where: { roomId: roomId }
+        });
+        socket.join(enterRoom.title);
+
+        const existRoom = await rooms.findOne({
+          where: { title: roomName },
+        });
+
+        if (!existRoom) {
+          res.status(400).send({
+            errorMessage: "존재하지 않는 방입니다."
+          }
+         );
+          return;
+         
+        }
+
+          socket.join(enterRoom.title);
+        
+        const nickName = existRoom.userNickname[existRoom.userNickname.length-1]
+        const roomName = existRoom.title 
+        socket.emit("welcome", nickName, roomName, "3번째인자");
+        
+      }
+    );
     socket.on("chat_message", (messageChat, nickName, userImage, roomId) => {
       console.log(messageChat, nickName, userImage, roomId);
+      chatUser = await users.findOne({ where: { userNickname:nickName}})
+       const newchat = await chats.create({
+         userNickname: nickName,
+         userId: chatUser.userId,
+         chat: messageChat,
+         userImg: chatUser.userImage,
+          });
+
       socket.emit("message", messageChat, nickName, userImage, roomId);
     });
+    socket.on("message", (message) => {
+        socket.to(roomID).emit("message", nickname, message);
+      });
 
-      
-  // socket.emit("welcome", users, users.length);
-
-  //         const room = await Room.findByPk(roomID);
-  //         const currentRound = room.currentRound;
-  //         const totalRound = room.round;
-  //         const openAt = room.openAt;
-  //         const now = Date.now();
-
-  //         socket.emit("restTime", currentRound, totalRound, openAt, now);
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     }
-  //   );
-
-  //   socket.on("peer", (nick) => {
-  //     socket.emit("peer", nick);
-  //   });
-
-  //   socket.on("endRest", async (currentRound) => {
-  //     const room = await Room.findByPk(roomID);
-  //     const openAt = Date.now() + room.studyTime * 60 * 1000;
-  //     await Room.update(
-  //       {
-  //         currentRound,
-  //         openAt,
-  //         isStarted: 1,
-  //       },
-  //       { where: { roomID } }
-  //     );
-  //     const now = Date.now();
-  //     socket.emit("studyTime", currentRound, room.round, openAt, now);
-  //   });
-
-  //   socket.on("endStudy", async () => {
-  //     const room = await Room.findByPk(roomID);
-  //     const openAt = Date.now() + room.recessTime * 60 * 1000;
-  //     const currentRound = room.currentRound;
-  //     const totalRound = room.round;
-
-  //     await Room.update(
-  //       {
-  //         openAt,
-  //         isStarted: 0,
-  //       },
-  //       { where: { roomID } }
-  //     );
-
-  //     await StudyTime.create({
-  //       userId: userID,
-  //       studyTime: room.studyTime,
-  //     });
-  //     const now = Date.now();
-  //     socket.emit("restTime", currentRound, totalRound, openAt, now);
-  //   });
-
-  //   socket.on("totalEnd", async () => {
-  //     const room = await Room.findByPk(roomID);
-  //     await StudyTime.create({
-  //       userId: userID,
-  //       studyTime: room.studyTime,
-  //     });
-  //     const now = Date.now();
-  //     const endTime = now + 60000;
-  //     socket.emit("totalEnd", endTime, now);
-  //   });
-
-  //   socket.on("disconnecting", async () => {
-  //     await PersonInRoom.destroy({
-  //       where: {
-  //         userId: userID,
-  //         roomId: roomID,
-  //       },
-  //     });
-
-  //     socket.to(roomID).emit("user-disconnected", peerID, nickname, streamID);
-
-  //     const PIR_list = await PersonInRoom.findAll({
-  //       where: {
-  //         roomId: roomID,
-  //       },
-  //     });
-
-  //     if (PIR_list.length === 0) {
-  //       await Room.destroy({ where: { roomId: roomID } });
-  //     }
-  //   });
-
-  //   socket.on("message", (message) => {
-  //     socket.to(roomID).emit("message", nickname, message);
-  //   });
-
-  //   socket.on("join-chatRoom", (roomId, userId, userNickname) => {
-  //     socket.join(roomId);
-  //   });
   });
 
-  // https 연결 시
-  // module.exports = { server, https };
-
-  // module.exports = { server };
-}
+module.exports = { server };
+// }
