@@ -109,9 +109,9 @@ async function GetPost(req, res) {
 
   const post = await posts.findAll({ 
     include: [{
-      model: Comments,
-      required: true
-      // attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+    model: images,
+    required: true,
+    attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
     }],
     where: { postId },
   });
@@ -120,18 +120,18 @@ async function GetPost(req, res) {
     where: { postId: post[0].postId },
   });
 
-  const postImage = await posts.findOne({
+  const postComment = await posts.findOne({
     // where: { postId },
     include: [{
-    model: images,
-    required: true,
-    attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+      model: Comments,
+      required: true
+      // attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
     }],
   })
 
   const postImageRes = { 
-    postId: postImage.postId,
-    images: postImage.images
+    postId: postComment.postId,
+    Comments: postComment.Comments
   }
 
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
