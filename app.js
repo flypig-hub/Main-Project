@@ -12,7 +12,7 @@ const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 // const ImageRouter = require("./router/imageRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
-const port = 8080;
+const port = 7000;
 
 // const session = require("express-session")
 const webSocket = require("./socket");
@@ -85,7 +85,7 @@ app.set("views", __dirname + "/views");
 
 
 const server = app.listen(port, () => {
-  console.log("8080번 포트에서 대기 중");
+  console.log(port,"번 포트에서 대기 중");
 });
 
 webSocket(server, app)
