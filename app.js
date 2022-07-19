@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
   res.status(200).render('index');
 })
 
-
+app.use("/socket", webSocket)
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
 // app.use("/image", ImageRouter);
@@ -84,6 +84,8 @@ app.set("views", __dirname + "/views");
 // app.get("/*", (_, res) => res.redirect("/"));
 
 
+const server = app.listen(port, () => {
+  console.log(port,"번 포트에서 대기 중");
+});
 
- app.listen(port, () => {
-   console.log(port, "포트로 서버가 켜졌어요!"); });
+webSocket(server, app)
