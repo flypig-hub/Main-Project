@@ -1,6 +1,6 @@
 const app = require("./app");
 const fs = require("fs");
-const { chats, rooms, users, sequelize, Sequelize } = require("./models");
+const { Chats, Rooms, users, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
@@ -14,12 +14,12 @@ module.exports = (server, app) => {
   app.set("io", io);
   io.on("connection", (socket) => {
     socket.on("join-room", async (roomId) => {
-      const enterRoom = await rooms.findOne({
+      const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
 
       socket.join(enterRoom.title);
-      const existRoom = await rooms.findOne({
+      const existRoom = await Rooms.findOne({
         where: { title: roomName },
       });
 
@@ -39,7 +39,7 @@ module.exports = (server, app) => {
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
       chatUser = await users.findOne({ where: { userId: userId } });
-      const newchat = await chats.create({
+      const newchat = await Chats.create({
         userNickname: nickName,
         userId: userId,
         roomId: roomId,
