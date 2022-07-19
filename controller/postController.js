@@ -137,7 +137,7 @@ async function GetPostingList(req, res) {
   // res.send({ allPost });
 
   const user = res.locals;
-  const postList = await posts.findAll({
+  const allPost = await posts.findAll({
     include: [{
       model: images,
       required: true,
@@ -153,10 +153,6 @@ async function GetPostingList(req, res) {
     }],
   });
   console.log(postComment);
-
-  const allPost = {
-    postList, 
-  }
 
   res.send({ allPost });
 }
