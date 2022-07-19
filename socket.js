@@ -10,13 +10,9 @@ const server = require("http").createServer(app);
       origin: ["http://localhost:3000", "*", "https://mendorong-jeju.co.kr"],
       credentials: true,
     },
-   
   });
-  console.log(io);
-app.set("io", io);
-  io.on("connection", (socket) => {
-  
 
+  io.on("connection", (socket) => {
     socket.on(
       "join-room",
       async (
@@ -25,57 +21,40 @@ app.set("io", io);
         const enterRoom = await rooms.findOne({
           where: { roomId: roomId }
         });
+        
         socket.join(enterRoom.title);
-
         const existRoom = await rooms.findOne({
           where: { title: roomName },
         });
-
+        
         if (!existRoom) {
           res.status(400).send({
             errorMessage: "존재하지 않는 방입니다."
           }
          );
-          return;
          
+          return;
         }
-
           socket.join(enterRoom.title);
-        
         const nickName = existRoom.userNickname[existRoom.userNickname.length-1]
         const roomName = existRoom.title 
         socket.emit("welcome", nickName, roomName, "3번째인자");
         
       }
     );
-<<<<<<< HEAD
-    socket.on(
-      "chat_message",
-      async  (messageChat, nickName, userImage, roomId) => {
-        console.log(messageChat, nickName, userImage, roomId);
-        chatUser = await users.findOne({ where: { userNickname: nickName } });
-        const newchat = await chats.create({
-          userNickname: nickName,
-          userId: chatUser.userId,
-          chat: messageChat,
-          userImg: chatUser.userImage,
-        });
-=======
     
     socket.on("chat_message", async (messageChat, userId, roomId) => {
       chatUser = await users.findOne({ where: { userId :userId}});
        const newchat = await chats.create({
          userNickname: nickName,
          userId: userId,
-         roomId: roomId
+         roomId: roomId,
          chat: messageChat,
          userImg: userImage,
           });
->>>>>>> 37732d112cd595f2317d17f78bb408c76108f95c
 
-        socket.emit("message", messageChat, nickName, userImage, roomId);
-      }
-    );
+      socket.emit("message", messageChat, nickName, userImage, roomId);
+    });
     socket.on("message", (message) => {
         socket.to(roomID).emit("message", nickname, message);
       });
@@ -83,4 +62,3 @@ app.set("io", io);
   });
 
 module.exports = { server };
-
