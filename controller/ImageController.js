@@ -170,7 +170,7 @@ async function DeleteImages(req, res) {
 async function ProfilesImage(req, res) {
   const userImage = res.locals.userImage;
   console.log(userImage); 
-  const {image} = req.files;
+  const image = req.file;
   console.log(image)
 
   const userImageKEY = image.map(userImageKEY => userImageKEY.key);
