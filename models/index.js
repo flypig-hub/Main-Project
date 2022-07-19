@@ -40,6 +40,11 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+const posts = sequelize.define('posts');
+const images = sequelize.define('images');
+posts.hasMany(images);
+images.belongsTo(posts);
+
 // db.posts = require("./posts")(sequelize, Sequelize);
 // db.users = require("./users")(sequelize, Sequelize);
 // db.Comments = require("./comments")(sequelize, Sequelize);
