@@ -37,13 +37,12 @@ async function unlike(req, res) {
   //   res.status(400).send({ errorMessage: "좋아요를 아직 클릭하지 않았습니다." });
   //   return;
   // } 
-    const dellike = await Like.destroy({
-      where: {
-        userId: userId,
-        postId: postId
-      },
-    });
- console.log(dellike);
+  const dellike = await Like.destroy({
+    where: {
+      userId: userId,
+      postId: postId
+    },
+  });
   const likes = await Like.findAll({ where: { postId:postId } });
   const likeNum = likes.length;
 

@@ -73,8 +73,6 @@ async function WritePosting(req, res) {
 async function GetPostingList(req, res) {
   let allPost = await posts.findAll();
   const user = res.locals;
-  
-  console.log("불린 전", user);
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
     const postComments = await Comments.findAll({
@@ -93,7 +91,6 @@ async function GetPostingList(req, res) {
     } else {
       islike = false;
     }
-    console.log(islike);
     Object.assign(post, {
       likeNum: likeNum,
       commentNum: commentNum,
