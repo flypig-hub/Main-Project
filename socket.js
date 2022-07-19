@@ -52,6 +52,11 @@ app.set("io", io);
       socket.emit("welcome", nickName, roomName, "3번째인자");
       // io.sockets.emit("room_change");
     });
+    socket.on("chat_message", (messageChat, nickName, userImage, roomId) => {
+      console.log(messageChat, nickName, userImage, roomId);
+      socket.emit("message", messageChat, nickName, userImage, roomId);
+    });
+
       
   // socket.emit("welcome", users, users.length);
 
