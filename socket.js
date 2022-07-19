@@ -48,18 +48,21 @@ app.set("io", io);
         
       }
     );
-    socket.on("chat_message", (messageChat, nickName, userImage, roomId) => {
-      console.log(messageChat, nickName, userImage, roomId);
-      chatUser = await users.findOne({ where: { userNickname:nickName}})
-       const newchat = await chats.create({
-         userNickname: nickName,
-         userId: chatUser.userId,
-         chat: messageChat,
-         userImg: chatUser.userImage,
-          });
+    socket.on(
+      "chat_message",
+      async  (messageChat, nickName, userImage, roomId) => {
+        console.log(messageChat, nickName, userImage, roomId);
+        chatUser = await users.findOne({ where: { userNickname: nickName } });
+        const newchat = await chats.create({
+          userNickname: nickName,
+          userId: chatUser.userId,
+          chat: messageChat,
+          userImg: chatUser.userImage,
+        });
 
-      socket.emit("message", messageChat, nickName, userImage, roomId);
-    });
+        socket.emit("message", messageChat, nickName, userImage, roomId);
+      }
+    );
     socket.on("message", (message) => {
         socket.to(roomID).emit("message", nickname, message);
       });
