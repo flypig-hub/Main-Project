@@ -65,10 +65,7 @@ async function createRoom(req, res) {
       max,
       hashTag,
     } = req.body;
-      const { userId, nickname, userImage } = res.locals
-      hostNickname: hostImg:
-
- 
+    const { userId, nickname, userImage } = res.locals
     const existRoom = await rooms.findOne({
       where: { title:title },
     });
