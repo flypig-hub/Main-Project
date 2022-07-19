@@ -24,8 +24,8 @@ module.exports = (server, app) => {
     cors: {
       origin: ["http://localhost:3000", "*", "https://mendorong-jeju.co.kr"],
       credentials: true,
-      methods: ["GET", "POST"],
     },
+    methods: ["GET", "POST"],
     allowEIO3: true,
     // path: "/my-custom-path/",
   });
