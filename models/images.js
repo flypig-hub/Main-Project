@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      images.belongsTo(models.posts, { foreignKey: 'postId', sourceKey: 'postNumber', onDelete: 'CASCADE' });
+      // images.belongsTo(models.posts, { foreignKey: 'postId', sourceKey: 'postNumber', onDelete: 'CASCADE' });
     }
   }
   images.init({
@@ -29,7 +29,9 @@ module.exports = (sequelize, DataTypes) => {
     thumbnailURL: DataTypes.INTEGER,
     postNumber: DataTypes.STRING,
     postImageKEY: DataTypes.STRING,
-    postImageURL: DataTypes.STRING
+    postImageURL: DataTypes.STRING,
+    userImageKEY: DataTypes.STRING,
+    userImageURL: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'images',
