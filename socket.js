@@ -45,14 +45,14 @@ app.set("io", io);
       }
     );
     
-    socket.on("chat_message", (messageChat, nickName, userImage, roomId) => {
-      console.log(messageChat, nickName, userImage, roomId);
-      chatUser = await users.findOne({ where: { userNickname:nickName}})
+    socket.on("chat_message", async (messageChat, userId, roomId) => {
+      chatUser = await users.findOne({ where: { userId :userId}});
        const newchat = await chats.create({
          userNickname: nickName,
-         userId: chatUser.userId,
+         userId: userId,
+         roomId: roomId
          chat: messageChat,
-         userImg: chatUser.userImage,
+         userImg: userImage,
           });
 
       socket.emit("message", messageChat, nickName, userImage, roomId);
