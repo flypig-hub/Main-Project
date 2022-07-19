@@ -110,7 +110,7 @@ async function GetPost(req, res) {
   const { nickname, userId } = res.locals;
   const { postId } = req.params;
 
-  let post = await posts.findAll({ 
+  const post = await posts.findAll({ 
     include: [{
       model: Comments,
       required: true
@@ -123,13 +123,19 @@ async function GetPost(req, res) {
     where: { postId: post[0].postId },
   });
 
-  // const postImage = await images.findAll({
-  //   include: [{
-  //   model: images,
-  //   required: true,
-  //   attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
-  //   }],
-  // })
+  const postImage = await posts.findOne({
+    // where: { postId },
+    include: [{
+    model: images,
+    required: true,
+    attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+    }],
+  })
+
+  const postImageRes = { 
+    postId: postImage.postId,
+    images: postImage.images
+  }
 
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
 
@@ -170,6 +176,7 @@ async function GetPost(req, res) {
     nickname,
     userId,
     post,
+    postImageRes
     // commentInfo: commentInfo
   });
 }
