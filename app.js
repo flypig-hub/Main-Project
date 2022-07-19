@@ -10,7 +10,7 @@ const passportConfig = require('./passport');
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
-const RommRouter = require("./router/roomRouter");
+const RoomRouter = require("./router/roomRouter");
 // const ImageRouter = require("./router/imageRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
   res.status(200).render('index');
 })
 
-app.use("/room", webSocket)
+app.use("/room", RoomRouter);
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
 // app.use("/image", ImageRouter);
@@ -89,4 +89,4 @@ const server = app.listen(port, () => {
   console.log(port,"번 포트에서 대기 중");
 });
 
-webSocket(server, app)
+webSocket(server, app);
