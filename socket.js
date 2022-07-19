@@ -25,8 +25,8 @@ module.exports = (server, app) => {
       origin: ["http://localhost:3000", "*", "https://mendorong-jeju.co.kr"],
       credentials: true,
     },
-    methods: ["GET", "POST"],
-    allowEIO3: true,
+    // methods: ["GET", "POST"],
+    // allowEIO3: true,
     // path: "/my-custom-path/",
   });
   console.log(io);
@@ -35,7 +35,7 @@ app.set("io", io);
   //   let roomID;
   //   let peerID;
   //   let userID;
-    socket["nickName"] = "";
+  // socket["nickName"] = "";
   //   let streamID;
   //   let statusMsg;
 
@@ -44,10 +44,12 @@ app.set("io", io);
       //roomName, done = enter_room의 첫번쨰 인자(input_value), 마지막인자(함수-showroom)
       socket.join(roomName);
       //roomName이름을 가진 방을 만들거나 들어감.
-      socket.nickName = nickName
+      // socket.nickName = nickName
       console.log(roomName, nickName);
+      let roomName = roomName
+      let nickName = nickName;
       // socket.emit("welcome", socket.nickname, roomName);
-      socket.to(roomName).emit("welcome", socket.nickname, roomName);
+      socket.emit("welcome", nickName, roomName, "3번째인자");
       // io.sockets.emit("room_change");
     });
       
