@@ -154,11 +154,6 @@ async function GetPostingList(req, res) {
   });
   console.log(postComment);
 
-  const postCommentInfo = { 
-    postId: postComment.Comments,
-  }
-  console.log(postCommentInfo);
-
   const allPost = {
     postList, 
   }
