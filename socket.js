@@ -48,6 +48,7 @@ app.set("io", io);
         
       }
     );
+<<<<<<< HEAD
     socket.on(
       "chat_message",
       async  (messageChat, nickName, userImage, roomId) => {
@@ -59,6 +60,18 @@ app.set("io", io);
           chat: messageChat,
           userImg: chatUser.userImage,
         });
+=======
+    
+    socket.on("chat_message", async (messageChat, userId, roomId) => {
+      chatUser = await users.findOne({ where: { userId :userId}});
+       const newchat = await chats.create({
+         userNickname: nickName,
+         userId: userId,
+         roomId: roomId
+         chat: messageChat,
+         userImg: userImage,
+          });
+>>>>>>> 37732d112cd595f2317d17f78bb408c76108f95c
 
         socket.emit("message", messageChat, nickName, userImage, roomId);
       }
