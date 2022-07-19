@@ -56,15 +56,27 @@ const s3 = new AWS.S3({
 
 // 이미지 넣기
 async function PostImage(req, res) {
+    const userImage = res.locals.userImage;
+    console.log(userImage);
     const image = req.files;
 
     const postImageKEY = image.map(postImageKEY => postImageKEY.key);
     const postImageURL = image.map(postImageURL => postImageURL.location);
     // console.log(postImageKEY, postImageURL);
 
+    // const userImageInfo = await images.findOne({
+    //   where: { userImage },
+    //   include: [{
+    //     model: users,
+    //     required: true,
+    //     attributes: ['userId', 'userImage']
+    //   }],
+    // })
+
     const postImages = await images.create({ 
-        postImageKEY: postImageKEY.toString(), 
-        postImageURL: postImageURL.toString()
+      postImageKEY: postImageKEY.toString(), 
+      postImageURL: postImageURL.toString(),
+      userImage: userImage.toString()
     });
 
     // console.log(postImages);
@@ -152,7 +164,26 @@ async function DeleteImages(req, res) {
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
 
+// 프로필 이미지 수정하기(넣기)
+async function ProfilesImage(req, res) {
+  const {image} = req.files;
+  console.log(image)
+
+  const userImageKEY = image.map(userImageKEY => userImageKEY.key);
+  const userImageURL = image.map(userImageURL => userImageURL.location);
+  // console.log(postImageKEY, postImageURL);
+
+  const userImages = await images.create({ 
+    userImageKEY: userImageKEY.toString(), 
+    userImageURL: userImageURL.toString()
+  });
+
+  // console.log(postImages);
+  res.status(200).send({ userImages, userImageKEY, userImageURL, msg: "성공" });
+};
+
 
 module.exports.PostImage = PostImage;
 module.exports.GetImages = GetImages;
 module.exports.DeleteImages = DeleteImages;
+module.exports.ProfilesImage = ProfilesImage;
