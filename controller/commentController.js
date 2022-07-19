@@ -1,5 +1,4 @@
 const { Comments, sequelize, Sequelize } = require("../models");
-const comments = require("../models/comments");
 
 //댓글 불러오기 API
 async function readComment(req, res) {
@@ -101,42 +100,11 @@ async function updateComment(req, res) {
 
 
 // 댓글 삭제 API
-async function deleteComment(req, res) {
-  const { userId } = res.locals;
-  const { commentId } = req.params;
-  try {
-    const existsComment = await Comments.findOne({
-      where: {
-        commentId:commentId,
-      },
-    });
-    // console.log(existsComment);
-     if (!userId) {
-    res.status(400).send({
-      errorMessage: "로그인이 필요한 서비스 입니다.-댓글삭제-",
-    });
-       return;
-       
-  }else if (userId != existsComment.userId) {
-    res.status(400).send({
-      errorMessage: "이 글의 작성자만 글을 삭제할 수 있습니다.",
-    });
-    return;
-  }
-    
-      const deleteComment = await Comments.destroy(
-        { where: { commentId } });
-      if (!deleteComment) {
-        res.status(400).send(
-          { errorMessage: "댓글 삭제가 정상적으로 처리되지 않았습니다." }
-        );
-        return;
-    }
-      res.status(200).send({ message: "댓글 삭제 완료" });
-  } catch (err) {
-    res.status(400).send({ errorMessage: "댓글 삭제를 할 수 없습니다." });
-  }
-}
+// async function kickUser(req, res) {
+//   res.params
+ 
+// }
+
 
 module.exports.readComment = readComment;
 module.exports.writeComment = writeComment;
