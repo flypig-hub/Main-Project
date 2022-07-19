@@ -104,7 +104,6 @@ async function updateComment(req, res) {
 async function deleteComment(req, res) {
   const { userId } = res.locals;
   const { commentId } = req.params;
-console.log(commentId);
   try {
     const existsComment = await Comments.findOne({
       where: {
