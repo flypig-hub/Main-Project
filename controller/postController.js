@@ -7,8 +7,6 @@ const {
   sequelize,
   Sequelize,
 } = require("../models");
-images.belongsTo(posts);
-posts.hasMany(images);
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
 const { post } = require("../router/likeRouter");
@@ -111,11 +109,28 @@ async function GetPostingList(req, res) {
 async function GetPost(req, res) {
   const { nickname, userId } = res.locals;
   const { postId } = req.params;
-  let post = await posts.findAll({ where: { postId: postId } });
+
+  let post = await posts.findAll({ 
+    include: [{
+      model: images,
+      required: true
+      // attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+    }],
+    where: { postId: postId } 
+  });
+
   const postComments = await Comments.findAll({
     where: { postId: post[0].postId },
   });
+
+  // const postImage = await images.findAll({
+  //   include: [{
+  //     model: posts
+  //   }]
+  // })
+
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
+
   let islike = await Like.findAll({
     where: { userId: post[0].userId, postId: post[0].postId}
   });
