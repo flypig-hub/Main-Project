@@ -1,11 +1,10 @@
 const app = require("./app");
 const fs = require("fs");
-const sequelize = require("sequelize");
+const { posts, Like, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 // const options = {
 //   letsencrypt로 받은 인증서 경로를 입력
 // };
-const { posts, Like, sequelize, Sequelize } = require("../models");
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 
 // socket.on("connect_error", (err) => {
