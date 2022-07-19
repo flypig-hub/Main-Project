@@ -12,7 +12,7 @@ const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 // const ImageRouter = require("./router/imageRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
-const port = 7000;
+const port = 8080;
 
 // const session = require("express-session")
 const webSocket = require("./socket");
