@@ -50,7 +50,7 @@ app.set("io", io);
        const newchat = await chats.create({
          userNickname: nickName,
          userId: userId,
-         roomId: roomId
+         roomId: roomId,
          chat: messageChat,
          userImg: userImage,
           });
