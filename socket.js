@@ -46,7 +46,8 @@ app.set("io", io);
       //roomName이름을 가진 방을 만들거나 들어감.
       socket.nickName = nickName
 
-      socket.to(roomName).emit("welcome", socket.nickname, roomName);
+      socket.emit("welcome", socket.nickname, roomName);
+      // socket.to(roomName).emit("welcome", socket.nickname, roomName);
       // io.sockets.emit("room_change");
     });
       
