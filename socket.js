@@ -40,27 +40,18 @@ app.set("io", io);
   //   let streamID;
   //   let statusMsg;
 
-  //   socket.on(
-  //     "join-room",
-  //     async (roomId, peerId, userId, nick, streamId, status) => {
-  //       roomID = roomId;
-  //       peerID = peerId;
-  //       userID = userId;
-  //       streamID = streamId;
-  //       statusMsg = status;
-  //       nickname = nick;
-  //       try {
-  //         socket.join(roomID);
-  //         socket
-  //           .to(roomID)
-  //           .emit("user-connected", peerID, nickname, streamID, statusMsg);
-  //         const users = await PersonInRoom.findAll({
-  //           where: {
-  //             roomId: roomID,
-  //             userId: { [Op.not]: userID },
-  //           },
-  //         });
-  //         socket.emit("welcome", users, users.length);
+    socket.on("join-room", (roomName, nickname) => {
+      //socket.on = emit한 event"enter_room"를 프론트에서 받음.
+      //roomName, done = enter_room의 첫번쨰 인자(input_value), 마지막인자(함수-showroom)
+      socket.join(roomName);
+      //roomName이름을 가진 방을 만들거나 들어감.
+      
+
+      socket.to(roomName).emit("welcome", socket.nickname);
+      // io.sockets.emit("room_change");
+    });
+      
+          socket.emit("welcome", users, users.length);
 
   //         const room = await Room.findByPk(roomID);
   //         const currentRound = room.currentRound;
