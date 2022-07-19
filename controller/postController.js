@@ -160,7 +160,7 @@ async function GetPostingList(req, res) {
   console.log(postCommentInfo);
 
   const allPost = {
-    postList, postComment, postCommentInfo, 
+    postList, 
   }
 
   res.send({ allPost });
