@@ -14,7 +14,6 @@ const { post } = require("../router/likeRouter");
 // 게시글 작성(유저)
 async function WritePosting(req, res) {
   // try {
-  console.log(res.locals);
   const { userId, nickname, userImage } = res.locals;
   const {
     title,
@@ -30,10 +29,10 @@ async function WritePosting(req, res) {
   const image = req.files;
   // console.log(req.files);
 
-  const postImageKEY = image.map((postImageKEY) => postImageKEY.key);
-  const postImageURL = image.map((postImageURL) => postImageURL.location);
-  const thumbnailKEY = postImageKEY[0];
-  const thumbnailURL = postImageURL[0];
+  const postImageKey = image.map((postImageKey) => postImageKey.key);
+  const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
+  const thumbnailKEY = postImageKey[0];
+  const thumbnailURL = postImageUrl[0];
 
   let isLike = false;
 
@@ -54,49 +53,114 @@ async function WritePosting(req, res) {
     isLike: isLike,
   });
 
-  const imagesInfo = await images.create({
-    postNumber: postInfo.postId,
-    thumbnailURL: thumbnailURL.toString(),
-    thumbnailKEY: thumbnailKEY.toString(),
-    postImageURL: postImageURL.toString(),
-    postImageKEY: postImageKEY.toString(),
-  })
-  console.log(imagesInfo);
-
-  res.status(201).send({ postInfo, imagesInfo });
+  postImageKey.forEach((element, i) => {
+    const postImageKEY = postImageKey[i];
+    const postImageURL = postImageUrl[i];
+    console.log(postImageKEY, postImageURL);
+    
+    if (image) {
+      const imagesInfo = images.create({
+        postNumber: postInfo.postId,
+        thumbnailURL: thumbnailURL.toString(),
+        thumbnailKEY: thumbnailKEY.toString(),
+        postImageURL: postImageURL,
+        postImageKEY: postImageKEY,
+      })
+      return imagesInfo
+    }
+  }); 
+  
+  res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   // } catch(e) {
   //     res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   // }
 }
 
+
+// async function getPostingList(req, res) {
+//   const user = res.locals;
+//   const postList = await posts.findAll({
+//     include: [{
+//       model: images,
+//       required: true,
+//       attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+//       }],
+//   });
+
+//   const postComment = await posts.findOne({
+//     include: [{
+//       model: Comments,
+//       required: true,
+//     }],
+//   });
+
+//   const allPost = { 
+//     postId: postComment.postId,
+//     Comments: Comments
+//   }
+
+//   res.send({ allPost });
+// }
+
+
+
+
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
-  let allPost = await posts.findAll();
+  // let allPost = await posts.findAll();
+  // const user = res.locals;
+  // for (i = 0; i < allPost.length; i++) {
+  //   let post = allPost[i];
+  //   const postComments = await Comments.findAll({
+  //     where: { postId: post.postId },
+  //   });
+  //   const postLikes = await Like.findAll({ where: { postId: post.postId } });
+  //   let islike = await Like.findOne({
+  //     where: { userId: post.userId, postId: post.postId },
+  //   });
+  //   // console.log(post, islike);
+  //   const likeNum = postLikes.length;
+  //   const commentNum = postComments.length;
+  //     // console.log("불린 전", userId, post.postId, i, "번째값입니다");
+  //   if (islike) {
+  //     islike = true;
+  //   } else {
+  //     islike = false;
+  //   }
+  //   Object.assign(post, {
+  //     likeNum: likeNum,
+  //     commentNum: commentNum,
+  //     islike: islike,
+  //   });
+  //   // return
+  // }
+  // res.send({ allPost });
+
   const user = res.locals;
-  for (i = 0; i < allPost.length; i++) {
-    let post = allPost[i];
-    const postComments = await Comments.findAll({
-      where: { postId: post.postId },
-    });
-    const postLikes = await Like.findAll({ where: { postId: post.postId } });
-    let islike = await Like.findOne({
-      where: { userId: post.userId, postId: post.postId },
-    });
-    // console.log(post, islike);
-    const likeNum = postLikes.length;
-    const commentNum = postComments.length;
-      // console.log("불린 전", userId, post.postId, i, "번째값입니다");
-    if (islike) {
-      islike = true;
-    } else {
-      islike = false;
-    }
-    Object.assign(post, {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    });
-    // return
+  const postList = await posts.findAll({
+    include: [{
+      model: images,
+      required: true,
+      attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+      }],
+  });
+
+  const postComment = await posts.findOne({
+    include: [{
+      model: Comments,
+      required: true,
+      attributes: ['postId', 'comment']
+    }],
+  });
+  console.log(postComment);
+
+  const postCommentInfo = { 
+    postId: postComment.Comments,
+  }
+  console.log(postCommentInfo);
+
+  const allPost = {
+    postList, postComment, postCommentInfo, 
   }
 
   res.send({ allPost });
@@ -107,11 +171,11 @@ async function GetPost(req, res) {
   const { nickname, userId } = res.locals;
   const { postId } = req.params;
 
-  let post = await posts.findAll({ 
+  const post = await posts.findAll({ 
     include: [{
-      model: Comments,
-      required: true
-      // attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+      model: images,
+      required: true,
+      attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
     }],
     where: { postId },
   });
@@ -120,13 +184,19 @@ async function GetPost(req, res) {
     where: { postId: post[0].postId },
   });
 
-  // const postImage = await images.findAll({
+  // const postComment = await posts.findOne({
+  //   where: { postId },
   //   include: [{
-  //   model: images,
-  //   required: true,
-  //   attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+  //     model: Comments,
+  //     required: true,
+  //     attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
   //   }],
   // })
+
+  // const postCommentRes = { 
+  //   postId: postComment.postId,
+  //   Comments: postComment.Comments
+  // }
 
   const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
 
@@ -167,6 +237,7 @@ async function GetPost(req, res) {
     nickname,
     userId,
     post,
+    // postCommentRes
     // commentInfo: commentInfo
   });
 }
@@ -245,23 +316,37 @@ async function DeletePost(req, res) {
   const { postId } = req.params;
 
   const existPost = await posts.findOne({ where: { postId } });
-  // console.log(existPost);
+  const imageKey = await images.findOne({ where: { postImageKEY, thumbnailKEY } })
+  console.log(existPost);
+  console.log(imageKey);
 
-  const postImageKEY = existPost.postImageKEY.split(',')
+  const postImageKEY = imageKey.postImageKEY.map(postImageKEY => postImageKEY.split('com/')[1]);
   console.log(postImageKEY);
 
-  if (existPost) {
-    const s3 = new AWS.S3();
-    const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Delete: { Objects: [{ Key: postImageKEY.toString() }] }
-    };
-    console.log(params.Delete);
+  // if (existPost) {
+  //   const s3 = new AWS.S3();
+  //   const params = {
+  //       Bucket: process.env.AWS_BUCKET_NAME,
+  //       Delete: { Objects: [{ Key: postImageKEY.toString() }] }
+  //   };
+  //   console.log(params.Delete);
 
-    s3.deleteObjects(params, function(err, data) {
-        if (err) console.log(err, 's3 deleteObject', data);
-        else { console.log("삭제되었습니다.", data) }
-    })
+  //   s3.deleteObjects(params, function(err, data) {
+  //       if (err) console.log(err, 's3 deleteObject', data);
+  //       else { console.log("삭제되었습니다.", data) }
+  //   })
+  // }
+  for (i = 0; i < fileName.length; i++) {
+    let deleteImages = fileName[i];
+    s3.deleteObjects({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Delete: {
+         Objects: `images/${deleteImages}`
+    }
+    }, function (err, data) {
+      if (err) { throw err; }
+      console.log('s3 deleteObject', data);
+    });
   }
   
 

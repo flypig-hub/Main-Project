@@ -62,9 +62,18 @@ async function PostImage(req, res) {
     const postImageURL = image.map(postImageURL => postImageURL.location);
     // console.log(postImageKEY, postImageURL);
 
+    // const userImageInfo = await images.findOne({
+    //   where: { userImage },
+    //   include: [{
+    //     model: users,
+    //     required: true,
+    //     attributes: ['userId', 'userImage']
+    //   }],
+    // })
+
     const postImages = await images.create({ 
-        postImageKEY: postImageKEY.toString(), 
-        postImageURL: postImageURL.toString()
+      postImageKEY: postImageKEY.toString(), 
+      postImageURL: postImageURL.toString(),
     });
 
     // console.log(postImages);
@@ -103,13 +112,13 @@ async function DeleteImages(req, res) {
     // const image = req.body;
     const { image } = req.body
     console.log(image);
-    // const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
+    const fileName = JSON.stringify(image).slice(0, -2).split('images/')[1];
     // console.log(fileName);
 
     s3.getObject(
       {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `images/${JSON.stringify(image).slice(0, -2).split('images/')[1]}`,
+        Key: `images/${fileName}`,
       }),
       console.log("지나가나요?");
 
@@ -123,15 +132,19 @@ async function DeleteImages(req, res) {
     // });
 
     // 이미지 1개 삭제할 때
-    s3.deleteObjects({
+    for (i = 0; i < fileName.length; i++) {
+      let deleteImages = fileName[i];
+      s3.deleteObjects({
       Bucket: process.env.AWS_BUCKET_NAME,
-      Delete: {
-           Objects: `images/${JSON.stringify(image).slice(0, -2).split('images/')[1]}`
-      }
-    }, function (err, data) {
-      if (err) { throw err; }
-      console.log('s3 deleteObject', data);
-    });
+      Delete: [{
+           Objects: { Key: `images/${deleteImages}`}
+      }]
+      }, function (err, data) {
+        if (err) { throw err; }
+        console.log('s3 deleteObject', data);
+      });
+    }
+    
       
     // 이미지 여러개 삭제할 때
     // const params = {
@@ -152,7 +165,29 @@ async function DeleteImages(req, res) {
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
 
+// 프로필 이미지 수정하기(넣기)
+async function ProfilesImage(req, res) {
+  const userImage = res.locals.userImage;
+  console.log(userImage); 
+  const {image} = req.files;
+  console.log(image)
+
+  const userImageKEY = image.map(userImageKEY => userImageKEY.key);
+  const userImageURL = image.map(userImageURL => userImageURL.location);
+  // console.log(postImageKEY, postImageURL);
+
+  const userImages = await images.create({ 
+    userImageKEY: userImageKEY.toString(), 
+    userImageURL: userImageURL.toString(),
+    userImage: userImage.toString()
+  });
+
+  // console.log(postImages);
+  res.status(200).send({ userImages, userImageKEY, userImageURL, msg: "성공" });
+};
+
 
 module.exports.PostImage = PostImage;
 module.exports.GetImages = GetImages;
 module.exports.DeleteImages = DeleteImages;
+module.exports.ProfilesImage = ProfilesImage;
