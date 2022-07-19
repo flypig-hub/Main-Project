@@ -4,15 +4,13 @@ const { chats, rooms, users, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
+
   const io = require("socket.io")(server, {
     cors: {
       origin: ["http://localhost:3000", "*", "https://mendorong-jeju.co.kr"],
       credentials: true,
     },
- 
   });
-  console.log(io);
-app.set("io", io);
 
   io.on("connection", (socket) => {
     socket.on(

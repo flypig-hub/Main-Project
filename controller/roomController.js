@@ -65,8 +65,9 @@ async function createRoom(req, res) {
       max,
       hashTag,
     } = req.body;
-    const { userId, nickname, userImage } = res.locals
-    const existRoom = await rooms.findOne({
+      const { userId, nickname, userImage } = res.locals
+
+      const existRoom = await rooms.findOne({
       where: { title:title },
     });
     if (existRoom) {
@@ -163,6 +164,23 @@ async function exitRoom(req, res) {
     }
 }
 
+// async function kickUser(req, res) {
+//     const { userId,roomId } = req.params;
+    
+//     const room = await rooms.findOne({ where: { roomId: roomId } });
+    
+//     if (userId !== room.hostNickname.userId) {
+//         res.status(400).send({
+//             msg: "강퇴기능은 룸 호스트만 사용 가능합니다."
+//         })
+    
+    
+        
+//     }
+
+
+// }
+
 module.exports = {
     callchats,
 //   keywordList,
@@ -171,4 +189,5 @@ module.exports = {
   enterRoom,
   exitRoom,
 //   checkRoomPw,
+//   kickUser
 };
