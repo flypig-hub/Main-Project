@@ -56,8 +56,6 @@ const s3 = new AWS.S3({
 
 // 이미지 넣기
 async function PostImage(req, res) {
-    const userImage = res.locals.userImage;
-    console.log(userImage);
     const image = req.files;
 
     const postImageKEY = image.map(postImageKEY => postImageKEY.key);
@@ -76,7 +74,6 @@ async function PostImage(req, res) {
     const postImages = await images.create({ 
       postImageKEY: postImageKEY.toString(), 
       postImageURL: postImageURL.toString(),
-      userImage: userImage.toString()
     });
 
     // console.log(postImages);
@@ -170,6 +167,8 @@ async function DeleteImages(req, res) {
 
 // 프로필 이미지 수정하기(넣기)
 async function ProfilesImage(req, res) {
+  const userImage = res.locals.userImage;
+  console.log(userImage); 
   const {image} = req.files;
   console.log(image)
 
@@ -179,7 +178,8 @@ async function ProfilesImage(req, res) {
 
   const userImages = await images.create({ 
     userImageKEY: userImageKEY.toString(), 
-    userImageURL: userImageURL.toString()
+    userImageURL: userImageURL.toString(),
+    userImage: userImage.toString()
   });
 
   // console.log(postImages);

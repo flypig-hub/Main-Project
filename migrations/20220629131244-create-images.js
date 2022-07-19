@@ -35,6 +35,12 @@ module.exports = {
       postImageURL: {
         type: Sequelize.STRING
       },
+      userImageKEY: {
+        type: Sequelize.STRING
+      },
+      userImageURL : {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

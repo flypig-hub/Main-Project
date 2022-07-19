@@ -29,7 +29,9 @@ module.exports = (sequelize, DataTypes) => {
     thumbnailURL: DataTypes.INTEGER,
     postNumber: DataTypes.STRING,
     postImageKEY: DataTypes.STRING,
-    postImageURL: DataTypes.STRING
+    postImageURL: DataTypes.STRING,
+    userImageKEY: DataTypes.STRING,
+    userImageURL: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'images',
