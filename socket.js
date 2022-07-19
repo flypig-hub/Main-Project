@@ -1,11 +1,10 @@
 const app = require("./app");
 const fs = require("fs");
-const sequelize = require("sequelize");
+const { posts, Like, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 // const options = {
 //   letsencrypt로 받은 인증서 경로를 입력
 // };
-
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 
 // socket.on("connect_error", (err) => {
@@ -17,7 +16,7 @@ const server = require("http").createServer(app);
 // https 실제 배포 시 연결
 // const https = require("https").createServer(options, app);
 
-const { Room, PersonInRoom, StudyTime } = require("./models");
+
 module.exports = (server, app) => {
   // https 설정 시
   // const io = require("socket.io")(https, {
@@ -25,9 +24,9 @@ module.exports = (server, app) => {
     cors: {
       origin: ["http://localhost:3000", "*", "https://mendorong-jeju.co.kr"],
       credentials: true,
-      methods: ["GET", "POST"],
     },
-    allowEIO3: true,
+    // methods: ["GET", "POST"],
+    // allowEIO3: true,
     // path: "/my-custom-path/",
   });
   console.log(io);
@@ -36,22 +35,25 @@ app.set("io", io);
   //   let roomID;
   //   let peerID;
   //   let userID;
-  //   let nickname;
+  // socket["nickName"] = "";
   //   let streamID;
   //   let statusMsg;
 
-    socket.on("join-room", (roomName, nickname) => {
+    socket.on("join-room", (roomName, nickName) => {
       //socket.on = emit한 event"enter_room"를 프론트에서 받음.
       //roomName, done = enter_room의 첫번쨰 인자(input_value), 마지막인자(함수-showroom)
       socket.join(roomName);
       //roomName이름을 가진 방을 만들거나 들어감.
-      
-
-      socket.to(roomName).emit("welcome", socket.nickname);
+      // socket.nickName = nickName
+      console.log(roomName, nickName);
+      let roomName = roomName
+      let nickName = nickName;
+      // socket.emit("welcome", socket.nickname, roomName);
+      socket.emit("welcome", nickName, roomName, "3번째인자");
       // io.sockets.emit("room_change");
     });
       
-          socket.emit("welcome", users, users.length);
+  // socket.emit("welcome", users, users.length);
 
   //         const room = await Room.findByPk(roomID);
   //         const currentRound = room.currentRound;
