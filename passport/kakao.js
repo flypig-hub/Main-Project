@@ -44,9 +44,11 @@ module.exports = () => {
                             host : false,
                             email : profile._json.kakao_account.email
                         });
+                        console.log(newUser);
                         const newUserImage = await images.create({
                             userImageURL : profile._json.properties.thumbnail_image,
                         });
+                        console.log(newUserImage);
                         done(null, newUser, newUserImage); // 회원가입하고 로그인 인증 완료
                         
                         console.log("가입완료")
