@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     autoIncrement: true,
     primaryKey: true
   },
-    userId: DataTypes.STRING,
-    postId: DataTypes.STRING
+    userId: DataTypes.INTEGER,
+    postId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Like',
