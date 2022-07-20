@@ -27,7 +27,10 @@ async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
   const Room = await Rooms.findOne({ where: { roomId: roomId } });
-  const chatingRooms = await Rooms.findAll({ where: { userId: userId } });
+  let chatingRooms = await Rooms.findAll({ where: { hostUserId: userId  } });
+  if (!chatingRooms){
+  let chatingRooms = await Rooms.findAll({ where: { roomUserId: userId  } });
+  }
   res.status(200),
     send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
 }
