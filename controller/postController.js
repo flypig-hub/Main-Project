@@ -63,6 +63,7 @@ async function WritePosting(req, res) {
         thumbnailKEY: thumbnailKEY.toString(),
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
+        userImageURL: userImage
       })
       return imagesInfo
     }
@@ -80,9 +81,10 @@ async function GetPostingList(req, res) {
     include: [{
       model: images,
       required: true,
-      attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+      attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL']
     }],
   });
+  console.log(allPost);
 
   const user = res.locals;
   for (i = 0; i < allPost.length; i++) {
@@ -120,42 +122,52 @@ async function GetPostingList(req, res) {
 // 게시글 상세 조회(S3 기능 추가 예정)
 async function GetPost(req, res) {
   const { postId } = req.params;
-    const allPost = await posts.findAll({
+    const postList = await posts.findAll({
       where: { postId },
       include: [{
         model: images,
         required: true,
-        attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+        attributes: ['postNumber', 'postImageURL', 'thumbnailURL'],
       }],
     });
-    console.log(allPost);
-  
-    const postComments = await Comments.findOne({
+    // console.log(postList);
+
+    const postComments = await posts.findOne({
       where: { postId },
+      include: [{
+        model: Comments,
+        required: true,
+        attributes: ['postId']
+      }],
+      commentNum: posts.commentNum 
     });
+    console.log(postComments);
 
     const postLikes = await Like.findOne({ 
       where: { postId } 
     });
-    console.log(postLikes);
+    // console.log(postLikes);
     
     let islike = await Like.findOne({
-      where: { userId: allPost.userId, postId: allPost.postId },
+      // where: { userId: allPost.userId, postId: allPost.postId },
     });
-    console.log(islike);
+    // console.log(islike);
     
     const likeNum = postLikes.length;
-    const commentNum = postComments.length;
+    const commentNum = postComments.Comments.length;
+    console.log(commentNum);
     if (islike) {
       islike = true;
     } else {
       islike = false;
     }
-    Object.assign(allPost, {
+    const allPost = Object.assign(postList, {
       likeNum: likeNum,
-      commentNum: commentNum,
+      commentNum: postComments.Comments.length,
       islike: islike,
     });
+    // console.log(allPost);
+
     res.send({ allPost });
  }
 
