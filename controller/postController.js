@@ -79,20 +79,40 @@ async function WritePosting(req, res) {
 
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
-  let allPost = await posts.findAll();
+
+  let allPost = await posts.findAll({
+    include: [{
+      model: images,
+      required: true,
+      attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL']
+    }],
+
+  });
   const user = res.locals;
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
     const postComments = await Comments.findAll({
       where: { postId: post.postId },
+      include: [{
+            model: posts,
+            required: true,
+            attributes: ['postId']
+          }],
     });
-    const postLikes = await Like.findAll({ where: { postId: post.postId } });
+
+    const postLikes = await Like.findAll({ 
+      where: { postId: post.postId } 
+    });
+    
     let islike = await Like.findOne({
       where: { userId: post.userId, postId: post.postId },
     });
+    // console.log(postLikes);
         // console.log(post, islike);
     const likeNum = postLikes.length;
+    console.log(likeNum);
     const commentNum = postComments.length;
+    console.log(commentNum);
       // console.log("불린 전", userId, post.postId, i, "번째값입니다");
     if (islike) {
       islike = true;
@@ -109,7 +129,7 @@ async function GetPostingList(req, res) {
   res.send({ allPost });
 
   // const user = res.locals;
-  // const allPost = await posts.findAll({
+  // const postLists = await posts.findAll({
   //   include: [{
   //     model: images,
   //     required: true,
@@ -118,7 +138,7 @@ async function GetPostingList(req, res) {
   // });
   // // console.log(allPost);
 
-  // const postComments = await posts.findAll({
+  // const postComments = await posts.findOne({
   //   include: [{
   //     model: Comments,
   //     required: true,
@@ -126,15 +146,20 @@ async function GetPostingList(req, res) {
   //   }],
   // });
   // // console.log(postComments);
+  // console.log(postComments.Comments.length);
 
   // const postLikes = await Like.findAll({ 
   //   include: [{
   //     model: posts,
   //     required: true,
-  //     // attributes: ['postId']
+  //     attributes: ['postId']
   //   }],
   // });
-  // console.log(postLikes);
+
+  // const allPost = {
+  //   postLists, postComments, postLikes
+  // }
+  // // console.log(postLikes);
   // // const postLikes = await Like.findAll({ 
   // //   include: [{
   // //     model: posts,
@@ -153,7 +178,7 @@ async function GetPostingList(req, res) {
   // console.log(islike);
 
   // const likeNum = postLikes.length;
-  // const commentNum = postComments.length;
+  // const commentNum = postComments.Comments.length;
 
   // if (islike) {
   //   islike = true;
@@ -178,7 +203,7 @@ async function GetPost(req, res) {
     include: [{
       model: images,
       required: true,
-      attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+      attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL']
     }],
     where: { postId },
   });
