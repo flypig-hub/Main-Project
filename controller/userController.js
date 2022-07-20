@@ -10,24 +10,24 @@ const axios = require('axios');
 
 //카카오 로그인
 const kakaoCallback = (req, res, next) => {
-  console.log(users,'이 친구는 지나가나요')  
-      passport.authenticate(
+        passport.authenticate(
         'kakao',
         
         { failureRedirect: '/' },
-        (err, users, info) => {
-          console.log(users,'여기서 문제가 발생하지요')
+        (err, users, images, info) => {
+          console.log(users, images,'여기서 문제가 발생하지요')
             if (err) return next(err)
             //----------------------------------------------------------------
             console.log('콜백')
-            const { userId, nickname, userImage, host, email } = users;
+            const { userImageURL } = images;
+            const { userId, nickname, host, email } = users;
             const token = jwt.sign({ userId }, process.env.MY_KEY)
 
             result = {
                 userId,
                 token,
                 nickname,
-                userImage,
+                userImageURL,
                 host,
                 email
             }
@@ -97,14 +97,14 @@ const naverCallback = (req, res, next) => {
 
 //로그인 인증
 async function checkMe(req, res) {
-    const {userId, nickname, userImage, email, host}  = res.locals
+    const {userId, nickname, userImageURL, email, host}  = res.locals
     
     res.send({
       success:true,
       email,
       userId,
       nickname,
-      userImage,
+      userImageURL,
       host
     });
   };
@@ -150,28 +150,28 @@ async function checkMe(req, res) {
   }
  }
 
-// 프로필이미지 수정하기
-//  async function MypagePutImage (req, res) {
-//   // try {
-//     const {userId} = res.locals;
-//     // const {userImage} = req.body;
-//     const userImage = req.files;
-//     if (userImage !== null) {
-//       const existUser = await users.findOne({where : {userId}});
-//       if (existUser) {
-//         await users.update({where:{userId}}, {userImage:userImage})
-//       }
-//     }
-//     console.log(userImage);
+//프로필이미지 수정하기
+ async function MypagePutImage (req, res) {
+   try {
+    const {userId} = res.locals;
+    // const {userImage} = req.body;
+    if (userImage !== null) {
+      const existUser = await users.findOne({where : {userId}});
+      if (existUser) {
+        await users.update({where:{userId}}, {userImage:userImage})
+      }
+    }
+    console.log(userImage);
 
   
-//   } catch (error) {
-//     console.log("프로필 수정 오류", error);
-//     res.status(400).send({
-//       result: false,
-//     });
-//  }
-//}
+  } catch (error) {
+    console.log("프로필 수정 오류", error);
+    res.status(400).send({
+      result: false,
+    });
+ }
+
+}
 
 // 사업자등록번호 검증
 
@@ -215,5 +215,5 @@ async function CNU_CK (req, res, next) {
 
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, CNU_CK, //MypagePutImage
+  checkMe, Mypage, MypagePutname, CNU_CK, MypagePutImage
 }

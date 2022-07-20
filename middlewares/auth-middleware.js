@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { users, sequelize, Sequelize } = require("../models");
+const { users, images, sequelize, Sequelize } = require("../models");
 
 module.exports = async (req, res, next) => {
     const { authorization } = req.headers;
@@ -35,6 +35,11 @@ module.exports = async (req, res, next) => {
         res.locals.userImage = loginuser.userImage
         res.locals.host = loginuser.host
         res.locals.email = loginuser.email
+<<<<<<< HEAD
+        res.locals.userImageURL = loginuserImage.userImageURL
+
+=======
+>>>>>>> 976f17465b75f713450a8e2bcea5815b2ae6579e
         next()
     } catch (error) {
         console.error(error);

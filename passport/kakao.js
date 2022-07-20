@@ -1,7 +1,7 @@
 require('dotenv').config();
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-const { users, sequelize, Sequelize } = require("../models");
+const { users, images, sequelize, Sequelize } = require("../models");
 
 module.exports = () => {
     passport.use(
@@ -27,7 +27,7 @@ module.exports = () => {
                         where: {snsId: profile.id},
                         
                     });
-                    console.log("2")
+                
                     // 이미 가입된 카카오 프로필이면 성공
                     
 
@@ -36,7 +36,7 @@ module.exports = () => {
                        console.log(exUser,"로그인 성공")
                    } else {
                         // 가입되지 않는 유저면 회원가입 시키고 로그인을 시킨다
-                        console.log("4 유저 정보 저장")
+                       
                         const newUser = await users.create({
                             snsId: profile.id,
                             provider: 'kakao',
@@ -45,7 +45,15 @@ module.exports = () => {
                             host : false,
                             email : profile._json.kakao_account.email
                         });
-                        done(null, newUser); // 회원가입하고 로그인 인증 완료
+                        console.log(newUser, '새로운 유저');
+                        console.log(profile._json.properties.thumbnail_image);                            
+                        const newUserImage = await images.create({
+                            userImageURL : profile._json.properties.thumbnail_image,
+                            
+                        });
+                        console.log(newUserImage, '이미지');
+                        
+                        done(null, newUser, newUserImage); // 회원가입하고 로그인 인증 완료
                         
                         console.log("가입완료")
                     }

@@ -103,19 +103,27 @@ async function createRoom(req, res) {
 async function enterRoom(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImage } = res.locals;
+  console.log("정보받기",roomId,userId, nickname, userImage)
   let room = await Rooms.findOne({ where: { roomId: roomId } });
   try {
-    room.roomUserId.push(userId);
-    room.roomUserNickname.push(nickname);
+    if (room.hostId==userId){
+      res.status(200).send({msg:"호스트가 입장하였습니다"});
+      return
+    }else{
+    let roomUserId = room.roomUserId.push(userId);
+    let roomUserNickname = room.roomUserNickname.push(nickname);
     roomUserNum = room.roomUserNickname.langth + 1;
-    room.roomUserImg.push(userImage);
-    room = await room.update(
+    let roomUserImg = room.roomUserImg.push(userImage);
+    console.log(room.roomUserId,room.roomUserNickname,room.roomUserImg)
+    room = await Rooms.update(
       { roomUserId: roomUserId },
       { roomUserNickname: roomUserNickname },
       { roomUserNum: roomUserNum },
       { roomUserImg: roomUserImg }
     );
+    console.log(room)
     return res.status(201).send({ msg: "입장 완료", room });
+    };
   } catch (err) {
     res.status(400).send({
       msg: "공개방 입장에 실패하였습니다.",
