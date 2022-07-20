@@ -31,21 +31,21 @@ module.exports = (server, app) => {
       socket.join(enterRoom.title);
       const nickName =
         enterRoom.userNickname[enterRoom.userNickname.length - 1];
-      const roomName = enterRoom.title;
+//       const roomName = enterRoom.title;
       socket.to(enterRoom.title).emit("welcome", nickName );
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
       chatUser = await users.findOne({ where: { userId: userId } });
       const newchat = await Chats.create({
-        userNickname: nickName,
+        userNickname: chatUser.nickName,
         userId: userId,
         roomId: roomId,
         chat: messageChat,
-        userImg: userImage,
+        userImg: chatUser.userImage,
       });
 
-      socket.emit("message", messageChat, nickName, userImage, roomId);
+      socket.emit("message", messageChat, chatUser.nickName, chatUser.userImage, roomId);
     });
     socket.on("message", (message) => {
       socket.to(roomID).emit("message", nickname, message);
