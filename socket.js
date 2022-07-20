@@ -30,9 +30,9 @@ module.exports = (server, app) => {
       }
       socket.join(enterRoom.title);
       const nickName =
-        existRoom.userNickname[existRoom.userNickname.length - 1];
-      const roomName = existRoom.title;
-      socket.emit("welcome", nickName, roomName, "3번째인자");
+        enterRoom.userNickname[enterRoom.userNickname.length - 1];
+      const roomName = enterRoom.title;
+      socket.to(enterRoom.title).emit("welcome", nickName );
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
