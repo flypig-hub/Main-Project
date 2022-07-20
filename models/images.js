@@ -25,8 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     nickname: DataTypes.STRING,
     postId: DataTypes.INTEGER,
-    userImageKEY: DataTypes.STRING,
-    userImageURL: DataTypes.STRING,
     thumbnailKEY: DataTypes.INTEGER,
     thumbnailURL: DataTypes.INTEGER,
     postNumber: DataTypes.STRING,
