@@ -17,7 +17,7 @@ module.exports = (server, app) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-
+      console(enterRoom.title,"로 입장합니다");
       socket.join(enterRoom.title);
 
       if (!enterRoom) {
