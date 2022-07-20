@@ -65,7 +65,6 @@ async function createRoom(req, res) {
     if (existRoom) {
       return res.status(400).send({ msg: "방이름이 중복됩니다" });
     }
-    console.log(hashTag);
     // let key = userId;
     // let hostNickname = {};
     // let hostImg = {};
@@ -75,6 +74,7 @@ async function createRoom(req, res) {
 
     const newRoom = await Rooms.create({
       max: max,
+
       hashTag: hashTag,
       title: title,
       hostNickname: nickname,
