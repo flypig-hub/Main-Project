@@ -25,9 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       hostImg: DataTypes.STRING,
       max: DataTypes.STRING,
       hashTag: DataTypes.JSON,
-      roomUserNickname: DataTypes.STRING,
+      roomUserNickname: DataTypes.JSON,
       roomUserNum: DataTypes.INTEGER,
-      roomUserImg: DataTypes.STRING,
+      roomUserImg: DataTypes.JSON,
     },
     {
       timestamp: true,

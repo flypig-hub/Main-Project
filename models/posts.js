@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // posts.hasMany(models.images, { foreignKey: 'postNumber', sourceKey: 'postId', onDelete: 'CASCADE' });
-      // posts.hasMany(models.Comments, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
-
-      // posts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+      posts.hasMany(models.images, { foreignKey: 'postNumber', sourceKey: 'postId', onDelete: 'CASCADE' });
+      posts.hasMany(models.Like, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
+      posts.hasMany(models.Comments, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
+      posts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
     }
   }
   posts.init(
@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
       },
       userId: DataTypes.STRING,
-      userImage: DataTypes.STRING,
       nickname: DataTypes.STRING,
       content: DataTypes.STRING,
       title: DataTypes.STRING,

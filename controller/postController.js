@@ -77,93 +77,96 @@ async function WritePosting(req, res) {
 }
 
 
-// async function getPostingList(req, res) {
-//   const user = res.locals;
-//   const postList = await posts.findAll({
-//     include: [{
-//       model: images,
-//       required: true,
-//       attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
-//       }],
-//   });
-
-//   const postComment = await posts.findOne({
-//     include: [{
-//       model: Comments,
-//       required: true,
-//     }],
-//   });
-
-//   const allPost = { 
-//     postId: postComment.postId,
-//     Comments: Comments
-//   }
-
-//   res.send({ allPost });
-// }
-
-
-
-
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
-  // let allPost = await posts.findAll();
-  // const user = res.locals;
-  // for (i = 0; i < allPost.length; i++) {
-  //   let post = allPost[i];
-  //   const postComments = await Comments.findAll({
-  //     where: { postId: post.postId },
-  //   });
-  //   const postLikes = await Like.findAll({ where: { postId: post.postId } });
-  //   let islike = await Like.findOne({
-  //     where: { userId: post.userId, postId: post.postId },
-  //   });
-  //   // console.log(post, islike);
-  //   const likeNum = postLikes.length;
-  //   const commentNum = postComments.length;
-  //     // console.log("불린 전", userId, post.postId, i, "번째값입니다");
-  //   if (islike) {
-  //     islike = true;
-  //   } else {
-  //     islike = false;
-  //   }
-  //   Object.assign(post, {
-  //     likeNum: likeNum,
-  //     commentNum: commentNum,
-  //     islike: islike,
-  //   });
-  //   // return
-  // }
-  // res.send({ allPost });
-
+  let allPost = await posts.findAll();
   const user = res.locals;
-  const postList = await posts.findAll({
-    include: [{
-      model: images,
-      required: true,
-      attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
-      }],
-  });
-
-  const postComment = await posts.findOne({
-    include: [{
-      model: Comments,
-      required: true,
-      attributes: ['postId', 'comment']
-    }],
-  });
-  console.log(postComment);
-
-  const postCommentInfo = { 
-    postId: postComment.Comments,
+  for (i = 0; i < allPost.length; i++) {
+    let post = allPost[i];
+    const postComments = await Comments.findAll({
+      where: { postId: post.postId },
+    });
+    const postLikes = await Like.findAll({ where: { postId: post.postId } });
+    let islike = await Like.findOne({
+      where: { userId: post.userId, postId: post.postId },
+    });
+        // console.log(post, islike);
+    const likeNum = postLikes.length;
+    const commentNum = postComments.length;
+      // console.log("불린 전", userId, post.postId, i, "번째값입니다");
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
+    }
+    Object.assign(post, {
+      likeNum: likeNum,
+      commentNum: commentNum,
+      islike: islike,
+    });
+    // return
   }
-  console.log(postCommentInfo);
-
-  const allPost = {
-    postList, 
-  }
-
   res.send({ allPost });
+
+  // const user = res.locals;
+  // const allPost = await posts.findAll({
+  //   include: [{
+  //     model: images,
+  //     required: true,
+  //     attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
+  //     }],
+  // });
+  // // console.log(allPost);
+
+  // const postComments = await posts.findAll({
+  //   include: [{
+  //     model: Comments,
+  //     required: true,
+  //     attributes: ['postId', 'comment']
+  //   }],
+  // });
+  // // console.log(postComments);
+
+  // const postLikes = await Like.findAll({ 
+  //   include: [{
+  //     model: posts,
+  //     required: true,
+  //     // attributes: ['postId']
+  //   }],
+  // });
+  // console.log(postLikes);
+  // // const postLikes = await Like.findAll({ 
+  // //   include: [{
+  // //     model: posts,
+  // //     required: true,
+  // //     attributes: ['postId']
+  // //   }],
+  // // });
+
+  // let islike = await Like.findOne({
+  //   include: [{
+  //     model: posts,
+  //     required: true,
+  //     attributes: ['userId']
+  //   }],
+  // });
+  // console.log(islike);
+
+  // const likeNum = postLikes.length;
+  // const commentNum = postComments.length;
+
+  // if (islike) {
+  //   islike = true;
+  // } else {
+  //   islike = false;
+  // }
+  // Object.assign(post, {
+  //   likeNum: likeNum,
+  //   commentNum: commentNum,
+  //   islike: islike,
+  // });
+
+  // res.send({ allPost });
 }
 
 // 게시글 상세 조회(S3 기능 추가 예정)
@@ -180,43 +183,44 @@ async function GetPost(req, res) {
     where: { postId },
   });
 
-  const postComments = await Comments.findAll({
-    where: { postId: post[0].postId },
+  const postComments = await posts.findOne({
+    where: { postId },
+    include: [{
+      model: Comments,
+      required: true,
+    }],
+  })
+  console.log(postComments);
+
+  const postLikes = await Like.findAll({ 
+    where: { postId },
+    include: [{
+      model: users,
+      required: true,
+    }], 
   });
-
-  // const postComment = await posts.findOne({
-  //   where: { postId },
-  //   include: [{
-  //     model: Comments,
-  //     required: true,
-  //     attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
-  //   }],
-  // })
-
-  // const postCommentRes = { 
-  //   postId: postComment.postId,
-  //   Comments: postComment.Comments
-  // }
-
-  const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
 
   let islike = await Like.findAll({
-    where: { userId: post[0].userId, postId: post[0].postId}
+    where: { postId },
+    include: [{
+      model: users,
+      required: true,
+    }],
   });
 
-  const likeNum = postLikes.length;
-  const commentNum = postComments.length;
+  // const likeNum = postLikes.length;
+  // const commentNum = postComments.length;
  
-  if (islike[0]) {
-    islike = true;
-  } else {
-    islike = false;
-  }
-  Object.assign(post[0], {
-    likeNum: likeNum,
-    commentNum: commentNum,
-    islike: islike,
-  });
+  // if (islike[0]) {
+  //   islike = true;
+  // } else {
+  //   islike = false;
+  // }
+  // Object.assign(post[0], {
+  //   likeNum: likeNum,
+  //   commentNum: commentNum,
+  //   islike: islike,
+  // });
 
   // const comments = await Comment.findOne({ where: { postId },
   //     order : [[ "createdAt", "DESC" ]]

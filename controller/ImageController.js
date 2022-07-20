@@ -57,6 +57,7 @@ const s3 = new AWS.S3({
 // 이미지 넣기
 async function PostImage(req, res) {
     const image = req.files;
+    console.log(image);
 
     const postImageKEY = image.map(postImageKEY => postImageKEY.key);
     const postImageURL = image.map(postImageURL => postImageURL.location);
@@ -169,7 +170,7 @@ async function DeleteImages(req, res) {
 async function ProfilesImage(req, res) {
   const userImage = res.locals.userImage;
   console.log(userImage); 
-  const {image} = req.files;
+  const image = req.file;
   console.log(image)
 
   const userImageKEY = image.map(userImageKEY => userImageKEY.key);

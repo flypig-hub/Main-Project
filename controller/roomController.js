@@ -1,40 +1,33 @@
 const { Rooms, Chats, sequelize, Sequelize } = require("../models");
 
 async function callchats(req, res) {
-    try {
-        // const { postId } = req.params;
-      const { postId } = req.body;
-        
-        const Chats = await Chats.findAll({
-          where: { postId: postId },
-            order: [["createdAt", "DESC"]],
-        });
-        res.status(200).send({ Chats, msg: "채팅을 불러왔습니다" });
-    } catch {
-        res.status(400)({msg:"채팅을 불러오지 못했습니다."})
-    }
+  try {
+    const { postId } = req.params;
+
+    const Chats = await Chats.findAll({
+      where: { postId: postId },
+      order: [["createdAt", "DESC"]],
+    });
+    res.status(200).send({ Chats, msg: "채팅을 불러왔습니다" });
+  } catch {
+    res.status(400)({ msg: "채팅을 불러오지 못했습니다." });
+  }
 }
 
 async function allRoomList(req, res) {
-    try {
- 
-        const allRoom = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
- 
+  try {
+    const allRoom = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
 
-
-    return res.status(200).send({allRoom, msg: "룸을 조회했습니다" });
+    return res.status(200).send({ allRoom, msg: "룸을 조회했습니다" });
   } catch (err) {
-    return res
-      .status(400)
-      .send({ msg: "룸 조회가 되지 않았습니다." });
+    return res.status(400).send({ msg: "룸 조회가 되지 않았습니다." });
   }
 }
 
 // async function keywordList(req, res) {
 //   const { roomId } = req.params;
 //     try {
-      
-        
+
 //     const keywordRoom = await Room.findAll({
 //       where: { purpose: roomPurpose },
 //       attributes: { exclude: ["roomPassword"] },
@@ -66,13 +59,13 @@ async function createRoom(req, res) {
   try {
     const { title, max, hashTag } = req.body;
     const { userId, nickname, userImage } = res.locals;
-    
     const existRoom = await Rooms.findOne({
-        where: { title: title },
-      });
+      where: { title: title },
+    });
     if (existRoom) {
       return res.status(400).send({ msg: "방이름이 중복됩니다" });
     }
+    console.log(hashTag);
     // let key = userId;
     // let hostNickname = {};
     // let hostImg = {};
@@ -99,43 +92,20 @@ async function createRoom(req, res) {
   }
 }
 
-// async function checkRoomPw(req, res) {
-//   const { roomId } = req.params;
-//   const { roomPassword } = req.body;
-//   const { userId } = res.locals.user;
-
-//   try {
-//     let room = await Room.findOne({
-//       where: { roomId },
-//       raw: true,
-//     });
-//     if (roomPassword != room.roomPassword) {
-//       return res.status(400).send({
-//         msg: "비공개방 패스워드가 불일치합니다",
-//       });
-//     }
-//     return res.status(200).send({ msg: "비밀번호 일치", roomId, userId });
-//   } catch (err) {
-//     return res.status(400).send({
-//       msg: "비공개방 입장에 실패하였습니다.",
-//     });
-//   }
-// }
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImage } = res.locals;
-    const room = await Rooms.findOne({ where: { roomId: roomId } });
-    try {
-        room.roomUserNickname.push(Object[userId] = nickname);
-    roomUserNum = room.roomUserNickname.langth+1
-    room.roomUserImg.push(Object[userId] = userImage)
+  const room = await Rooms.findOne({ where: { roomId: roomId } });
+  try {
+    room.roomUserNickname.push((Object[userId] = nickname));
+    roomUserNum = room.roomUserNickname.langth + 1;
+    room.roomUserImg.push((Object[userId] = userImage));
     await room.update(
-        {roomUserNickname:roomUserNickname},
-        {roomUserNum:roomUserNum},
-        { roomUserImg:roomUserImg }
-        
-    )
+      { roomUserNickname: roomUserNickname },
+      { roomUserNum: roomUserNum },
+      { roomUserImg: roomUserImg }
+    );
     return res.status(201).send({ msg: "입장 완료" });
   } catch (err) {
     res.status(400).send({
@@ -145,56 +115,51 @@ async function enterRoom(req, res) {
 }
 
 async function exitRoom(req, res) {
- 
-    const { roomId } = req.params;
-    const { userId} = res.locals.user;
-    
-    const room = await Rooms.findOne({ where: { roomId: roomId } });
-    console.log(room.roomUserNickname, room.roomUserNickname.userId,userId)
-    // const roomUserNickname = room.roomUserNickname.filter(
-    //   (roomUser) => roomUser.userId !== userId
-    // );
+  const { roomId } = req.params;
+  const { userId } = res.locals.user;
 
-    if (userId === room.userId) {
-        await Chats.destroy({ roomId: roomId });
-        await Rooms.destroy({ roomId: roomId });
-    }
-    else {
-        let roomUserNum = room.roomUserNickname.langth + 1;
-        console.log(room.roomUserImg, room.roomUserImg.userId, userImage)
-        const roomUserImg = room.roomUserImg.filter(room.roomUserImguserImage);
-        await room.update(
-            { roomUserNickname: roomUserNickname },
-            { roomUserImg: roomUserImg },
-            { roomUserNum: roomUserNum }
-        );
-    }
+  const room = await Rooms.findOne({ where: { roomId: roomId } });
+  console.log(room.roomUserNickname, room.roomUserNickname.userId, userId);
+  // const roomUserNickname = room.roomUserNickname.filter(
+  //   (roomUser) => roomUser.userId !== userId
+  // );
+
+  if (userId === room.userId) {
+    await Chats.destroy({ roomId: roomId });
+    await Rooms.destroy({ roomId: roomId });
+  } else {
+    let roomUserNum = room.roomUserNickname.langth + 1;
+    console.log(room.roomUserImg, room.roomUserImg.userId, userImage);
+    const roomUserImg = room.roomUserImg.filter(room.roomUserImguserImage);
+    await room.update(
+      { roomUserNickname: roomUserNickname },
+      { roomUserImg: roomUserImg },
+      { roomUserNum: roomUserNum }
+    );
+  }
 }
 
 // async function kickUser(req, res) {
 //     const { userId,roomId } = req.params;
-    
+
 //     const room = await Rooms.findOne({ where: { roomId: roomId } });
-    
+
 //     if (userId !== room.hostNickname.userId) {
 //         res.status(400).send({
 //             msg: "강퇴기능은 룸 호스트만 사용 가능합니다."
 //         })
-    
-    
-        
-//     }
 
+//     }
 
 // }
 
 module.exports = {
-    callchats,
-//   keywordList,
+  callchats,
+  //   keywordList,
   allRoomList,
   createRoom,
   enterRoom,
   exitRoom,
-//   checkRoomPw,
-//   kickUser
+  //   checkRoomPw,
+  //   kickUser
 };
