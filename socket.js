@@ -52,15 +52,17 @@ module.exports = (server, app) => {
         roomId: roomId,
         chat: messageChat,
         userImg: chatUser.userImage,
-      });
-
-      socket.emit(
+        
+         socket.emit(
         "message",
         messageChat,
         chatUser.nickName,
         chatUser.userImage,
         roomId
       );
+      });
+
+     
     });
   });
 };
