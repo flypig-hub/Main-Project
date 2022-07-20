@@ -28,8 +28,13 @@ module.exports = (server, app) => {
         return;
       }
       socket.join(enterRoom.title);
+      if (enterRoom.hostNickname){
+        let nickName = enterRoom.hostNickname
+      }else{
+      let lastUser = [enterRoom.userNickname.length - 1]
       const nickName =
-      enterRoom.userNickname[enterRoom.userNickname.length - 1];
+      enterRoom.userNickname[lastUser];
+      }
       socket.to(enterRoom.title).emit("welcome", nickName );
 
     });
