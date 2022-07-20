@@ -38,7 +38,7 @@ module.exports = (server, app) => {
         let lastUser = enterRoom.roomUserNickname.length-1;
        
         let nickName = enterRoom.roomUserNickname[lastUser];
-      
+        console.log("유저닉네임=", nickName);
         socket.to(enterRoom.title).emit("welcome", nickName);
       }
     });
