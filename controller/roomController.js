@@ -26,13 +26,15 @@ async function allRoomList(req, res) {
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
+  console.log(userId);
   const Room = await Rooms.findOne({ where: { roomId: roomId } });
-  let chatingRooms = await Rooms.findAll({ where: { hostUserId: userId } });
-  if (!chatingRooms) {
-    let chatingRooms = await Rooms.findAll({ where: { roomUserId: userId } });
-  }
-  res.status(200),
-    send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
+  let chatingRooms = await Rooms.findAll({
+    where: {
+      [Op.or]: [{ hostId: userId }, { roomUserId: userId }],
+    }
+  });
+
+  res.status(200).send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
 }
 
 // async function keywordList(req, res) {
