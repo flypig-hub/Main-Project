@@ -3,8 +3,8 @@ const authMiddleware = require("../middlewares/auth-middleware");
 const roomController = require("../controller/roomController");
 const router = express.Router();
 
-router.get("/chat/:roomId", authMiddleware, roomController.callchats);
-router.get("/", authMiddleware, roomController.allRoomList);
+router.get("/chat/:roomId",  authMiddleware,  roomController.callchats);
+router.get("/", roomController.allRoomList);
 // router.get("/list/:roomId", authMiddleware, studyRoomCtl.keywordList);
 router.post("/", authMiddleware, roomController.createRoom);
 router.post("/:roomId", authMiddleware, roomController.enterRoom);
