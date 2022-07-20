@@ -53,7 +53,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: chatUser.userImage,
       });
-      console.log(newchat.nickName, newchat.userImage);
+      console.log(newchat.userNickname, newchat.userImg,newchat);
       socket.emit(
         "message",
         messageChat,
