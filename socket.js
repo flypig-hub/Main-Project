@@ -17,7 +17,7 @@ module.exports = (server, app) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-
+      console(enterRoom.title,"로 입장합니다");
       socket.join(enterRoom.title);
 
       if (!enterRoom) {
@@ -29,17 +29,17 @@ module.exports = (server, app) => {
       }
       socket.join(enterRoom.title);
       console.log(enterRoom.hostNickname);
-      if (enterRoom.hostNickname){
-        let nickName = enterRoom.hostNickname
-        console.log("닉네임=",nickName);
-        socket.to(enterRoom.title).emit("welcome", nickName );
-      }else{
-      let lastUser = [enterRoom.userNickname.length - 1]
-      let nickName = enterRoom.userNickname[lastUser];
-      socket.to(enterRoom.title).emit("welcome", nickName );
-      }
+      if (enterRoom.roomUserId===[]) {
+        let nickName = enterRoom.hostNickname;
+        console.log("호스트닉네임=", nickName);
+        socket.to(enterRoom.title).emit("welcome", nickName);
+      } else {
+        let lastUser = enterRoom.roomUserNickname.length-1;
+       
+        let nickName = enterRoom.roomUserNickname[lastUser];
       
-
+        socket.to(enterRoom.title).emit("welcome", nickName);
+      }
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
@@ -51,7 +51,6 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: chatUser.userImage,
       });
-
 
       socket.emit(
         "message",

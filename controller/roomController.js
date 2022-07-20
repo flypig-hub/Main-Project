@@ -27,9 +27,9 @@ async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
   const Room = await Rooms.findOne({ where: { roomId: roomId } });
-  let chatingRooms = await Rooms.findAll({ where: { hostUserId: userId  } });
-  if (!chatingRooms){
-  let chatingRooms = await Rooms.findAll({ where: { roomUserId: userId  } });
+  let chatingRooms = await Rooms.findAll({ where: { hostUserId: userId } });
+  if (!chatingRooms) {
+    let chatingRooms = await Rooms.findAll({ where: { roomUserId: userId } });
   }
   res.status(200),
     send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
@@ -69,7 +69,7 @@ async function Roomdetail(req, res) {
 async function createRoom(req, res) {
   try {
     const { title, max, hashTag } = req.body;
-    const { userId, nickname, userImage } = res.locals;
+    const { userId, nickname, userImageURL } = res.locals;
     const existRoom = await Rooms.findOne({
       where: { title: title },
     });
@@ -85,7 +85,7 @@ async function createRoom(req, res) {
       title: title,
       hostNickname: nickname,
       hostId: userId,
-      hostImg: userImage,
+      hostImg: userImageURL,
       createdAt: Date(),
       updatedAt: Date(),
       roomUserId: [],
@@ -102,38 +102,51 @@ async function createRoom(req, res) {
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
-  const { userId, nickname, userImage } = res.locals;
-  console.log("정보받기",roomId,userId, nickname, userImage)
+  const { userId, nickname, userImageURL } = res.locals;
+  console.log( roomId,userId, nickname, userImageURL);
   let room = await Rooms.findOne({ where: { roomId: roomId } });
-  try {
-    if (room.hostId==userId){
-      res.status(200).send({msg:"호스트가 입장하였습니다"});
-      return
-    }else{
-    let roomUserId = room.roomUserId.push(userId);
-    let roomUserNickname = room.roomUserNickname.push(nickname);
-    roomUserNum = room.roomUserNickname.langth + 1;
-    let roomUserImg = room.roomUserImg.push(userImage);
-    console.log(room.roomUserId,room.roomUserNickname,room.roomUserImg)
-    room = await Rooms.update(
-      { roomUserId: roomUserId },
-      { roomUserNickname: roomUserNickname },
-      { roomUserNum: roomUserNum },
-      { roomUserImg: roomUserImg }
-    );
-    console.log(room)
-    return res.status(201).send({ msg: "입장 완료", room });
-    };
-  } catch (err) {
-    res.status(400).send({
-      msg: "공개방 입장에 실패하였습니다.",
-    });
+  // try {
+  if (room.hostId == userId) {
+    res.status(200).send({ msg: "호스트가 입장하였습니다" });
+    return;
+  } 
+//   else {
+//     for (i = 0; i < room.roomUserId.length; i++) {
+//       if (userId == room.roomUserId[i]) 
+//       res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
+//       return
+//     }
+    
+//     room.roomUserId.push(userId);
+//     room.roomUserNickname.push(nickname);
+//     let roomUserNum = room.roomUserNickname.length + 1;
+//     room.roomUserImg.push(userImageURL);
+
+//      await Rooms.update(
+//        {
+//          roomUserId: room.roomUserId,
+//          roomUserImg: room.roomUserImg,
+//          roomUserNickname: room.roomUserNickname,
+//          roomUserNum: roomUserNum
+//        },
+//        { where: { roomId: roomId } }
+//      );
+    return res.status(201).send({ msg: "입장 완료" });
   }
-}
+//   }
+
+
+    
+//   } catch (err) {
+//     res.status(400).send({
+//       msg: "공개방 입장에 실패하였습니다.",
+//     });
+//   }
+// }
 
 async function exitRoom(req, res) {
   const { roomId } = req.params;
-  const { userId } = res.locals.user;
+  const { userId,nickname,userImgURL } = res.locals.user;
 
   const room = await Rooms.findOne({ where: { roomId: roomId } });
   console.log(room.roomUserNickname, room.roomUserNickname.userId, userId);
@@ -152,9 +165,9 @@ async function exitRoom(req, res) {
       (roomUsersNickname) => roomUsersNickname != nickname
     );
     const roomUsersImg = room.roomUserImg.filter(
-      (roomUsersImg) => roomUsersImg != userImg
+      (roomUsersImg) => roomUsersImg != userImgURL
     );
-      const roomUserNum = roomUsersId.langth+1
+    const roomUserNum = roomUsersId.length + 1;
     await room.update(
       { roomuserId: roomUsersId },
       { roomUserNickname: roomUsersNickname },
