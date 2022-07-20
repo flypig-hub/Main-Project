@@ -133,7 +133,7 @@ async function enterRoom(req, res) {
 //      );
     return res.status(201).send({ msg: "입장 완료" });
   }
-  }
+//   }
 
 
     
