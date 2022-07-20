@@ -30,7 +30,7 @@ module.exports = (server, app) => {
       console.log(enterRoom.title);
       socket.join(enterRoom.title);
       console.log(enterRoom.roomUserId);
-      if (enterRoom.roomUserId===[]) {
+      if (enterRoom.roomUserId.length===0) {
         let nickName = enterRoom.hostNickname;
         console.log("호스트닉네임=", nickName);
         socket.to(enterRoom.title).emit("welcome", nickName);
