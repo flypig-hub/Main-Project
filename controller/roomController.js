@@ -78,7 +78,7 @@ async function createRoom(req, res) {
     //  hostImg[userId] = userImage;
     // console.log(hostNickname, hostImg);
     console.log("1", max,
-     "1", hashTag,
+     "1", String(hashTag),
      "1", title,
     "1", nickname,
     "1", userImage,
@@ -89,7 +89,7 @@ async function createRoom(req, res) {
     "1",  null,)
     const newRoom = await Rooms.create({
       max: max,
-      hashTag: hashTag,
+      hashTag:String(hashTag),
       title: title,
       hostNickname: nickname,
       hostImg: userImage,
