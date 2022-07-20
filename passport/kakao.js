@@ -41,15 +41,14 @@ module.exports = () => {
                             snsId: profile.id,
                             provider: 'kakao',
                             nickname : profile._json.properties.nickname,
-                            userImage : profile._json.properties.thumbnail_image,
                             host : false,
                             email : profile._json.kakao_account.email
                         });
                         console.log(newUser, '새로운 유저');
                         console.log(profile._json.properties.thumbnail_image);                            
                         const newUserImage = await images.create({
+                            userId: newUser.userId,
                             userImageURL : profile._json.properties.thumbnail_image,
-                            
                         });
                         console.log(newUserImage, '이미지');
                         
