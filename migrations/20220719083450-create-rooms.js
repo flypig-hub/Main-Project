@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       hashTag: {
-        type: Sequelize.STRING,
+        type: Sequelize.JSON,
       },
       roomUserNickname: {
         type: Sequelize.STRING,
