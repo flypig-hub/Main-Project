@@ -14,22 +14,18 @@ module.exports = (server, app) => {
   app.set("io", io);
   io.on("connection", (socket) => {
     socket.on("join-room", async (roomId) => {
-      console.log(roomId);
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-      console.log(enterRoom, "로 입장합니다");
-      socket.join("엔터룸=", enterRoom);
-
       if (!enterRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
         });
         return;
       }
-      console.log(enterRoom.title);
+      
       socket.join(enterRoom.title);
-      console.log(io.sockets.adapter);
+
       if (enterRoom.roomUserId.length === 0) {
         let nickName = enterRoom.hostNickname;
         console.log("호스트닉네임=", nickName);
@@ -47,7 +43,7 @@ module.exports = (server, app) => {
       console.log(messageChat, userId, roomId);
       const chatUser = await users.findOne({ where: { userId: userId } });
       const userImg = await images.findOne({where: { userId: userId } });
-      console.log(chatUser[0], userImg[0], chatUser, userImg);
+      console.log(Object.values(chatUser), Object.values(userImg), chatUser.dataValues.nickname, userImg.dataValues.userImageURL);
       const newchat = await Chats.create({
         userNickname: chatUser.nickName,
         userId: userId,
@@ -55,12 +51,12 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: chatUser.userImage,
       });
-      console.log(newchat.userNickname, newchat.userImg,newchat);
+      console.log(io.sockets.adapter.sids);
       socket.emit(
         "message",
         messageChat,
-        "챗유저 닉네임",
-        "챗유저 유알엘",
+        chatUser.dataValues.nickname,
+        userImg.dataValues.userImageURL,
         roomId
       );
     });
