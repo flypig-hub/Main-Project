@@ -110,12 +110,12 @@ async function enterRoom(req, res) {
       res.status(200).send({msg:"호스트가 입장하였습니다"});
       return
     }else{
-    room.roomUserId.push(userId);
-    room.roomUserNickname.push(nickname);
+    let roomUserId = room.roomUserId.push(userId);
+    let roomUserNickname = room.roomUserNickname.push(nickname);
     roomUserNum = room.roomUserNickname.langth + 1;
-    room.roomUserImg.push(userImage);
+    let roomUserImg = room.roomUserImg.push(userImage);
     console.log(room.roomUserId,room.roomUserNickname,room.roomUserImg)
-    room = await room.update(
+    room = await Rooms.update(
       { roomUserId: roomUserId },
       { roomUserNickname: roomUserNickname },
       { roomUserNum: roomUserNum },
