@@ -41,11 +41,13 @@ module.exports = () => {
                             snsId: profile.id,
                             provider: 'kakao',
                             nickname : profile._json.properties.nickname,
-                            userImage : profile._json.properties.thumbnail_image,
                             host : false,
                             email : profile._json.kakao_account.email
                         });
-                        done(null, newUser); // 회원가입하고 로그인 인증 완료
+                        const newUserImage = await images.create({
+                            userImageURL : profile._json.properties.thumbnail_image,
+                        });
+                        done(null, newUser, newUserImage); // 회원가입하고 로그인 인증 완료
                         
                         console.log("가입완료")
                     }
