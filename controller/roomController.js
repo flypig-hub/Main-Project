@@ -1,5 +1,5 @@
 const { Rooms, Chats, sequelize, Sequelize } = require("../models");
-
+const Op = Sequelize.Op;
 async function callchats(req, res) {
   try {
     const { postId } = req.params;
