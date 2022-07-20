@@ -219,5 +219,5 @@ async function CNU_CK (req, res, next) {
 
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, CNU_CK, MypagePutImage
+  checkMe, Mypage, MypagePutname, CNU_CK, //MypagePutImage
 }
