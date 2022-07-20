@@ -64,27 +64,32 @@ async function allRoomList(req, res) {
 async function createRoom(req, res) {
   try {
     const { title, max, hashTag } = req.body;
-    const { userId, nickname, userImage } = res.locals;
+    const { userId, nickname, userImage } = res.locals
     const existRoom = await Rooms.findOne({
         where: { title: title },
       });
     if (existRoom) {
       return res.status(400).send({ msg: "방이름이 중복됩니다" });
     }
+    // let key = userId;
+    // let hostNickname = {};
+    // let hostImg = {};
+    // hostNickname[userId] = userImage;
+    //  hostImg[userId] = userImage;
+    // console.log(hostNickname, hostImg);
 
-    
-      const newRoom = await Rooms.create({
-          max: max,
-          hashTag:hashTag,
-        title: title,
-        hostNickname: (Object[userId] = nickname),
-        hostImg: (Object[userId] = userImage),
-        createdAt: Date(),
-        updatedAt: Date(),
-        roomUserNickname: [],
-        roomUserNum: 1,
-        roomUserImg: [],
-      });
+    const newRoom = await Rooms.create({
+      max: max,
+      hashTag: hashTag,
+      title: title,
+      hostNickname: nickname,
+      hostImg: userImage,
+      createdAt: Date(),
+      updatedAt: Date(),
+      roomUserNickname: null,
+      roomUserNum: 1,
+      roomUserImg: null,
+    });
 
     return res.status(200).send({ msg: "완료", newRoom });
   } catch (err) {
