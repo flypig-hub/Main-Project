@@ -19,7 +19,6 @@ module.exports = (server, app) => {
       });
 
       socket.join(enterRoom.title);
-      
 
       if (!enterRoom) {
         res.status(400).send({
@@ -30,9 +29,9 @@ module.exports = (server, app) => {
       }
       socket.join(enterRoom.title);
       const nickName =
-        enterRoom.userNickname[enterRoom.userNickname.length - 1];
-//       const roomName = enterRoom.title;
+      enterRoom.userNickname[enterRoom.userNickname.length - 1];
       socket.to(enterRoom.title).emit("welcome", nickName );
+
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
@@ -45,10 +44,14 @@ module.exports = (server, app) => {
         userImg: chatUser.userImage,
       });
 
-      socket.emit("message", messageChat, chatUser.nickName, chatUser.userImage, roomId);
-    });
-    socket.on("message", (message) => {
-      socket.to(roomID).emit("message", nickname, message);
+
+      socket.emit(
+        "message",
+        messageChat,
+        chatUser.nickName,
+        chatUser.userImage,
+        roomId
+      );
     });
   });
 };
