@@ -120,7 +120,7 @@ async function GetPostingList(req, res) {
 // 게시글 상세 조회(S3 기능 추가 예정)
 async function GetPost(req, res) {
   const { postId } = req.params;
-    const allPost = await posts.findOne({
+    const allPost = await posts.findAll({
       where: { postId },
       include: [{
         model: images,
@@ -128,6 +128,7 @@ async function GetPost(req, res) {
         attributes: ['postNumber', 'postImageURL', 'thumbnailURL']
       }],
     });
+    console.log(allPost);
   
     const postComments = await Comments.findOne({
       where: { postId },
@@ -139,17 +140,7 @@ async function GetPost(req, res) {
     console.log(postLikes);
     
     let islike = await Like.findOne({
-      // where: { userId: allPost.userId, postId: allPost.postId },
-      include: [{
-        model: posts,
-        required: true,
-        attributes: ['postId'],
-        include: [{
-          model: users,
-          required: true,
-          attributes: ['userId'],
-        }],
-      }],
+      where: { userId: allPost.userId, postId: allPost.postId },
     });
     console.log(islike);
     
