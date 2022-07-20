@@ -18,8 +18,8 @@ module.exports = (server, app) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-      console.log(enterRoom,"로 입장합니다");
-      socket.join("엔터룸=",enterRoom);
+      console.log(enterRoom, "로 입장합니다");
+      socket.join("엔터룸=", enterRoom);
 
       if (!enterRoom) {
         res.status(400).send({
@@ -30,21 +30,21 @@ module.exports = (server, app) => {
       console.log(enterRoom.title);
       socket.join(enterRoom.title);
       console.log(io.sockets.adapter);
-      if (enterRoom.roomUserId.length===0) {
+      if (enterRoom.roomUserId.length === 0) {
         let nickName = enterRoom.hostNickname;
         console.log("호스트닉네임=", nickName);
         socket.emit("welcome", nickName);
-      } 
-//       else {
-//         let lastUser = enterRoom.roomUserNickname.length-1;
-//         let nickName = enterRoom.roomUserNickname[lastUser];
-//         console.log("유저닉네임=", nickName);
-//         socket.to(enterRoom.title).emit("welcome", nickName);
-//       }
+      }
+      //       else {
+      //         let lastUser = enterRoom.roomUserNickname.length-1;
+      //         let nickName = enterRoom.roomUserNickname[lastUser];
+      //         console.log("유저닉네임=", nickName);
+      //         socket.to(enterRoom.title).emit("welcome", nickName);
+      //       }
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
-      console.log(messageChat,userId, roomId);
+      console.log(messageChat, userId, roomId);
       chatUser = await users.findOne({ where: { userId: userId } });
       const newchat = await Chats.create({
         userNickname: chatUser.nickName,
@@ -52,17 +52,15 @@ module.exports = (server, app) => {
         roomId: roomId,
         chat: messageChat,
         userImg: chatUser.userImage,
-        
-         
       });
-        socket.emit(
+      console.log(newchat.nickName, newchat.userImage);
+      socket.emit(
         "message",
         messageChat,
-        chatUser.nickName,
-        chatUser.userImage,
+        newchat.nickName,
+        newchat.userImage,
         roomId
       );
-     
     });
   });
 };
