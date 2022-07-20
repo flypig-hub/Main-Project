@@ -29,14 +29,17 @@ module.exports = async (req, res, next) => {
         const { userId } = jwt.verify(tokenValue, process.env.MY_KEY);
         //검증 성공시 locals에 인증 정보 넣어주기//
         console.log('userId',userId);
-       const loginuser = await users.findOne({ where: { userId } });
-       const loginuserImage = await images.findOne({ where: { userId } });
+       const loginuser =  await users.findOne({ where: { userId } });
         res.locals.userId = loginuser.userId
         res.locals.nickname = loginuser.nickname
+        res.locals.userImage = loginuser.userImage
         res.locals.host = loginuser.host
         res.locals.email = loginuser.email
+<<<<<<< HEAD
         res.locals.userImageURL = loginuserImage.userImageURL
 
+=======
+>>>>>>> 976f17465b75f713450a8e2bcea5815b2ae6579e
         next()
     } catch (error) {
         console.error(error);

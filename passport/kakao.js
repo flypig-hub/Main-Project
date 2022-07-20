@@ -41,6 +41,7 @@ module.exports = () => {
                             snsId: profile.id,
                             provider: 'kakao',
                             nickname : profile._json.properties.nickname,
+                            userImage : profile._json.properties.thumbnail_image,
                             host : false,
                             email : profile._json.kakao_account.email
                         });
