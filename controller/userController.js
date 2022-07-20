@@ -101,12 +101,11 @@ async function checkMe(req, res) {
     
     res.send({
       success:true,
+      email,
       userId,
       nickname,
       userImage,
-      host,
-      email
-
+      host
     });
   };
 
@@ -202,20 +201,17 @@ async function CNU_CK (req, res, next) {
         await users.update({host:true}, {where:{userId}})
         res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
       }
-        console.log(result)
+
       } catch (error) {
-        console.log("사업자 등록번호 오류", error);
-        res.status(400).send({
-        result: false,
-       });
+        console.error(error);
+        res.status(401).send({
+          errorMEssage: '국세청에 등록되지 않은 사업자등록번호입니다.',
+      })
+        return;
     }
   }
-      
-      
-
-
-        next();
-  };
+  next();
+};
 
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,

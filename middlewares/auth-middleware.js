@@ -34,6 +34,7 @@ module.exports = async (req, res, next) => {
         res.locals.nickname = loginuser.nickname
         res.locals.userImage = loginuser.userImage
         res.locals.host = loginuser.host
+        res.locals.email = loginuser.email
         next()
     } catch (error) {
         console.error(error);
