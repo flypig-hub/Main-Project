@@ -21,16 +21,16 @@ module.exports = {
         type: Sequelize.STRING,
       },
       hashTag: {
-        type: Sequelize.STRING,
+        type: Sequelize.JSON,
       },
       roomUserNickname: {
-        type: Sequelize.STRING,
+        type: Sequelize.JSON,
       },
       roomUserNum: {
         type: Sequelize.INTEGER,
       },
       roomUserImg: {
-        type: Sequelize.STRING,
+        type: Sequelize.JSON,
       },
       createdAt: {
         allowNull: false,

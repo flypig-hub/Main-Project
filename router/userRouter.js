@@ -44,7 +44,7 @@ router.get('/mypage', authMiddleware, Mypage)
 //닉네임 수정
 router.put('/mypage/:userId/nick', authMiddleware, MypagePutname)
 
-// //프로필 이미지 수정
+// 프로필 이미지 수정
 // router.put('/mypage/:userId/img', authMiddleware, MypagePutImage)
 
 //사업자 등록번호 조회
