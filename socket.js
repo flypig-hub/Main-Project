@@ -47,7 +47,7 @@ module.exports = (server, app) => {
       console.log(messageChat, userId, roomId);
       const chatUser = await users.findOne({ where: { userId: userId } });
       const userImg = await images.findOne({where: { userId: userId } });
-      console.log(chatUser[0].nickName, userImg[0].userImageURL, chatUser[0], userImg[0]);
+      console.log(chatUser[0], userImg[0], chatUser, userImg);
       const newchat = await Chats.create({
         userNickname: chatUser.nickName,
         userId: userId,
@@ -59,8 +59,8 @@ module.exports = (server, app) => {
       socket.emit(
         "message",
         messageChat,
-        newchat.nickName,
-        newchat.userImage,
+        "챗유저 닉네임",
+        "챗유저 유알엘",
         roomId
       );
     });
