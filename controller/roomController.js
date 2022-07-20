@@ -69,7 +69,7 @@ async function Roomdetail(req, res) {
 async function createRoom(req, res) {
   try {
     const { title, max, hashTag } = req.body;
-    const { userId, nickname, userImage } = res.locals;
+    const { userId, nickname, userImageURL } = res.locals;
     const existRoom = await Rooms.findOne({
       where: { title: title },
     });
@@ -85,7 +85,7 @@ async function createRoom(req, res) {
       title: title,
       hostNickname: nickname,
       hostId: userId,
-      hostImg: userImage,
+      hostImg: userImageURL,
       createdAt: Date(),
       updatedAt: Date(),
       roomUserId: [],
@@ -102,7 +102,7 @@ async function createRoom(req, res) {
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
-  const { userId, nickname, userImage } = res.locals;
+  const { userId, nickname, userImageURL } = res.locals;
   
   let room = await Rooms.findOne({ where: { roomId: roomId } });
   // try {
@@ -119,7 +119,7 @@ async function enterRoom(req, res) {
     room.roomUserId.push(userId);
     room.roomUserNickname.push(nickname);
     let roomUserNum = room.roomUserNickname.length + 1;
-    room.roomUserImg.push(userImage);
+    room.roomUserImg.push(userImageURL);
 
      await Rooms.update(
        {
@@ -145,7 +145,7 @@ async function enterRoom(req, res) {
 
 async function exitRoom(req, res) {
   const { roomId } = req.params;
-  const { userId } = res.locals.user;
+  const { userId,nickname,userImgURL } = res.locals.user;
 
   const room = await Rooms.findOne({ where: { roomId: roomId } });
   console.log(room.roomUserNickname, room.roomUserNickname.userId, userId);
@@ -164,9 +164,9 @@ async function exitRoom(req, res) {
       (roomUsersNickname) => roomUsersNickname != nickname
     );
     const roomUsersImg = room.roomUserImg.filter(
-      (roomUsersImg) => roomUsersImg != userImg
+      (roomUsersImg) => roomUsersImg != userImgURL
     );
-    const roomUserNum = roomUsersId.langth + 1;
+    const roomUserNum = roomUsersId.length + 1;
     await room.update(
       { roomuserId: roomUsersId },
       { roomUserNickname: roomUsersNickname },
