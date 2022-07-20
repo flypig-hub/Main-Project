@@ -19,11 +19,9 @@ module.exports = (server, app) => {
       });
 
       socket.join(enterRoom.title);
-      const existRoom = await Rooms.findOne({
-        where: { title: roomName },
-      });
+      
 
-      if (!existRoom) {
+      if (!enterRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
         });
