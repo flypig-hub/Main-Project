@@ -64,8 +64,7 @@ async function allRoomList(req, res) {
 async function createRoom(req, res) {
   try {
     const { title, max, hashTag } = req.body;
-    const { userId, nickname, userImage } = res.locals;
-    
+    const { userId, nickname, userImage } = res.locals
     const existRoom = await Rooms.findOne({
         where: { title: title },
       });
@@ -197,4 +196,3 @@ module.exports = {
 //   checkRoomPw,
 //   kickUser
 };
-
