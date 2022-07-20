@@ -14,19 +14,20 @@ module.exports = (server, app) => {
   app.set("io", io);
   io.on("connection", (socket) => {
     socket.on("join-room", async (roomId) => {
+      console.log(roomId);
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
       console(enterRoom,"로 입장합니다");
-      socket.join(enterRoom.title);
+      socket.join("엔터룸=",enterRoom);
 
       if (!enterRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
         });
-
         return;
       }
+      socket.join(enterRoom.title);
       socket.join(enterRoom.title);
       console.log(enterRoom.hostNickname);
       if (enterRoom.roomUserId===[]) {
