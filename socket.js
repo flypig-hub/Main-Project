@@ -31,13 +31,14 @@ module.exports = (server, app) => {
       console.log(enterRoom.hostNickname);
       if (enterRoom.hostNickname){
         let nickName = enterRoom.hostNickname
+        console.log("닉네임=",nickName);
+        socket.to(enterRoom.title).emit("welcome", nickName );
       }else{
       let lastUser = [enterRoom.userNickname.length - 1]
-      let nickName =
-      enterRoom.userNickname[lastUser];
-      }
-      console.log(nickName);
+      let nickName = enterRoom.userNickname[lastUser];
       socket.to(enterRoom.title).emit("welcome", nickName );
+      }
+      
 
     });
 
