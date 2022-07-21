@@ -13,7 +13,7 @@ const AWS = require("aws-sdk");
 // 게시글 작성(유저)
 async function WritePosting(req, res) {
   try {
-  const { userId, nickname, userImage } = res.locals;
+  const { userId, nickname, userImageURL } = res.locals;
   const {
     title,
     content,
@@ -36,7 +36,6 @@ async function WritePosting(req, res) {
 
   const postInfo = await posts.create({
     userId,
-    userImage,
     nickname,
     title,
     content,
@@ -58,13 +57,16 @@ async function WritePosting(req, res) {
     
     if (image) {
       const imagesInfo = images.create({
+        userId: userId,
+        nickname: nickname,
         postNumber: postInfo.postId,
         thumbnailURL: thumbnailURL.toString(),
         thumbnailKEY: thumbnailKEY.toString(),
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
-        userImageURL: userImage
+        userImageURL: userImageURL
       })
+      console.log(imagesInfo);
       return imagesInfo
     }
   });
@@ -84,9 +86,9 @@ async function GetPostingList(req, res) {
       attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL']
     }],
   });
-  console.log(allPost);
 
   const user = res.locals;
+
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
     const postComments = await Comments.findAll({
@@ -122,51 +124,47 @@ async function GetPostingList(req, res) {
 // 게시글 상세 조회(S3 기능 추가 예정)
 async function GetPost(req, res) {
   const { postId } = req.params;
-    const postList = await posts.findAll({
+    const allPost = await posts.findAll({
       where: { postId },
       include: [{
         model: images,
         required: true,
-        attributes: ['postNumber', 'postImageURL', 'thumbnailURL'],
-      }],
-    });
-    // console.log(postList);
+        attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL'],
+    },{
+      model: Comments,
+      required: true,
+      attributes: ['userId', 'nickname', 'postId', 'comment']
+    },{
+      model: Like,
+      required: true,
+      attributes: ['userId', 'postId']
+    }]
+  });
 
-    const postComments = await posts.findOne({
-      where: { postId },
-      include: [{
-        model: Comments,
-        required: true,
-        attributes: ['postId']
-      }],
-      commentNum: posts.commentNum 
-    });
-    console.log(postComments);
+    for (i = 0; i < allPost.length; i++) {
+      let post = allPost[i];
+      const postComments = await Comments.findAll({ where: { postId: post.postId } });
+      const postLikes = await Like.findAll({ where: { postId: post.postId } });
+      
+      let islike = await Like.findOne({
+        where: { userId: post.userId, postId: post.postId },
+      });
+  
+      const likeNum = postLikes.length;
+      const commentNum = postComments.length;
 
-    const postLikes = await Like.findOne({ 
-      where: { postId } 
-    });
-    // console.log(postLikes);
-    
-    let islike = await Like.findOne({
-      // where: { userId: allPost.userId, postId: allPost.postId },
-    });
-    // console.log(islike);
-    
-    const likeNum = postLikes.length;
-    const commentNum = postComments.Comments.length;
-    console.log(commentNum);
-    if (islike) {
-      islike = true;
-    } else {
-      islike = false;
+      if (islike) {
+        islike = true;
+      } else {
+        islike = false;
+      }
+
+      Object.assign(post, {
+        likeNum: likeNum,
+        commentNum: commentNum,
+        islike: islike,
+      });
     }
-    const allPost = Object.assign(postList, {
-      likeNum: likeNum,
-      commentNum: postComments.Comments.length,
-      islike: islike,
-    });
-    // console.log(allPost);
 
     res.send({ allPost });
  }
