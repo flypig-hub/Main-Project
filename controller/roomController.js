@@ -27,7 +27,7 @@ async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
  
-  const Room = await Rooms.findAll({ where: { roomId: roomId } });
+  let Room = await Rooms.findAll({ where: { roomId: roomId } });
   
   let chatingRooms = await Rooms.findAll({
     where: {
