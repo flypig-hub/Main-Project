@@ -48,9 +48,6 @@ async function Roomdetail(req, res) {
 }
  
 
-  res.status(200).send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
-}
-
 async function createRoom(req, res) {
   try {
     const { title, max, hashTag } = req.body;
