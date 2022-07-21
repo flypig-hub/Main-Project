@@ -48,14 +48,15 @@ const googleCallback = (req, res, next) => {
       (err, users, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host, email } = users
+          const { userImageURL } = images;
+          const { userId, nickname, host, email } = users
           const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
               userId,
               token,
               nickname,
-              userImage,
+              userImageURL,
               host,
               email
           }
