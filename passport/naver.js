@@ -40,7 +40,7 @@ module.exports = () => {
                      userImageURL : profile.profileImage,
                  });
                  console.log(newUserImage, '이미지');
-                  done(null, newUser, userImageURL);
+                  done(null, newUser, newUserImage);
                }
             } catch (error) {
                console.error(error);
