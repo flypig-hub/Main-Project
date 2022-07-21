@@ -112,7 +112,7 @@ async function checkMe(req, res) {
 // 마이페이지 정보
  async function Mypage (req, res) {
   // const {userId} = req.params;
-  const {nickname, userImage, host, email} = res.locals;
+  const {nickname, userImageURL, host, email} = res.locals;
   // const myposts = await posts.findOne({where : {nickname}});
   // const mypostlist = myposts.map((a) => ({
   //     postId : a.postId
@@ -121,7 +121,7 @@ async function checkMe(req, res) {
    res.json({
       result : true,
       nickname,
-      userImage,
+      userImageURL,
       host,
       email,
       // mypostlist,  //DB 수정이 필요
@@ -152,26 +152,37 @@ async function checkMe(req, res) {
 
 //프로필이미지 수정하기
  async function MypagePutImage (req, res) {
-   try {
-    const {userId} = res.locals;
-    // const {userImage} = req.body;
-    if (userImage !== null) {
-      const existUser = await users.findOne({where : {userId}});
-      if (existUser) {
-        await users.update({where:{userId}}, {userImage:userImage})
-      }
-    }
-    console.log(userImage);
 
+//try {
+  const image = req.files;
+  const userId = res.locals.userId
+  const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
+  const userImageURL = image.map((userImageURL) => userImageURL.location);
+  console.log(userImageKEY, userImageURL);
+  const existImage = await images.findOne({where : {userImageKEY}})
+  if (!existImage) {
+    const userImages = await images.update({
+      userId : res.locals.userId,
+      userImageKEY: userImageKEY.toString(), 
+      userImageURL: userImageURL.toString(),  
+      });
+    res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
+  }
+   
   
-  } catch (error) {
-    console.log("프로필 수정 오류", error);
-    res.status(400).send({
-      result: false,
-    });
- }
+  // const existImage = await images.findOne({where : {userImageKEY}})
+  // console.log(existImage,'여기까진 보이나')
+  // if (existImage == null){
+  //  await images.update({userImageURL, userImageKEY}, {where:{userId}});
+  //  res.status(200).send({result : true, message :"수정 완료"})
+  //  console.log(existImage, '이거 안나오지?')
+  // };
+  // console.log('수정아 보고싶다 ㅠㅠ')
+// } catch (error) {
+//   res.status(400).send({result : false, errorMessage: "프로필사진 수정실패",});
 
-}
+//   }
+ }
 
 // 사업자등록번호 검증
 
