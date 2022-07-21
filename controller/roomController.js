@@ -107,44 +107,41 @@ async function enterRoom(req, res) {
   const { userId, nickname, userImageURL } = res.locals;
   console.log( roomId,userId, nickname, userImageURL);
   let room = await Rooms.findOne({ where: { roomId: roomId } });
-  // try {
+  try {
   if (room.hostId == userId) {
     res.status(200).send({ msg: "호스트가 입장하였습니다" });
     return;
   } 
-//   else {
-//     for (i = 0; i < room.roomUserId.length; i++) {
-//       if (userId == room.roomUserId[i]) 
-//       res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
-//       return
-//     }
+  else {
+    for (i = 0; i < room.roomUserId.length; i++) {
+      if (userId == room.roomUserId[i]) 
+      res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
+      return
+    }
     
-//     room.roomUserId.push(userId);
-//     room.roomUserNickname.push(nickname);
-//     let roomUserNum = room.roomUserNickname.length + 1;
-//     room.roomUserImg.push(userImageURL);
+    room.roomUserId.push(userId);
+    room.roomUserNickname.push(nickname);
+    let roomUserNum = room.roomUserNickname.length + 1;
+    room.roomUserImg.push(userImageURL);
 
-//      await Rooms.update(
-//        {
-//          roomUserId: room.roomUserId,
-//          roomUserImg: room.roomUserImg,
-//          roomUserNickname: room.roomUserNickname,
-//          roomUserNum: roomUserNum
-//        },
-//        { where: { roomId: roomId } }
-//      );
+     await Rooms.update(
+       {
+         roomUserId: room.roomUserId,
+         roomUserImg: room.roomUserImg,
+         roomUserNickname: room.roomUserNickname,
+         roomUserNum: roomUserNum
+       },
+       { where: { roomId: roomId } }
+     );
     return res.status(201).send({ msg: "입장 완료" });
   }
-//   }
-
-
-    
-//   } catch (err) {
-//     res.status(400).send({
-//       msg: "공개방 입장에 실패하였습니다.",
-//     });
-//   }
-// }
+  }
+  } catch (err) {
+    res.status(400).send({
+      msg: "공개방 입장에 실패하였습니다.",
+    });
+  }
+}
 
 async function exitRoom(req, res) {
   const { roomId } = req.params;
