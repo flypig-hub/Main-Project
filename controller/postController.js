@@ -190,22 +190,25 @@ async function ModifyPosting(req, res) {
   });
 
   if (image) {
+    // S3 이미지 삭제 후 업로드
+
+
+
     await images.findByIdAndUpdate({
-      
+      postImageKEY,
     })
   } else {
     // 이미지가 없으면 existPost에서 찾은 이미지를 가져다 쓴다
   }
 
   const existImage = await images.findOne({
-    where: {  }
+    where: { postId }
   })
 
-  if (nickname !== existPost.nickname) {
+  if (userId !== existPost.userId) {
     res.status(400).send({ errorMessage: "접근 권한이 없습니다!" });
   }
 
-  // S3 이미지 업로드 및 수정
   const ModifyPost = await existPost.update({
     userId,
     userImage,
@@ -234,60 +237,81 @@ async function ModifyPosting(req, res) {
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost(req, res) {
   // try {
-  // const { userId, nickname, userImage } = res.locals;
+  const { userId, nickname } = res.locals;
   const { postId } = req.params;
+  console.log(postId);
 
-  const existPost = await posts.findOne({ where: { postId } });
-  const imageKey = await images.findOne({ where: { postImageKEY, thumbnailKEY } })
-  console.log(existPost);
-  console.log(imageKey);
+  const postImageInfo = await images.findAll({
+    where:{ postNumber: postId }
+  });
+  // console.log(postImageInfo);
 
-  const postImageKEY = imageKey.postImageKEY.map(postImageKEY => postImageKEY.split('com/')[1]);
-  console.log(postImageKEY);
+  const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
+  console.log(postImageKey);
+
+  postImageKey.forEach((element, i) => {
+    const postImageKEY = postImageKey[i];
+    // console.log(postImageKEY);
+    
+    if (postId) {
+    const s3 = new AWS.S3();
+        const params = {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Delete: {
+            Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+          }
+        };
+        // console.log(params.Delete)
+
+        s3.deleteObjects(params, function(err, data) {
+          if (err) console.log(err, err.stack); // error
+          else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+        });
+    }
+  });
+
+  
 
   // if (existPost) {
   //   const s3 = new AWS.S3();
   //   const params = {
   //       Bucket: process.env.AWS_BUCKET_NAME,
-  //       Delete: { Objects: [{ Key: postImageKEY.toString() }] }
+  //       Delete: { Objects: [{ Key: `images/${fileName}` }] }
   //   };
   //   console.log(params.Delete);
 
   //   s3.deleteObjects(params, function(err, data) {
-  //       if (err) console.log(err, 's3 deleteObject', data);
-  //       else { console.log("삭제되었습니다.", data) }
+  //     if (err) console.log(err, 's3 deleteObject', data);
+  //     else { console.log("삭제되었습니다.", data) }
   //   })
   // }
-  for (i = 0; i < fileName.length; i++) {
-    let deleteImages = fileName[i];
-    s3.deleteObjects({
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Delete: {
-         Objects: `images/${deleteImages}`
-    }
-    }, function (err, data) {
-      if (err) { throw err; }
-      console.log('s3 deleteObject', data);
-    });
-  }
+
+  // for (i = 0; i < fileName.length; i++) {
+  //   let deleteImages = fileName[i]; 
+  //   s3.deleteObjects({
+  //   Bucket: process.env.AWS_BUCKET_NAME,
+  //   Delete: {
+  //        Objects: `images/${deleteImages}`
+  //   }
+  //   }, function (err, data) {
+  //     if (err) { throw err; }
+  //     console.log('s3 deleteObject', data);
+  //   });
+  // }
   
 
   // 댓글, 게시글 삭제
-  // if (userId !== existPost.userId) {
-  //     res.send({msg: "삭제할 수 없습니다."})
-  // };
   // if (nickname !== existPost.nickname) {
   //     res.send({msg: "삭제할 수 없습니다."})
   // };
+  const destroyLike = await Like.destroy({ where: { postId } });
+  const destroyComment = await Comments.destroy({ where: { postId } });
+  const destroyImages = await images.destroy({ where: { postNumber: postId } });
   const destroyPost = await posts.destroy({ where: { postId } });
-  console.log(destroyPost);
-  // await Comment.destroy({
-  //     where: { postId }
-  // });
-  res.status(200).send({ msg: "게시글이 삭제되었습니다!" });
+
+  res.status(200).send({ postImageInfo, msg: "게시글이 삭제되었습니다!" });
   // } catch (e) {
-  //     res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
-  // }
+      // res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
 }
 module.exports.WritePosting = WritePosting;
 module.exports.GetPostingList = GetPostingList;
