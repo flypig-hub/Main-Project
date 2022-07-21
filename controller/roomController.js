@@ -141,7 +141,7 @@ async function enterRoom(req, res) {
       msg: "공개방 입장에 실패하였습니다.",
     });
   }
-}
+
 
 async function exitRoom(req, res) {
   const { roomId } = req.params;
