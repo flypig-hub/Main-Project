@@ -45,7 +45,7 @@ const googleCallback = (req, res, next) => {
   passport.authenticate(
       'google',
       { failureRedirect: '/' },
-      (err, users, info) => {
+      (err, users, images, info) => {
           if (err) return next(err)
           console.log('콜백')
           const { userImageURL } = images;
