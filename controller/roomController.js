@@ -109,8 +109,8 @@ async function createRoom(req, res) {
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
-  // const { userId, nickname, userImageURL } = res.locals;
-  const { userId, nickname, userImageURL } = req.body;
+  const { userId, nickname, userImageURL } = res.locals;
+  
   console.log("룸=",roomId, userId, nickname, userImageURL);
   let room = await Rooms.findOne({ where: { roomId: roomId } });
   try {
