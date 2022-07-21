@@ -26,47 +26,27 @@ async function allRoomList(req, res) {
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
-  console.log(userId);
-  const Room = await Rooms.findOne({ where: { roomId: roomId } });
+ 
+  let Room = await Rooms.findOne({ where: { roomId: roomId } });
+  let loadChat = []
+  if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
+     loadChat = await Chats.findAll({ where: { roomId: roomId },order: [["createdAt"]], });
+  }
   let chatingRooms = await Rooms.findAll({
     where: {
-      [Op.or]: [{ hostId: userId }, { roomUserId: userId }],
-    }
+      [Op.or]: [
+        { hostId: userId },
+        { roomUserId: { [Op.substring]: userId } },
+      ],
+    },
   });
+ 
 
-  res.status(200).send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
+  res
+    .status(200)
+    .send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room, loadChat });
 }
-
-// async function keywordList(req, res) {
-//   const { roomId } = req.params;
-//     try {
-
-//     const keywordRoom = await Room.findAll({
-//       where: { purpose: roomPurpose },
-//       attributes: { exclude: ["roomPassword"] },
-//       order: [["createdAt", "DESC"]],
-//       include: [
-//         {
-//           model: PersonInRoom,
-//           as: "peopleInRoom",
-//           attributes: ["userId", "createdAt", "nick"],
-//           raw: true,
-//         },
-//       ],
-//     });
-//     const startedRoom = await Room.findOne({
-//       attributes: [
-//         [Sequelize.fn("COUNT", Sequelize.col("isStarted")), "count"],
-//       ],
-//       where: { purpose: roomPurpose },
-//     });
-//     res.status(200).send({ list: keywordRoom, startedCnt: startedRoom });
-//   } catch (err) {
-//     return res
-//       .status(400)
-//       .send({ msg: "해당 키워드의 스터디룸 리스트 조회에 실패했습니다." });
-//   }
-// }
+ 
 
 async function createRoom(req, res) {
   try {
@@ -105,38 +85,57 @@ async function createRoom(req, res) {
 async function enterRoom(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImageURL } = res.locals;
-  console.log(roomId, userId, nickname, userImageURL);
+  
+  console.log("룸=",roomId, userId, nickname, userImageURL);
   let room = await Rooms.findOne({ where: { roomId: roomId } });
   try {
     if (room.hostId == userId) {
       res.status(200).send({ msg: "호스트가 입장하였습니다" });
+      return
+    }
+    if (Number(room.max) < room.roomUserId.length) {
+      res.status(400).send({
+        msg: "입장 가능 인원을 초과하였습니다.",
+      });
       return;
     }
-    else {
-      for (i = 0; i < room.roomUserId.length; i++) {
-        if (userId == room.roomUserId[i])
-          res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
-        return
-      }
-    
-      room.roomUserId.push(userId);
-      room.roomUserNickname.push(nickname);
-      let roomUserNum = room.roomUserNickname.length + 1;
-      room.roomUserImg.push(userImageURL);
-
-      await Rooms.update(
-        {
-          roomUserId: room.roomUserId,
-          roomUserImg: room.roomUserImg,
-          roomUserNickname: room.roomUserNickname,
-          roomUserNum: roomUserNum
-        },
-        { where: { roomId: roomId } }
-      );
-      return res.status(201).send({ msg: "입장 완료" });
-    }
+    if (room.roomUserId.includes(userId)) { 
+    res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
+    return
   }
-  catch (err) {
+      
+    room.roomUserId.push(userId);
+    room.roomUserNickname.push(nickname);
+    let roomUserNum = room.roomUserNickname.length + 1;
+    room.roomUserImg.push(userImageURL);
+
+    await Rooms.update(
+      {
+        roomUserId: room.roomUserId,
+        roomUserImg: room.roomUserImg,
+        roomUserNickname: room.roomUserNickname,
+        roomUserNum: roomUserNum
+      },
+      { where: { roomId: roomId } }
+    );
+    room = {
+      roomId: room.roomId,
+      title: room.title,
+      hostId: room.hostId,
+      hostNickname: room.hostNickname,
+      hostImg: room.hostImg,
+      max: room.max,
+      hashTag: room.hashTag,
+      roomUserId: room.roomUserId,
+      roomUserNickname: room.roomUserNickname,
+      roomUserNum: room.roomUserNum,
+      roomUserImg: room.roomUserImg,
+      createdAt: room.createdAt,
+      updatedAt: room.updatedAt,
+    };
+    console.log(room);
+   res.status(201).send({ msg: "입장 완료", room });
+      } catch (err) {
     res.status(400).send({
       msg: "공개방 입장에 실패하였습니다.",
     });
@@ -176,29 +175,13 @@ async function exitRoom(req, res) {
   }
 }
 
-// async function kickUser(req, res) {
-//     const { userId,roomId } = req.params;
-
-//     const room = await Rooms.findOne({ where: { roomId: roomId } });
-
-//     if (userId !== room.hostNickname.userId) {
-//         res.status(400).send({
-//             msg: "강퇴기능은 룸 호스트만 사용 가능합니다."
-//         })
-
-//     }
-
-// }
 
 module.exports = {
   callchats,
-  //   keywordList,
   allRoomList,
   createRoom,
   enterRoom,
   exitRoom,
-  //   checkRoomPw,
-  //   kickUser
   Roomdetail,
 };
 

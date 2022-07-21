@@ -45,17 +45,18 @@ const googleCallback = (req, res, next) => {
   passport.authenticate(
       'google',
       { failureRedirect: '/' },
-      (err, users, info) => {
+      (err, users, images, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host, email } = users
+          const { userImageURL } = images;
+          const { userId, nickname, host, email } = users
           const token = jwt.sign({ userId }, 'mendorong-jeju')
 
           result = {
               userId,
               token,
               nickname,
-              userImage,
+              userImageURL,
               host,
               email
           }
@@ -74,17 +75,18 @@ const naverCallback = (req, res, next) => {
   passport.authenticate(
       'naver',
       { failureRedirect: '/' },
-      (err, users, info) => {
+      (err, users, images, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host, email } = users
+          const { userImageURL } = images;
+          const { userId, nickname, host, email } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               userId,
               token,
               nickname,
-              userImage,
+              userImageURL,
               host,
               email
           }
@@ -112,7 +114,7 @@ async function checkMe(req, res) {
 // 마이페이지 정보
  async function Mypage (req, res) {
   // const {userId} = req.params;
-  const {nickname, userImage, host, email} = res.locals;
+  const {nickname, userImageURL, host, email} = res.locals;
   // const myposts = await posts.findOne({where : {nickname}});
   // const mypostlist = myposts.map((a) => ({
   //     postId : a.postId
@@ -121,7 +123,7 @@ async function checkMe(req, res) {
    res.json({
       result : true,
       nickname,
-      userImage,
+      userImageURL,
       host,
       email,
       // mypostlist,  //DB 수정이 필요
@@ -152,26 +154,20 @@ async function checkMe(req, res) {
 
 //프로필이미지 수정하기
  async function MypagePutImage (req, res) {
-   try {
-    const {userId} = res.locals;
-    // const {userImage} = req.body;
-    if (userImage !== null) {
-      const existUser = await users.findOne({where : {userId}});
-      if (existUser) {
-        await users.update({where:{userId}}, {userImage:userImage})
-      }
-    }
-    console.log(userImage);
 
-  
-  } catch (error) {
-    console.log("프로필 수정 오류", error);
-    res.status(400).send({
-      result: false,
-    });
+//try {
+  const image = req.files;
+  const userId = res.locals.userId
+  const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
+  const userImageURL = image.map((userImageURL) => userImageURL.location);
+  console.log(userImageKEY, userImageURL, '업로드까지');
+  const existImage = await images.findOne({where : {userId}})
+  if (existImage) {
+    const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
+    {where :{userId},});
+    res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
+  }  
  }
-
-}
 
 // 사업자등록번호 검증
 

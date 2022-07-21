@@ -13,6 +13,12 @@ module.exports = (server, app) => {
   });
   app.set("io", io);
   io.on("connection", (socket) => {
+    socket.onAny((event) => {
+      
+      console.log(`Socket Event:${event}`);
+      console.log(io.sockets.adapter);
+      
+    });
     socket.on("join-room", async (roomId) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
@@ -31,28 +37,29 @@ module.exports = (server, app) => {
         console.log("호스트닉네임=", nickName);
         socket.emit("welcome", nickName);
       }
-      //       else {
-      //         let lastUser = enterRoom.roomUserNickname.length-1;
-      //         let nickName = enterRoom.roomUserNickname[lastUser];
-      //         console.log("유저닉네임=", nickName);
-      //         socket.to(enterRoom.title).emit("welcome", nickName);
-      //       }
+            else {
+              let lastUser = enterRoom.roomUserNickname.length-1;
+              let nickName = enterRoom.roomUserNickname[lastUser];
+              console.log("유저닉네임=", nickName);
+              socket.to(enterRoom.title).emit("welcome", nickName);
+            }
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
       console.log(messageChat, userId, roomId);
       const chatUser = await users.findOne({ where: { userId: userId } });
       const userImg = await images.findOne({where: { userId: userId } });
+      const room = await Rooms.findOne({where: { roomId: roomId } });
       console.log(Object.values(chatUser), Object.values(userImg), chatUser.dataValues.nickname, userImg.dataValues.userImageURL);
       const newchat = await Chats.create({
-        userNickname: chatUser.nickName,
+        userNickname: chatUser.dataValues.nickname,
         userId: userId,
         roomId: roomId,
         chat: messageChat,
-        userImg: chatUser.userImage,
+        userImg: userImg.dataValues.userImageURL,
       });
-      console.log(io.sockets.adapter.sids);
-      socket.emit(
+      console.log(room.title);
+      socket.to(room.title).emit(
         "message",
         messageChat,
         chatUser.dataValues.nickname,
