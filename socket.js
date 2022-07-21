@@ -52,7 +52,7 @@ module.exports = (server, app) => {
         userImg: userImg.dataValues.userImageURL,
       });
       console.log(io.sockets.adapter.sids);
-      socket.emit(
+      socket.to()emit(
         "message",
         messageChat,
         chatUser.dataValues.nickname,
