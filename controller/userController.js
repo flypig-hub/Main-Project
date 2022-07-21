@@ -75,17 +75,18 @@ const naverCallback = (req, res, next) => {
   passport.authenticate(
       'naver',
       { failureRedirect: '/' },
-      (err, users, info) => {
+      (err, users, images, info) => {
           if (err) return next(err)
           console.log('콜백')
-          const { userId, nickname, userImage, host, email } = users
+          const { userImageURL } = images;
+          const { userId, nickname, host, email } = users
           const token = jwt.sign({ userId }, process.env.MY_KEY)
 
           result = {
               userId,
               token,
               nickname,
-              userImage,
+              userImageURL,
               host,
               email
           }
