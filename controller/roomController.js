@@ -109,39 +109,36 @@ async function createRoom(req, res) {
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
-  const { userId, nickname, userImageURL } = res.locals;
-  console.log(roomId, userId, nickname, userImageURL);
+  // const { userId, nickname, userImageURL } = res.locals;
+  const { userId, nickname, userImageURL } = req.body;
+  console.log("룸=",roomId, userId, nickname, userImageURL);
   let room = await Rooms.findOne({ where: { roomId: roomId } });
   try {
     if (room.hostId == userId) {
       res.status(200).send({ msg: "호스트가 입장하였습니다" });
-      return;
+      return
     }
-    else {
-      for (i = 0; i < room.roomUserId.length; i++) {
-        if (userId == room.roomUserId[i])
-          res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
-        return
-      }
-    
-      room.roomUserId.push(userId);
-      room.roomUserNickname.push(nickname);
-      let roomUserNum = room.roomUserNickname.length + 1;
-      room.roomUserImg.push(userImageURL);
-
-      await Rooms.update(
-        {
-          roomUserId: room.roomUserId,
-          roomUserImg: room.roomUserImg,
-          roomUserNickname: room.roomUserNickname,
-          roomUserNum: roomUserNum
-        },
-        { where: { roomId: roomId } }
-      );
-      return res.status(201).send({ msg: "입장 완료" });
-    }
+    if (room.roomUserId.includes(userId)) { 
+    res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
+    return
   }
-  catch (err) {
+      
+    room.roomUserId.push(userId);
+    room.roomUserNickname.push(nickname);
+    let roomUserNum = room.roomUserNickname.length + 1;
+    room.roomUserImg.push(userImageURL);
+
+    await Rooms.update(
+      {
+        roomUserId: room.roomUserId,
+        roomUserImg: room.roomUserImg,
+        roomUserNickname: room.roomUserNickname,
+        roomUserNum: roomUserNum
+      },
+      { where: { roomId: roomId } }
+    );
+   res.status(201).send({ msg: "입장 완료", room });
+      } catch (err) {
     res.status(400).send({
       msg: "공개방 입장에 실패하였습니다.",
     });
