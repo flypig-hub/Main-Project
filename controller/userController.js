@@ -160,30 +160,13 @@ async function checkMe(req, res) {
   const userId = res.locals.userId
   const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
   const userImageURL = image.map((userImageURL) => userImageURL.location);
-  console.log(userImageKEY, userImageURL);
-  const existImage = await images.findOne({where : {userImageKEY}})
-  if (!existImage) {
-    const userImages = await images.update({
-      userId : res.locals.userId,
-      userImageKEY: userImageKEY.toString(), 
-      userImageURL: userImageURL.toString(),  
-      });
+  console.log(userImageKEY, userImageURL, '업로드까지');
+  const existImage = await images.findOne({where : {userId}})
+  if (existImage) {
+    const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
+    {where :{userId},});
     res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
-  }
-   
-  
-  // const existImage = await images.findOne({where : {userImageKEY}})
-  // console.log(existImage,'여기까진 보이나')
-  // if (existImage == null){
-  //  await images.update({userImageURL, userImageKEY}, {where:{userId}});
-  //  res.status(200).send({result : true, message :"수정 완료"})
-  //  console.log(existImage, '이거 안나오지?')
-  // };
-  // console.log('수정아 보고싶다 ㅠㅠ')
-// } catch (error) {
-//   res.status(400).send({result : false, errorMessage: "프로필사진 수정실패",});
-
-//   }
+  }  
  }
 
 // 사업자등록번호 검증
