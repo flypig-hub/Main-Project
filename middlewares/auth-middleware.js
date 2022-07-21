@@ -35,7 +35,6 @@ module.exports = async (req, res, next) => {
         res.locals.nickname = loginuser.nickname
         res.locals.host = loginuser.host
         res.locals.email = loginuser.email
-        res.locals.userImage = loginuser.userImage
         res.locals.userImageURL = loginuserImage.userImageURL
 
         next()
