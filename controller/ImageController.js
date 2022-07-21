@@ -171,4 +171,4 @@ async function DeleteImages(req, res) {
 module.exports.PostImage = PostImage;
 module.exports.GetImages = GetImages;
 module.exports.DeleteImages = DeleteImages;
-module.exports.ProfilesImage = ProfilesImage;
+
