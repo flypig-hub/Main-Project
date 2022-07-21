@@ -45,13 +45,13 @@ module.exports = (server, app) => {
       const userImg = await images.findOne({where: { userId: userId } });
       console.log(Object.values(chatUser), Object.values(userImg), chatUser.dataValues.nickname, userImg.dataValues.userImageURL);
       const newchat = await Chats.create({
-        userNickname: chatUser.nickName,
+        userNickname: chatUser.dataValues.nickname,
         userId: userId,
         roomId: roomId,
         chat: messageChat,
-        userImg: chatUser.userImage,
+        userImg: userImg.dataValues.userImageURL,
       });
-      console.log(io.sockets.adapter.sids, io.sockets.adapter.rooms);
+      console.log(io.sockets.adapter.sids);
       socket.emit(
         "message",
         messageChat,
