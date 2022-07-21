@@ -23,8 +23,7 @@ async function WritePosting(req, res) {
     type,
     link,
     houseTitle,
-    imageKEY,
-  } = req.body;
+    } = req.body;
   const image = req.files;
 
   const postImageKey = image.map((postImageKey) => postImageKey.key);
@@ -79,6 +78,7 @@ async function WritePosting(req, res) {
 
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
+  const user = res.locals;
   let allPost = await posts.findAll({
     include: [{
       model: images,
@@ -86,8 +86,6 @@ async function GetPostingList(req, res) {
       attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL']
     }],
   });
-
-  const user = res.locals;
 
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
@@ -141,40 +139,39 @@ async function GetPost(req, res) {
     }]
   });
 
-    for (i = 0; i < allPost.length; i++) {
-      let post = allPost[i];
-      const postComments = await Comments.findAll({ where: { postId: post.postId } });
-      const postLikes = await Like.findAll({ where: { postId: post.postId } });
-      
-      let islike = await Like.findOne({
-        where: { userId: post.userId, postId: post.postId },
-      });
-  
-      const likeNum = postLikes.length;
-      const commentNum = postComments.length;
+  for (i = 0; i < allPost.length; i++) {
+    let post = allPost[i];
+    const postComments = await Comments.findAll({ where: { postId: post.postId } });
+    const postLikes = await Like.findAll({ where: { postId: post.postId } });
+    
+    let islike = await Like.findOne({
+      where: { userId: post.userId, postId: post.postId },
+    });
 
-      if (islike) {
-        islike = true;
-      } else {
-        islike = false;
-      }
+    const likeNum = postLikes.length;
+    const commentNum = postComments.length;
 
-      Object.assign(post, {
-        likeNum: likeNum,
-        commentNum: commentNum,
-        islike: islike,
-      });
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
     }
 
-    res.send({ allPost });
+    Object.assign(post, {
+      likeNum: likeNum,
+      commentNum: commentNum,
+      islike: islike,
+    });
+  }
+
+  res.send({ allPost });
  }
 
 
 // 게시글 수정 (S3 기능 추가 예정)
-
 async function ModifyPosting(req, res) {
   // try {
-  const { userId, userImage, nickname } = res.locals;
+  const { userId, userImageURL, nickname } = res.locals;
   const { postId } = req.params;
   const {
     title,
@@ -185,7 +182,6 @@ async function ModifyPosting(req, res) {
     type,
     link,
     houseTitle,
-    imageKEY,
   } = req.body;
   const image = req.files;
 
@@ -194,7 +190,9 @@ async function ModifyPosting(req, res) {
   });
 
   if (image) {
-    // 이미지가 들어오면 수정해준다
+    await images.findByIdAndUpdate({
+      
+    })
   } else {
     // 이미지가 없으면 existPost에서 찾은 이미지를 가져다 쓴다
   }
@@ -207,11 +205,7 @@ async function ModifyPosting(req, res) {
     res.status(400).send({ errorMessage: "접근 권한이 없습니다!" });
   }
 
-  
-
   // S3 이미지 업로드 및 수정
-
-
   const ModifyPost = await existPost.update({
     userId,
     userImage,
