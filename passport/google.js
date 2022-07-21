@@ -3,7 +3,7 @@ require('dotenv').config();
 const { access } = require('fs');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { users, sequelize, Sequelize } = require("../models");
+const { users, images, sequelize, Sequelize } = require("../models");
 
 module.exports = () => {
     passport.use(
