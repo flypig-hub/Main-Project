@@ -58,7 +58,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: userImg.dataValues.userImageURL,
       });
-      
+      console.log(room.title);
       socket.to(room.title).emit(
         "message",
         messageChat,
