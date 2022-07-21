@@ -31,12 +31,12 @@ module.exports = (server, app) => {
         console.log("호스트닉네임=", nickName);
         socket.emit("welcome", nickName);
       }
-      //       else {
-      //         let lastUser = enterRoom.roomUserNickname.length-1;
-      //         let nickName = enterRoom.roomUserNickname[lastUser];
-      //         console.log("유저닉네임=", nickName);
-      //         socket.to(enterRoom.title).emit("welcome", nickName);
-      //       }
+            else {
+              let lastUser = enterRoom.roomUserNickname.length-1;
+              let nickName = enterRoom.roomUserNickname[lastUser];
+              console.log("유저닉네임=", nickName);
+              socket.to(enterRoom.title).emit("welcome", nickName);
+            }
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
@@ -51,7 +51,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: chatUser.userImage,
       });
-      console.log(io.sockets.adapter.sids);
+      console.log(io.sockets.adapter.sids, io.sockets.adapter.rooms);
       socket.emit(
         "message",
         messageChat,
