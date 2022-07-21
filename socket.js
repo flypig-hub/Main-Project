@@ -16,6 +16,7 @@ module.exports = (server, app) => {
     socket.onAny((event) => {
       
       console.log(`Socket Event:${event}`);
+      console.log(io.sockets.adapter);
       
     });
     socket.on("join-room", async (roomId) => {
@@ -56,7 +57,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: userImg.dataValues.userImageURL,
       });
-      console.log(io.sockets.adapter.sids);
+      
       socket.to(roomId).emit(
         "message",
         messageChat,
