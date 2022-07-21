@@ -13,6 +13,11 @@ module.exports = (server, app) => {
   });
   app.set("io", io);
   io.on("connection", (socket) => {
+    socket.onAny((event) => {
+      
+      console.log(`Socket Event:${event}`);
+      
+    });
     socket.on("join-room", async (roomId) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
