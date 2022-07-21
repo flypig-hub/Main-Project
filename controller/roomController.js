@@ -26,8 +26,8 @@ async function allRoomList(req, res) {
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
-  console.log(userId);
-  const Room = await Rooms.findOne({ where: { roomId: roomId } });
+ 
+  const Room = await Rooms.findAll({ where: { roomId: roomId } });
   
   let chatingRooms = await Rooms.findAll({
     where: {
@@ -137,6 +137,22 @@ async function enterRoom(req, res) {
       },
       { where: { roomId: roomId } }
     );
+    room = {
+      roomId: room.roomId,
+      title: room.title,
+      hostId: room.hostId,
+      hostNickname: room.hostNickname,
+      hostImg: room.hostImg,
+      max: room.max,
+      hashTag: room.hashTag,
+      roomUserId: room.roomUserId,
+      roomUserNickname: room.roomUserNickname,
+      roomUserNum: room.roomUserNum,
+      roomUserImg: room.roomUserImg,
+      createdAt: room.createdAt,
+      updatedAt: room.updatedAt,
+    };
+
    res.status(201).send({ msg: "입장 완료", room });
       } catch (err) {
     res.status(400).send({
