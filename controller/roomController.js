@@ -152,7 +152,7 @@ async function enterRoom(req, res) {
       createdAt: room.createdAt,
       updatedAt: room.updatedAt,
     };
-
+    console.log(room);
    res.status(201).send({ msg: "입장 완료", room });
       } catch (err) {
     res.status(400).send({
