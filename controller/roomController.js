@@ -28,11 +28,16 @@ async function Roomdetail(req, res) {
   const { userId } = res.locals;
   console.log(userId);
   const Room = await Rooms.findOne({ where: { roomId: roomId } });
+  
   let chatingRooms = await Rooms.findAll({
     where: {
-      [Op.or]: [{ hostId: userId }, { roomUserId: userId }],
-    }
+      [Op.or]: [
+        { hostId: userId },
+        { roomUserId: { [Op.substring]: userId } },
+      ],
+    },
   });
+ 
 
   res.status(200).send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
 }
