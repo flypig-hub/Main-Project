@@ -27,8 +27,11 @@ async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId } = res.locals;
  
-  let Room = await Rooms.findAll({ where: { roomId: roomId } });
-  
+  let Room = await Rooms.findOne({ where: { roomId: roomId } });
+  let loadChat = []
+  if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
+     loadChat = await Chats.findAll({ where: { roomId: roomId },order: [["createdAt"]], });
+  }
   let chatingRooms = await Rooms.findAll({
     where: {
       [Op.or]: [
@@ -39,39 +42,14 @@ async function Roomdetail(req, res) {
   });
  
 
+  res
+    .status(200)
+    .send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room, loadChat });
+}
+ 
+
   res.status(200).send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room });
 }
-
-// async function keywordList(req, res) {
-//   const { roomId } = req.params;
-//     try {
-
-//     const keywordRoom = await Room.findAll({
-//       where: { purpose: roomPurpose },
-//       attributes: { exclude: ["roomPassword"] },
-//       order: [["createdAt", "DESC"]],
-//       include: [
-//         {
-//           model: PersonInRoom,
-//           as: "peopleInRoom",
-//           attributes: ["userId", "createdAt", "nick"],
-//           raw: true,
-//         },
-//       ],
-//     });
-//     const startedRoom = await Room.findOne({
-//       attributes: [
-//         [Sequelize.fn("COUNT", Sequelize.col("isStarted")), "count"],
-//       ],
-//       where: { purpose: roomPurpose },
-//     });
-//     res.status(200).send({ list: keywordRoom, startedCnt: startedRoom });
-//   } catch (err) {
-//     return res
-//       .status(400)
-//       .send({ msg: "해당 키워드의 스터디룸 리스트 조회에 실패했습니다." });
-//   }
-// }
 
 async function createRoom(req, res) {
   try {
@@ -117,6 +95,12 @@ async function enterRoom(req, res) {
     if (room.hostId == userId) {
       res.status(200).send({ msg: "호스트가 입장하였습니다" });
       return
+    }
+    if (Number(room.max) < room.roomUserId.length) {
+      res.status(400).send({
+        msg: "입장 가능 인원을 초과하였습니다.",
+      });
+      return;
     }
     if (room.roomUserId.includes(userId)) { 
     res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
@@ -194,29 +178,13 @@ async function exitRoom(req, res) {
   }
 }
 
-// async function kickUser(req, res) {
-//     const { userId,roomId } = req.params;
-
-//     const room = await Rooms.findOne({ where: { roomId: roomId } });
-
-//     if (userId !== room.hostNickname.userId) {
-//         res.status(400).send({
-//             msg: "강퇴기능은 룸 호스트만 사용 가능합니다."
-//         })
-
-//     }
-
-// }
 
 module.exports = {
   callchats,
-  //   keywordList,
   allRoomList,
   createRoom,
   enterRoom,
   exitRoom,
-  //   checkRoomPw,
-  //   kickUser
   Roomdetail,
 };
 
