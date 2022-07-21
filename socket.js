@@ -49,6 +49,7 @@ module.exports = (server, app) => {
       console.log(messageChat, userId, roomId);
       const chatUser = await users.findOne({ where: { userId: userId } });
       const userImg = await images.findOne({where: { userId: userId } });
+      const room = await Rooms.findOne({where: { roomId: roomId } });
       console.log(Object.values(chatUser), Object.values(userImg), chatUser.dataValues.nickname, userImg.dataValues.userImageURL);
       const newchat = await Chats.create({
         userNickname: chatUser.dataValues.nickname,
@@ -58,7 +59,7 @@ module.exports = (server, app) => {
         userImg: userImg.dataValues.userImageURL,
       });
       
-      socket.to(roomId).emit(
+      socket.to(room.title).emit(
         "message",
         messageChat,
         chatUser.dataValues.nickname,
