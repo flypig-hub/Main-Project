@@ -13,6 +13,7 @@ const {
     MypagePutImage,
     CNU_CK
 } = require("../controller/userController")
+const upload = require("../middlewares/S3-middleware");
 
 
 
@@ -46,7 +47,7 @@ router.get('/mypage', authMiddleware, Mypage)
 router.put('/mypage/:userId/nick', authMiddleware, MypagePutname)
 
 // 프로필 이미지 수정
-// router.put('/mypage/:userId/img', authMiddleware, MypagePutImage)
+router.put('/mypage/:userId/img', authMiddleware, upload.array('images', 1), MypagePutImage)
 
 //사업자 등록번호 조회
 router.put('/mypage/checkCNU', authMiddleware, CNU_CK)
