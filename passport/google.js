@@ -27,7 +27,7 @@ module.exports = () => {
                         where : {snsId: profile.id},
                     });
                     const exUserImg = await images.findOne({
-                        where : {userImageURL: profile._json.properties.thumbnail_image}
+                        where : {userImageURL: profile.photos[0].value}
                     })
                     console.log(exUserImg, '이미지 중복일때를 확인해야해')
                     // 이미 가입된 구글 프로필이면 성공
