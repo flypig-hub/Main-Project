@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { users, images, sequelize, Sequelize } = require("../models");
+require('dotenv').config();
 
 module.exports = async (req, res, next) => {
     const { authorization } = req.headers;
