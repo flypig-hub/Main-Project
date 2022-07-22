@@ -31,13 +31,6 @@ module.exports = (server, app) => {
       }
       console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
-      
-      console.log(
-//         "이 룸의 클라이언트 = ",
-//         io.sockets.clients(enterRoom.title),
-        "룸 리스트 = ", io.sockets.manager.rooms,
-        "내 소켓ID = ", socket.id
-      );
 
       if (enterRoom.roomUserId.length === 0) {
         let nickName = enterRoom.hostNickname;
