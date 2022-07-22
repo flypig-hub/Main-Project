@@ -45,7 +45,7 @@ module.exports = (server, app) => {
       
       if (enterRoom.dataValues.hostId == userId)
       {console.log("호스트입니다.")}
-      else(!enterRoom.dataValues.roomUserId.includes(userId))
+      else if (!enterRoom.dataValues.roomUserId.includes(userId))
       {
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
         enterRoom.roomUserId.push(Number(userId));
