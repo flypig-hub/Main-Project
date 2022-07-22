@@ -38,12 +38,12 @@ module.exports = (server, app) => {
       });
       
       console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-      console.log("1.userid 2.enterRoom.dataValues.roomUserId.includes ",userId,enterRoom.dataValues.roomUserId,typeof userId,typeof enterRoom.dataValues.roomUserId[0]);
+      console.log("1.userid 2.enterRoom.dataValues.roomUserId.includes ",userId,enterRoom.dataValues.roomUserId,typeof Number(userId),typeof enterRoom.dataValues.roomUserId[0]);
       
       
       if (enterRoom.dataValues.hostId == userId)
       {console.log("호스트입니다.")}
-      else if (!enterRoom.dataValues.roomUserId.includes(userId))
+      else if (!enterRoom.dataValues.roomUserId.includes(Number(userId)))
       {
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
         enterRoom.roomUserId.push(Number(userId));
