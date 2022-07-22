@@ -43,18 +43,19 @@ module.exports = (server, app) => {
 //           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
         
 //       }
-      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.hostId.includes(userId) === false){
+      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.roomUserNickname.includes(userId) === false){
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
-        room.roomUserId.push(userId);
-        room.roomUserNickname.push(enterUser.dataValues.nickname);
-    let roomUserNum = room.roomUserNickname.length + 1;
-        room.roomUserImg.push(userImageURL);
+        enterRoom.roomUserId.push(userId);
+        enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
+    let roomUserNum = enterRoom.roomUserNickname.length + 1;
+        console.log(userImageURL);
+        enterRoom.roomUserImg.push(userImageURL);
 
     await Rooms.update(
       {
-        roomUserId: room.roomUserId,
-        roomUserImg: room.roomUserImg,
-        roomUserNickname: room.roomUserNickname,
+        roomUserId: enterRoom.dataValues.roomUserId,
+        roomUserImg: enterRoom.dataValues.roomUserImg,
+        roomUserNickname: enterRoom.dataValues.roomUserNickname,
         roomUserNum: roomUserNum
       },
       { where: { roomId: roomId } }
