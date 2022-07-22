@@ -43,25 +43,28 @@ module.exports = (server, app) => {
                   enterRoom.dataValues.roomUserId.includes(userId)===false);
       
       
-//       if (enterRoom.dataValues.hostId !== userId && !enterRoom.dataValues.roomUserId.includes(userId)){
-//         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
-//         enterRoom.roomUserId.push(Number(userId));
-//         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
-//     let roomUserNum = enterRoom.roomUserNickname.length + 1;
-//         console.log(userImageURL);
-//         enterRoom.roomUserImg.push(userImageURL.userImageURL);
+      if (enterRoom.dataValues.hostId !== userId)
+      {console.log("호스트입니다.")}
+      else(!enterRoom.dataValues.roomUserId.includes(userId))
+      {
+        let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
+        enterRoom.roomUserId.push(Number(userId));
+        enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
+    let roomUserNum = enterRoom.roomUserNickname.length + 1;
+        console.log(userImageURL);
+        enterRoom.roomUserImg.push(userImageURL.userImageURL);
 
-//     await Rooms.update(
-//       {
-//         roomUserId: enterRoom.dataValues.roomUserId,
-//         roomUserImg: enterRoom.dataValues.roomUserImg,
-//         roomUserNickname: enterRoom.dataValues.roomUserNickname,
-//         roomUserNum: roomUserNum
-//       },
-//       { where: { roomId: roomId } }
-//     );
-//         socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
-//       }
+    await Rooms.update(
+      {
+        roomUserId: enterRoom.dataValues.roomUserId,
+        roomUserImg: enterRoom.dataValues.roomUserImg,
+        roomUserNickname: enterRoom.dataValues.roomUserNickname,
+        roomUserNum: roomUserNum
+      },
+      { where: { roomId: roomId } }
+    );
+        socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
+      }
       
       
     });
