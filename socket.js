@@ -29,8 +29,15 @@ module.exports = (server, app) => {
         });
         return;
       }
-      
+      console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
+      
+      console.log(
+        "이 룸의 클라이언트 = ",
+        io.sockets.clients(enterRoom.title),
+        "룸 리스트 = ", io.sockets.manager.rooms,
+        "내 소켓ID = ", socket.id
+      );
 
       if (enterRoom.roomUserId.length === 0) {
         let nickName = enterRoom.hostNickname;
@@ -66,6 +73,33 @@ module.exports = (server, app) => {
         userImg.dataValues.userImageURL,
         roomId
       );
+    });
+    
+    socket.on("leave-room", async (roomId) => {
+      console.log(roomId);
+      const leaveRoom = await Rooms.findOne({
+        where: { roomId: roomId },
+      });
+
+      if (!leaveRoom) {
+        res.status(400).send({
+          errorMessage: "존재하지 않는 방입니다.",
+        });
+        return;
+      }
+      console.log(enterRoom.title,"에서퇴장합니다");
+      socket.leave(enterRoom.title);
+      
+      if (enterRoom.roomUserId.length === 0) {
+        let nickName = enterRoom.hostNickname;
+        console.log("호스트닉네임=", nickName);
+        socket.to(enterRoom.title).socket.emit("bye", nickName);
+      } else {
+        let lastUser = enterRoom.roomUserNickname.length - 1;
+        let nickName = enterRoom.roomUserNickname[lastUser];
+        console.log("유저닉네임=", nickName);
+        socket.to(enterRoom.title).emit("bye", nickName);
+      }
     });
   });
 };
