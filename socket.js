@@ -43,7 +43,7 @@ module.exports = (server, app) => {
                   enterRoom.dataValues.roomUserId.includes(userId)===false);
       
       
-      if (enterRoom.dataValues.hostId !== userId)
+      if (enterRoom.dataValues.hostId == userId)
       {console.log("호스트입니다.")}
       else(!enterRoom.dataValues.roomUserId.includes(userId))
       {
