@@ -28,7 +28,7 @@ module.exports = () => {
                         
                     });
                     const exUserImg = await images.findOne({
-                        where : {userImageURL: profile._json.properties.thumbnail_image}
+                        where : {snsId: profile.id}
                     })
                     console.log(exUserImg, '이미지 중복일때를 확인해야해')
                 
@@ -52,6 +52,7 @@ module.exports = () => {
                         console.log(profile._json.properties.thumbnail_image);                            
                         const newUserImage = await images.create({
                             userId: newUser.userId,
+                            snsId: profile.id,
                             userImageURL : profile._json.properties.thumbnail_image,
                         });
                         console.log(newUserImage, '이미지');

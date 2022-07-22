@@ -23,13 +23,8 @@ module.exports = (server, app) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-      if (!enterRoom) {
-        res.status(400).send({
-          errorMessage: "존재하지 않는 방입니다.",
-        });
-        return;
-      }
-      
+     
+      console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
 
       if (enterRoom.roomUserId.length === 0) {
@@ -66,6 +61,35 @@ module.exports = (server, app) => {
         userImg.dataValues.userImageURL,
         roomId
       );
+    });
+    
+    socket.on("leave-room", async (roomId) => {
+      console.log(roomId);
+      const leaveRoom = await Rooms.findOne({
+        where: { roomId: roomId },
+      });
+
+      if (!leaveRoom) {
+        res.status(400).send({
+          errorMessage: "존재하지 않는 방입니다.",
+        });
+        return;
+      }
+      console.log(leaveRoom.title,"에서퇴장합니다");
+      socket.leave(leaveRoom.title);
+      
+      console.log(io.sockets.adapter)
+      
+      if (leaveRoom.roomUserId.length === 0) {
+        let nickName = leaveRoom.hostNickname;
+        console.log("호스트닉네임=", nickName);
+        socket.to(leaveRoom.title).emit("bye", nickName);
+      } else {
+        let lastUser = leaveRoom.roomUserNickname.length - 1;
+        let nickName = leaveRoom.roomUserNickname[lastUser];
+        console.log("유저닉네임=", nickName);
+        socket.to(leaveRoom.title).emit("bye", nickName);
+      }
     });
   });
 };
