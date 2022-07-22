@@ -23,12 +23,7 @@ module.exports = (server, app) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-      if (roomId==2) {
-        res.status(400).send({
-          errorMessage: "2번방 에러 입니다.",
-        });
-        return;
-      }
+     
       console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
 
