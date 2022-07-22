@@ -38,28 +38,30 @@ module.exports = (server, app) => {
       });
       
       console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-      console.log("is 호스트가 아닌 방에 처음들어오는 사람 = ",enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.roomUserId.includes(userId) === false);
+      console.log("1.호스트이다 = ture, 2.방에 있는 유저가 아니다. 3. 방에 있는 유저가 아니다. ",enterRoom.dataValues.hostId !== userId ,
+                  !enterRoom.dataValues.roomUserId.includes(userId),
+                  enterRoom.dataValues.roomUserId.includes(userId)===false);
       
       
-      if (enterRoom.dataValues.hostId !== userId && !enterRoom.dataValues.roomUserId.includes(userId)){
-        let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
-        enterRoom.roomUserId.push(Number(userId));
-        enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
-    let roomUserNum = enterRoom.roomUserNickname.length + 1;
-        console.log(userImageURL);
-        enterRoom.roomUserImg.push(userImageURL.userImageURL);
+//       if (enterRoom.dataValues.hostId !== userId && !enterRoom.dataValues.roomUserId.includes(userId)){
+//         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
+//         enterRoom.roomUserId.push(Number(userId));
+//         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
+//     let roomUserNum = enterRoom.roomUserNickname.length + 1;
+//         console.log(userImageURL);
+//         enterRoom.roomUserImg.push(userImageURL.userImageURL);
 
-    await Rooms.update(
-      {
-        roomUserId: enterRoom.dataValues.roomUserId,
-        roomUserImg: enterRoom.dataValues.roomUserImg,
-        roomUserNickname: enterRoom.dataValues.roomUserNickname,
-        roomUserNum: roomUserNum
-      },
-      { where: { roomId: roomId } }
-    );
-        socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
-      }
+//     await Rooms.update(
+//       {
+//         roomUserId: enterRoom.dataValues.roomUserId,
+//         roomUserImg: enterRoom.dataValues.roomUserImg,
+//         roomUserNickname: enterRoom.dataValues.roomUserNickname,
+//         roomUserNum: roomUserNum
+//       },
+//       { where: { roomId: roomId } }
+//     );
+//         socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
+//       }
       
       
     });
