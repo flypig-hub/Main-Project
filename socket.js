@@ -1,6 +1,6 @@
 const app = require("./app");
 const fs = require("fs");
-const {images, Chats, images, Rooms, users, sequelize, Sequelize } = require("./models");
+const {images, Chats, Rooms, users, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
