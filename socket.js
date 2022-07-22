@@ -36,7 +36,9 @@ module.exports = (server, app) => {
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
         userImg: null,
       });
-      if (enterRoom.dataValues.hostId != userId || !enterUser.dataValues.roomUserNickname.includes(userId)) {
+      
+      console.log(enterUser.dataValues.roomUserNickname,"=룸유저닉네임")
+//       if (enterRoom.dataValues.hostId != userId || !enterUser.dataValues.roomUserNickname.includes(userId)) {
         if (enterRoom.dataValues.hostId === enterUser.userId) {
           console.log("입장호스트닉네임=", enterUser.dataValues.hostNickname);
           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.hostNickname);
@@ -45,7 +47,7 @@ module.exports = (server, app) => {
           console.log("입장유저닉네임=", enterUser.dataValues.nickname);
           socket.to(enterRoom.title).emit("welcome", nickname);
         };
-      }
+//       }
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
