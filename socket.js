@@ -44,7 +44,7 @@ module.exports = (server, app) => {
         
 //       }
       if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.hostId.includes(userId) === false){
-        let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId})
+        let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
         room.roomUserId.push(userId);
         room.roomUserNickname.push(enterUser.dataValues.nickname);
     let roomUserNum = room.roomUserNickname.length + 1;
