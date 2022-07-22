@@ -33,8 +33,8 @@ module.exports = (server, app) => {
       socket.join(enterRoom.title);
       
       console.log(
-        "이 룸의 클라이언트 = ",
-        io.sockets.clients(enterRoom.title),
+//         "이 룸의 클라이언트 = ",
+//         io.sockets.clients(enterRoom.title),
         "룸 리스트 = ", io.sockets.manager.rooms,
         "내 소켓ID = ", socket.id
       );
