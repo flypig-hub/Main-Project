@@ -30,9 +30,9 @@ module.exports = (server, app) => {
       socket.join(enterRoom.title);
         
       await Chats.create({
-        userNickname: null,
-        userId: null,
-        roomId: null,
+        userNickname: "system",
+        userId: "system",
+        roomId: roomId,
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
         userImg: null,
       });
