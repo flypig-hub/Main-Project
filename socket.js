@@ -23,9 +23,9 @@ module.exports = (server, app) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
-      if (!enterRoom) {
+      if (roomId==2) {
         res.status(400).send({
-          errorMessage: "존재하지 않는 방입니다.",
+          errorMessage: "2번방 에러 입니다.",
         });
         return;
       }
