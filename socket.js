@@ -1,6 +1,6 @@
 const app = require("./app");
 const fs = require("fs");
-const {images, Chats, Rooms, users, sequelize, Sequelize } = require("./models");
+const {images, Chats, images, Rooms, users, sequelize, Sequelize } = require("./models");
 const { Op } = sequelize;
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
@@ -38,11 +38,31 @@ module.exports = (server, app) => {
       });
       
       console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-      if (enterRoom.dataValues.hostId != userId || !enterRoom.dataValues.roomUserNickname.includes(userId)) {
+//       if (enterRoom.dataValues.hostId != userId || !enterRoom.dataValues.roomUserNickname.includes(userId)) {
        
-          socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
+//           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
         
+//       }
+      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.hostId.includes(userId) === false){
+        let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId})
+        room.roomUserId.push(userId);
+        room.roomUserNickname.push(enterUser.dataValues.nickname);
+    let roomUserNum = room.roomUserNickname.length + 1;
+        room.roomUserImg.push(userImageURL);
+
+    await Rooms.update(
+      {
+        roomUserId: room.roomUserId,
+        roomUserImg: room.roomUserImg,
+        roomUserNickname: room.roomUserNickname,
+        roomUserNum: roomUserNum
+      },
+      { where: { roomId: roomId } }
+    );
+        socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
       }
+      
+      
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
