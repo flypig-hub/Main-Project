@@ -7,6 +7,7 @@ const { images, posts, users, like, sequelize, Sequelize } = require("../models"
 // const posts = require('../models/posts');
 // const like = require('../models/like');
 const axios = require('axios');
+const { cache } = require('ejs');
 
 //카카오 로그인
 const kakaoCallback = (req, res, next) => {
@@ -155,7 +156,8 @@ async function checkMe(req, res) {
 //프로필이미지 수정하기
  async function MypagePutImage (req, res) {
 
-//try {
+try {
+  
   const image = req.files;
   const userId = res.locals.userId
   const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
@@ -167,8 +169,11 @@ async function checkMe(req, res) {
     {where :{userId},});
     res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
   }  
- }
 
+}catch(error){
+  res.status(400).send({result : false, errorMessage: "프로필사진 업데이트 실패",});
+}
+}
 // 사업자등록번호 검증
 
 async function CNU_CK (req, res, next) {
