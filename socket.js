@@ -83,6 +83,8 @@ module.exports = (server, app) => {
       console.log(leaveRoom.title,"에서퇴장합니다");
       socket.leave(leaveRoom.title);
       
+      console.log(io.sockets.adapter)
+      
       if (leaveRoom.roomUserId.length === 0) {
         let nickName = leaveRoom.hostNickname;
         console.log("호스트닉네임=", nickName);
