@@ -119,25 +119,26 @@ async function GetPostingList(req, res) {
 }
 
 
-// 게시글 상세 조회(S3 기능 추가 예정)
+// 게시글 상세 조회
 async function GetPost(req, res) {
   const { postId } = req.params;
     const allPost = await posts.findAll({
       where: { postId },
       include: [{
         model: images,
-        required: true,
+        required: false,
         attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL'],
     },{
       model: Comments,
-      required: true,
-      attributes: ['userId', 'nickname', 'postId', 'comment']
+      required: false,
+      attributes: ['postId', 'comment']
     },{
       model: Like,
-      required: true,
+      required: false,
       attributes: ['userId', 'postId']
     }]
   });
+  console.log(allPost);
 
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
@@ -255,18 +256,18 @@ async function DeletePost(req, res) {
     
     if (postId) {
     const s3 = new AWS.S3();
-        const params = {
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Delete: {
-            Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
-          }
-        };
-        // console.log(params.Delete)
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+        }
+      };
+      // console.log(params.Delete)
 
-        s3.deleteObjects(params, function(err, data) {
-          if (err) console.log(err, err.stack); // error
-          else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-        });
+      s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      });
     }
   });
 
