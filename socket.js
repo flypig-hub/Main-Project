@@ -38,9 +38,7 @@ module.exports = (server, app) => {
       });
       
       console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-      console.log("1.호스트이다 = ture, 2.방에 있는 유저가 아니다. 3. 방에 있는 유저가 아니다. ",enterRoom.dataValues.hostId !== userId ,
-                  !enterRoom.dataValues.roomUserId.includes(userId),
-                  enterRoom.dataValues.roomUserId.includes(userId)===false);
+      console.log("1.userid 2.enterRoom.dataValues.roomUserId.includes ",userId,enterRoom.dataValues.roomUserId,typeof userId,typeof enterRoom.dataValues.roomUserId);
       
       
       if (enterRoom.dataValues.hostId == userId)
