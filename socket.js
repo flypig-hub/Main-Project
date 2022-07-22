@@ -43,9 +43,9 @@ module.exports = (server, app) => {
 //           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
         
 //       }
-      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.roomUserNickname.includes(userId) === false){
+      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.roomUserId.includes(userId) === false){
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
-        enterRoom.roomUserId.push(userId);
+        enterRoom.roomUserId.push(Number(userId));
         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
     let roomUserNum = enterRoom.roomUserNickname.length + 1;
         console.log(userImageURL);
