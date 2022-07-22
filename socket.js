@@ -83,7 +83,7 @@ module.exports = (server, app) => {
       if (leaveRoom.roomUserId.length === 0) {
         let nickName = leaveRoom.hostNickname;
         console.log("호스트닉네임=", nickName);
-        socket.to(leaveRoom.title).socket.emit("bye", nickName);
+        socket.to(leaveRoom.title).emit("bye", nickName);
       } else {
         let lastUser = leaveRoom.roomUserNickname.length - 1;
         let nickName = leaveRoom.roomUserNickname[lastUser];
