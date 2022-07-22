@@ -26,9 +26,6 @@ router.delete('/:postId', authMiddleware, PostController.DeletePost);
 
 
 // 이미지 조회
-router.get('/', ImageController.GetImages)
-
-
 router.delete('/images', authMiddleware, upload.array('images', 8), ImageController.DeleteImages)
 
 router.post('/images', upload.array('images', 8), ImageController.PostImage)

@@ -171,7 +171,6 @@ async function GetPost(req, res) {
 
 // 게시글 수정 (S3 기능 추가 예정)
 async function ModifyPosting(req, res) {
-  // try {
   const { userId, userImageURL, nickname } = res.locals;
   const { postId } = req.params;
   const {
@@ -183,24 +182,37 @@ async function ModifyPosting(req, res) {
     type,
     link,
     houseTitle,
-  } = req.body;
+    } = req.body;
   const image = req.files;
 
-  const existPost = await posts.findOne({
-    where: { postId },
-  });
+  const existPost = await images.findOne({
+    where: { postNumber: postId },
+  })
+  console.log(existPost);
 
-  if (image) {
-    // S3 이미지 삭제 후 업로드
-
-
-
-    await images.findByIdAndUpdate({
-      postImageKEY,
+  if (!image) {
+    const nonImageModify = await images.findOne({
+      where: { postNumber: postId },
     })
+    console.log(nonImageModify);
   } else {
-    // 이미지가 없으면 existPost에서 찾은 이미지를 가져다 쓴다
-  }
+    const ImageModify = await images.findOne({
+      where: { postNumber: postId },
+    })
+
+    const s3 = new AWS.S3();
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Delete: {
+        Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+      }
+    };
+    s3.deleteObjects(params, function(err, data) {
+      if (err) console.log(err, err.stack); // error
+      else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+    });
+    // 이미지 업로드는 Router, upload에서 실행
+  };
 
   const existImage = await images.findOne({
     where: { postId }
@@ -230,14 +242,10 @@ async function ModifyPosting(req, res) {
   console.log(ModifyPost);
 
   res.status(200).send({ ModifyPost, msg: "게시글이 수정되었습니다!" });
-  // } catch (e) {
-  //     res.status(400).send({ errorMessage: "게시글을 수정을 할 수 없습니다." });
-  // }
 }
 
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost(req, res) {
-  // try {
   const { userId, nickname } = res.locals;
   const { postId } = req.params;
   console.log(postId);
@@ -262,8 +270,6 @@ async function DeletePost(req, res) {
           Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
         }
       };
-      // console.log(params.Delete)
-
       s3.deleteObjects(params, function(err, data) {
         if (err) console.log(err, err.stack); // error
         else { console.log("S3에서 삭제되었습니다"), data }; // deleted
@@ -271,48 +277,12 @@ async function DeletePost(req, res) {
     }
   });
 
-  
-
-  // if (existPost) {
-  //   const s3 = new AWS.S3();
-  //   const params = {
-  //       Bucket: process.env.AWS_BUCKET_NAME,
-  //       Delete: { Objects: [{ Key: `images/${fileName}` }] }
-  //   };
-  //   console.log(params.Delete);
-
-  //   s3.deleteObjects(params, function(err, data) {
-  //     if (err) console.log(err, 's3 deleteObject', data);
-  //     else { console.log("삭제되었습니다.", data) }
-  //   })
-  // }
-
-  // for (i = 0; i < fileName.length; i++) {
-  //   let deleteImages = fileName[i]; 
-  //   s3.deleteObjects({
-  //   Bucket: process.env.AWS_BUCKET_NAME,
-  //   Delete: {
-  //        Objects: `images/${deleteImages}`
-  //   }
-  //   }, function (err, data) {
-  //     if (err) { throw err; }
-  //     console.log('s3 deleteObject', data);
-  //   });
-  // }
-  
-
-  // 댓글, 게시글 삭제
-  // if (nickname !== existPost.nickname) {
-  //     res.send({msg: "삭제할 수 없습니다."})
-  // };
   const destroyLike = await Like.destroy({ where: { postId } });
   const destroyComment = await Comments.destroy({ where: { postId } });
   const destroyImages = await images.destroy({ where: { postNumber: postId } });
   const destroyPost = await posts.destroy({ where: { postId } });
 
   res.status(200).send({ postImageInfo, msg: "게시글이 삭제되었습니다!" });
-  // } catch (e) {
-      // res.status(400).send({ errorMessage: "접근 권한이 없습니다!"});
 }
 module.exports.WritePosting = WritePosting;
 module.exports.GetPostingList = GetPostingList;

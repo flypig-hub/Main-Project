@@ -71,32 +71,6 @@ async function PostImage(req, res) {
 };
 
 
-// 이미지 불러오기
-async function GetImages(req, res) {
-    const key = req.params;
-    console.log(req.params);
-    // const fileName = JSON.stringify(key).slice(0, -2).split('images/')[1];
-    res.send({});
-}
-
-// // Key값을 배열로 만드는 함수
-// const ImageKeyFunction = (Key) => {
-//     const ImageKey = Key.map((data) => {
-//         if (data.imageKey.length !== 0) {
-//             data.imageKey = [];
-//             return data;
-//         }
-//         let imageKey = data.imageKey;
-//         for (let i = 0; i < imageKey.length; i++) {
-//             imageKey[i] = `images/${fileName}${imageKey[i]}`
-//         }
-//         data.imageKey = imageKey;
-//         return data;
-//     });
-//     return ImageKeyFunction;
-// }
-
-
 // 이미지 삭제
 async function DeleteImages(req, res) {
     // const image = req.body;
@@ -156,6 +130,4 @@ async function DeleteImages(req, res) {
 
 
 module.exports.PostImage = PostImage;
-module.exports.GetImages = GetImages;
 module.exports.DeleteImages = DeleteImages;
-
