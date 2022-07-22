@@ -38,18 +38,16 @@ module.exports = (server, app) => {
       });
       
       console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-//       if (enterRoom.dataValues.hostId != userId || !enterRoom.dataValues.roomUserNickname.includes(userId)) {
-       
-//           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
-        
-//       }
-      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.roomUserId.includes(userId) === false){
+      console.log("is 호스트가 아닌 방에 처음들어오는 사람 = ",enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.roomUserId.includes(userId) === false);
+      
+      
+      if (enterRoom.dataValues.hostId !== userId && !enterRoom.dataValues.roomUserId.includes(userId)){
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
         enterRoom.roomUserId.push(Number(userId));
         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
     let roomUserNum = enterRoom.roomUserNickname.length + 1;
         console.log(userImageURL);
-        enterRoom.roomUserImg.push(userImageURL);
+        enterRoom.roomUserImg.push(userImageURL.userImageURL);
 
     await Rooms.update(
       {
