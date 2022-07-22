@@ -36,14 +36,14 @@ module.exports = (server, app) => {
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
         userImg: null,
       });
-      if (entereRoom.dataValues.hostId != userId || !enterUser.dataValues.roomUserNickname.includes(userId)) {
-        if (entereRoom.dataValues.hostId === enteruser.userId) {
+      if (enterRoom.dataValues.hostId != userId || !enterUser.dataValues.roomUserNickname.includes(userId)) {
+        if (enterRoom.dataValues.hostId === enterUser.userId) {
           console.log("입장호스트닉네임=", enterUser.dataValues.hostNickname);
           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.hostNickname);
         } else {
           let nickname = enterUser.dataValues.roomUserNickname[enterUser.dataValues.roomUserNickname - 1]
           console.log("입장유저닉네임=", enterUser.dataValues.nickname);
-          socket.to(enterRoom.title).emit("welcome", Nickname);
+          socket.to(enterRoom.title).emit("welcome", nickname);
         };
       }
     });
@@ -93,13 +93,13 @@ module.exports = (server, app) => {
         chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
         userImg: null,
       });
-      if (leaveRoom.hostId === leaveuser.userId) {
+      if (leaveRoom.hostId === leaveUser.userId) {
         console.log("퇴장호스트닉네임=", leaveUser.dataValues.hostNickname);
         socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.hostNickname);
       } else {
         let nickname = leaveUser.dataValues.roomUserNickname[leaveUser.dataValues.roomUserNickname - 1]
         console.log("퇴장유저닉네임=", leaveUser.dataValues.nickname);
-        socket.to(leaveRoom.title).emit("bye", Nickname);
+        socket.to(leaveRoom.title).emit("bye", nickname);
       };
       if (leaveUser.dataValues.userId == leaveRoom.dataValues.hostId) {
         await Rooms.update({
