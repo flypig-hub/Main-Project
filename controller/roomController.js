@@ -84,15 +84,16 @@ async function createRoom(req, res) {
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
-  const { userId, nickname, userImageURL } = res.locals;
-  
+  // const { userId, nickname, userImageURL } = res.locals;
+  const { userId, nickname, userImageURL } = req.body;
   console.log("룸=",roomId, userId, nickname, userImageURL);
   let room = await Rooms.findOne({ where: { roomId: roomId } });
+ 
   try {
     if (room.hostId == userId) {
       res.status(200).send({ msg: "호스트가 입장하였습니다" });
       return
-    }
+  }
     if (Number(room.max) < room.roomUserId.length) {
       res.status(400).send({
         msg: "입장 가능 인원을 초과하였습니다.",
@@ -104,38 +105,11 @@ async function enterRoom(req, res) {
     return
   }
       
-    room.roomUserId.push(userId);
-    room.roomUserNickname.push(nickname);
-    let roomUserNum = room.roomUserNickname.length + 1;
-    room.roomUserImg.push(userImageURL);
-
-    await Rooms.update(
-      {
-        roomUserId: room.roomUserId,
-        roomUserImg: room.roomUserImg,
-        roomUserNickname: room.roomUserNickname,
-        roomUserNum: roomUserNum
-      },
-      { where: { roomId: roomId } }
-    );
-    room = {
-      roomId: room.roomId,
-      title: room.title,
-      hostId: room.hostId,
-      hostNickname: room.hostNickname,
-      hostImg: room.hostImg,
-      max: room.max,
-      hashTag: room.hashTag,
-      roomUserId: room.roomUserId,
-      roomUserNickname: room.roomUserNickname,
-      roomUserNum: room.roomUserNum,
-      roomUserImg: room.roomUserImg,
-      createdAt: room.createdAt,
-      updatedAt: room.updatedAt,
-    };
-    console.log(room);
-   res.status(201).send({ msg: "입장 완료", room });
-      } catch (err) {
+    
+   res.status(201).send({ msg: "입장 완료" });
+    
+  
+  } catch (err) {
     res.status(400).send({
       msg: "공개방 입장에 실패하였습니다.",
     });
