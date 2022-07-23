@@ -30,31 +30,31 @@ module.exports = (server, app) => {
       socket.join(enterRoom.title);
         
       await Chats.create({
-        userNickname: null,
-        userId: null,
-        roomId: null,
+        userNickname: "system",
+        userId: "system",
+        roomId: roomId,
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
         userImg: null,
       });
       
       console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-//       if (enterRoom.dataValues.hostId != userId || !enterRoom.dataValues.roomUserNickname.includes(userId)) {
-       
-//           socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
-        
-//       }
-      if (enterRoom.dataValues.hostId !== userId && enterRoom.dataValues.hostId.includes(userId) === false){
+      console.log("1.enterRoom.dataValues.hostId 2.Number(userId) ",enterRoom.dataValues.hostId , Number(userId),typeof enterRoom.dataValues.hostId,typeof enterRoom.dataValues.roomUserId[0]);
+      
+      
+       if (enterRoom.dataValues.hostId != Number(userId) && !enterRoom.dataValues.roomUserId.includes (Number(userId)))
+      {
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
-        room.roomUserId.push(userId);
-        room.roomUserNickname.push(enterUser.dataValues.nickname);
-    let roomUserNum = room.roomUserNickname.length + 1;
-        room.roomUserImg.push(userImageURL);
+        enterRoom.roomUserId.push(Number(userId));
+        enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
+    let roomUserNum = enterRoom.roomUserNickname.length + 1;
+        console.log(userImageURL);
+        enterRoom.roomUserImg.push(userImageURL.userImageURL);
 
     await Rooms.update(
       {
-        roomUserId: room.roomUserId,
-        roomUserImg: room.roomUserImg,
-        roomUserNickname: room.roomUserNickname,
+        roomUserId: enterRoom.dataValues.roomUserId,
+        roomUserImg: enterRoom.dataValues.roomUserImg,
+        roomUserNickname: enterRoom.dataValues.roomUserNickname,
         roomUserNum: roomUserNum
       },
       { where: { roomId: roomId } }
