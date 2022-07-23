@@ -120,22 +120,39 @@ async function checkMe(req, res) {
   // 내가 쓴 게시물
   const mypageImage = await posts.findAll({
     where : {userId},
-    include: [{
-      model: images,
-      required: true,
-      attributes: ['thumbnailURL']
-    }],
-  });
-  console.log(mypageImage)
 
-  const mypageThumnail = mypageImage.map((mypageinfo) =>({
+  });
+
+  const mypageThumbnail = await images.findAll({
+    where: {userId},
+  })
+
+  const mypageThumbnailMap = mypageThumbnail.map(mypageThumbnailMap => mypageThumbnailMap.thumbnailURL)
+  // console.log(mypageThumbnail.thumbnailURL, '여기도 안지나가나')
+  console.log(mypageThumbnailMap, '여기는 지나가길')
+
+  mypageThumbnailMap.forEach((element, i) => {
+    const thumbnailURL = mypageThumbnailMap[i]
+    console.log(thumbnailURL);
+
+    const mypageThumnail = mypageImage.map((mypageinfo) =>({
     nickname : mypageinfo.nickname,
     title : mypageinfo.title,
     commentNum : mypageinfo.commentNum,
     likeNum : mypageinfo.likeNum,
     thumbnailURL : mypageinfo.thumbnailURL,
-
   }))
+
+  res.json({
+    result : true,
+    // mypostlist,
+    // mylikelist,
+    mypageThumnail  //DB 수정이 필요
+         //DB 수정이 필요 
+  })
+  })
+
+  
   // const myposts = await posts.findAll({where : {userId}});
   
   // const mypostlist = myposts.map((a) => ({
@@ -150,13 +167,13 @@ async function checkMe(req, res) {
   // const mylikelist = likelist.map((b) =>{
 
   // })
-   res.json({
-      result : true,
-      // mypostlist,
-      // mylikelist,
-      mypageThumnail  //DB 수정이 필요
-           //DB 수정이 필요 
-    })
+  //  res.json({
+  //     result : true,
+  //     // mypostlist,
+  //     // mylikelist,
+  //     mypageThumnail  //DB 수정이 필요
+  //          //DB 수정이 필요 
+  //   })
  }
 
 // 마이페이지 정보 - 2

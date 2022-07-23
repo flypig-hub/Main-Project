@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       posts.hasMany(models.images, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       posts.hasMany(models.Like, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       posts.hasMany(models.Comments, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
+      //마이페이지
+      posts.hasMany(models.mypage, { foreignKey: 'title', sourceKey: 'title', onDelete: 'CASCADE' });
+      posts.hasMany(models.mypage, { foreignKey: 'nickname', sourceKey: 'nickname', onDelete: 'CASCADE' });
+      posts.hasMany(models.mypage, { foreignKey: 'likeNum', sourceKey: 'likeNum', onDelete: 'CASCADE' });
+      posts.hasMany(models.mypage, { foreignKey: 'commentNum', sourceKey: 'commentNum', onDelete: 'CASCADE' });
+      //유저
       posts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
     }
   }
