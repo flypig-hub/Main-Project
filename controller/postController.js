@@ -23,6 +23,7 @@ async function WritePosting(req, res) {
     type,
     link,
     houseTitle,
+    tagList
     } = req.body;
   const image = req.files;
 
@@ -58,7 +59,7 @@ async function WritePosting(req, res) {
       const imagesInfo = images.create({
         userId: userId,
         nickname: nickname,
-        postNumber: postInfo.postId,
+        postId: postInfo.postId,
         thumbnailURL: thumbnailURL.toString(),
         thumbnailKEY: thumbnailKEY.toString(),
         postImageURL: postImageURL,
@@ -83,7 +84,7 @@ async function GetPostingList(req, res) {
     include: [{
       model: images,
       required: true,
-      attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL']
+      attributes: ['postId', 'postImageURL', 'thumbnailURL', 'userImageURL']
     }],
   });
 
@@ -127,7 +128,7 @@ async function GetPost(req, res) {
       include: [{
         model: images,
         required: false,
-        attributes: ['postNumber', 'postImageURL', 'thumbnailURL', 'userImageURL'],
+        attributes: ['postId', 'postImageURL', 'thumbnailURL', 'userImageURL'],
     },{
       model: Comments,
       required: false,
@@ -182,67 +183,72 @@ async function ModifyPosting(req, res) {
     type,
     link,
     houseTitle,
+    tagList
     } = req.body;
   const image = req.files;
 
-  const existPost = await images.findOne({
-    where: { postNumber: postId },
-  })
-  console.log(existPost);
+  // images DB에서 Key 찾아오기
+  const postImageInfo = await images.findAll({
+    where:{ postId }
+  });
 
-  if (!image) {
-    const nonImageModify = await images.findOne({
-      where: { postNumber: postId },
-    })
-    console.log(nonImageModify);
-  } else {
-    const ImageModify = await images.findOne({
-      where: { postNumber: postId },
-    })
+  const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
+  console.log(postImageKey);
 
+  postImageKey.forEach((element, i) => {
+    const postImageKEY = postImageKey[i];
+
+    if (postId) {
     const s3 = new AWS.S3();
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Delete: {
-        Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
-      }
-    };
-    s3.deleteObjects(params, function(err, data) {
-      if (err) console.log(err, err.stack); // error
-      else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-    });
-    // 이미지 업로드는 Router, upload에서 실행
-  };
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+        }
+      };
+      s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      });
+    }
+  });
 
-  const existImage = await images.findOne({
+  // image KEY값, URL 배열 만들기
+  const PostImageKey = image.map((postImageKey) => postImageKey.key);
+  const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
+  const thumbnailKEY = postImageKey[0];
+  const thumbnailURL = postImageUrl[0];
+  // console.log(postImageKey);
+
+  // images DB 수정
+  const ModifyImage = await images.update({
+    postImageKEY:PostImageKey.toString(),
+    postImageURL:postImageUrl.toString(),
+    thumbnailKEY:thumbnailKEY.toString(),
+    thumbnailURL:thumbnailURL.toString()
+  }, {
     where: { postId }
   })
 
-  if (userId !== existPost.userId) {
-    res.status(400).send({ errorMessage: "접근 권한이 없습니다!" });
-  }
-
-  const ModifyPost = await existPost.update({
-    userId,
-    userImage,
-    nickname,
-    title,
-    content,
-    mainAddress,
-    subAddress,
-    category,
-    type,
-    link,
-    houseTitle,
-    thumbnailURL: thumbnailURL.toString(),
-    // thumbnailKEY,
-    // postImageURL: postImageURL.toString(),
-    // postImageKEY: postImageKEY.toString(),
+  // posts DB 수정
+  const ModifyPost = await posts.update({
+    title:title,
+    content:content,
+    mainAddress:mainAddress,
+    subAddress:subAddress,
+    category:category,
+    type:type,
+    link:link,
+    houseTitle:houseTitle,
+    tagList:tagList
+  },{
+    where: { postId },
   });
-  console.log(ModifyPost);
 
-  res.status(200).send({ ModifyPost, msg: "게시글이 수정되었습니다!" });
-}
+  // console.log(ModifyImage);
+  res.status(200).send({ ModifyPost, ModifyImage, msg: "게시글이 수정되었습니다!" })
+};
+
 
 // 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
 async function DeletePost(req, res) {
@@ -251,17 +257,15 @@ async function DeletePost(req, res) {
   console.log(postId);
 
   const postImageInfo = await images.findAll({
-    where:{ postNumber: postId }
+    where:{ postId }
   });
-  // console.log(postImageInfo);
 
   const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
   console.log(postImageKey);
 
   postImageKey.forEach((element, i) => {
     const postImageKEY = postImageKey[i];
-    // console.log(postImageKEY);
-    
+
     if (postId) {
     const s3 = new AWS.S3();
       const params = {
@@ -279,7 +283,7 @@ async function DeletePost(req, res) {
 
   const destroyLike = await Like.destroy({ where: { postId } });
   const destroyComment = await Comments.destroy({ where: { postId } });
-  const destroyImages = await images.destroy({ where: { postNumber: postId } });
+  const destroyImages = await images.destroy({ where: { postId } });
   const destroyPost = await posts.destroy({ where: { postId } });
 
   res.status(200).send({ postImageInfo, msg: "게시글이 삭제되었습니다!" });

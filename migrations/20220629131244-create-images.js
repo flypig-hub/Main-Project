@@ -23,9 +23,6 @@ module.exports = {
       postId : {
         type: Sequelize.INTEGER
       },
-      postNumber : {
-        type: Sequelize.STRING
-      },
       thumbnailKEY: {
         type: Sequelize.STRING
       },

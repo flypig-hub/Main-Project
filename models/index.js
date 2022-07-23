@@ -40,37 +40,4 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// const posts = sequelize.define('posts');
-// const images = sequelize.define('images');
-// posts.hasMany(images);
-// images.belongsTo(posts);
-
-// db.posts = require("./posts")(sequelize, Sequelize);
-// db.users = require("./users")(sequelize, Sequelize);
-// db.Comments = require("./comments")(sequelize, Sequelize);
-// db.images = require("./images")(sequelize, Sequelize);
-// db.like = require("./like")(sequelize, Sequelize);
-
-// db.posts.hasMany(db.Comments, { as: "Comments" });
-// db.Comments.belongsTo(db.posts, {
-//   foreignKey: "postId",
-//   as: "posts"
-// });
-
-// db.posts.hasMany(db.images, { as: "images" });
-// db.images.belongsTo(db.posts, {
-//   foreignKey: "postId",
-//   as: "posts"
-// });
-
 module.exports = db;
-
-// =====================================
-// MySQL DB Join Query
-// SELECT
-// 	posts.postId,
-//     images.postNumber,
-// 	images.postImageURL
-// FROM posts LEFT OUTER JOIN images
-// ON posts.postId = images.postNumber
-// =====================================

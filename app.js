@@ -40,11 +40,7 @@ db.sequelize
 
 passportConfig()
 
-
-
 const app = express()
-
-
 
 //body parser
 app.use(morgan("dev"));
@@ -53,13 +49,9 @@ app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 
 
-
-
-
 //미들웨어 실행
 app.use(reqlogMiddleware);
 app.use(cors(corsOption));
-
 
 
 // 라우터 등록
