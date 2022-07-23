@@ -112,25 +112,56 @@ async function checkMe(req, res) {
     });
   };
 
-// 마이페이지 정보
+// 마이페이지 정보 - 1
  async function Mypage (req, res) {
-  // const {userId} = req.params;
-  const {nickname, userImageURL, host, email} = res.locals;
-  // const myposts = await posts.findOne({where : {nickname}});
+  const {userId} = res.locals;
+  // const {nickname, userImageURL, host, email, userId} = res.locals;
+  
+  // 내가 쓴 게시물
+  const mypageImage = await posts.findAll({
+    where : {userId},
+    include: [{
+      model: images,
+      required: true,
+      attributes: ['thumbnailURL']
+    }],
+  });
+  console.log(mypageImage)
+
+  const mypageThumnail = mypageImage.map((mypageinfo) =>({
+    nickname : mypageinfo.nickname,
+    title : mypageinfo.title,
+    commentNum : mypageinfo.commentNum,
+    likeNum : mypageinfo.likeNum,
+    thumbnailURL : mypageinfo.thumbnailURL,
+
+  }))
+  // const myposts = await posts.findAll({where : {userId}});
+  
   // const mypostlist = myposts.map((a) => ({
-  //     postId : a.postId
+  //     postId : a.postId,
+  //     title : a.title,
+  //     commentNum : a.commentNum,
+  //     likeNum : a.likeNum
   //    }));
-  // const likelist = await like.findOne({where : {nickname}});
+
+  // 좋아요 누른 게시물
+  // const likelist = await like.findAll({where : {userId}});
+  // const mylikelist = likelist.map((b) =>{
+
+  // })
    res.json({
       result : true,
-      nickname,
-      userImageURL,
-      host,
-      email,
-      // mypostlist,  //DB 수정이 필요
-      // likelist     //DB 수정이 필요 
+      // mypostlist,
+      // mylikelist,
+      mypageThumnail  //DB 수정이 필요
+           //DB 수정이 필요 
     })
  }
+
+// 마이페이지 정보 - 2
+ 
+
 
 // 마이페이지 정보 수정
 //닉네임
@@ -201,11 +232,13 @@ async function CNU_CK (req, res, next) {
         const userId = res.locals.userId
         await users.update({host:true}, {where:{userId}})
         res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
+      } else {
+        res.status(404).send({result : true, message :"국세청에 등록되지 않은 사업자등록번호입니다."})
       }
 
       } catch (error) {
         console.error(error);
-        res.status(401).send({
+        res.status(404).send({
           errorMEssage: '국세청에 등록되지 않은 사업자등록번호입니다.',
       })
         return;
