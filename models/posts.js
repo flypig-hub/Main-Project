@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       link: DataTypes.STRING,
       houseTitle: DataTypes.STRING,
+      tagList: DataTypes.STRING
     },
     {
       sequelize,
