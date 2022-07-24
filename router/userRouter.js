@@ -44,7 +44,7 @@ router.get('/me', authMiddleware, checkMe);
 //마이페이지 정보
 
 
-router.get('/mypage', authMiddleware, Mypage)
+router.get('/mypage/:userId', authMiddleware, Mypage)
 
 //마이페이지 정보 수정
 router.put('/mypage/:userId/nick', authMiddleware, MypagePutname)
