@@ -11,9 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      hosts.hasMany(models.images, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
     }
   }
   hosts.init({
+    hostId: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
     title: DataTypes.STRING,
     category: DataTypes.STRING,
     houstInfo: DataTypes.STRING,

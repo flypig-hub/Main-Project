@@ -16,7 +16,7 @@ async function hostCreateAcc(req, res) {
     const { userId, nickname, userImageURL } = res.locals;
     const host = res.locals.host
     if (host != true) {
-        res.send({ msg: "호스트가 아닙니다!" })
+        res.send({ errorMessage : "호스트가 아닙니다!" })
     };
 
     const { 
@@ -61,19 +61,19 @@ async function hostCreateAcc(req, res) {
         
         if (image) {
             const imagesInfo = images.create({
-            userId: userId,
-            nickname: nickname,
-            thumbnailURL: thumbnailURL.toString(),
-            thumbnailKEY: thumbnailKEY.toString(),
-            postImageURL: postImageURL,
-            postImageKEY: postImageKEY,
-            userImageURL: userImageURL
+                userId: userId,
+                nickname: nickname,
+                thumbnailURL: thumbnailURL.toString(),
+                thumbnailKEY: thumbnailKEY.toString(),
+                postImageURL: postImageURL,
+                postImageKEY: postImageKEY,
+                userImageURL: userImageURL
             })
-            console.log(imagesInfo);
-            return imagesInfo
+        } else {
+            res.send({ msg: "숙소 등록이 완료되었습니다!" })
         }
     });
-    res.status(201).send({ createAcc, msg:"숙소 등록이 완료되었습니다!" })
+    res.status(201).send({ createAcc, msg: "숙소 등록이 완료되었습니다!" })
 };
 
 

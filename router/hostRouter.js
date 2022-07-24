@@ -9,5 +9,7 @@ const router = express.Router();
 router.post('/', authMiddleware, upload.array('images', 8), HostController.hostCreateAcc)
 
 
+// 호스트 숙소 전체 조회
+router.get('/')
 
 module.exports = router;

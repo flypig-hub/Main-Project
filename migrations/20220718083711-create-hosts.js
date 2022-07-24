@@ -2,7 +2,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('hosts', {
-      id: {
+      hostId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
