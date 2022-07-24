@@ -48,6 +48,7 @@ async function WritePosting(req, res) {
     commentNum: 0,
     likeNum: 0,
     isLike: isLike,
+    tagList: tagList
   });
 
   postImageKey.forEach((element, i) => {
