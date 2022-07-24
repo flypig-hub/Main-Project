@@ -149,7 +149,20 @@ async function checkMe(req, res) {
  async function Mypage (req, res) {
   const {userId} = res.locals;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
+  // 좋아요 누른 게시물
+
+  const mylikelist = await posts.findAll({
+    where : {userId},
+    include: [{
+      model: images,
+      attributes: ['postId', 'thumbnailURL']
+    }],
+  })
+  console.log(mylikelist, '좋아요 리스트 테스트');
   
+  const mylikeinfo = mylikelist.map((likeinfo) =>({
+
+  }));
   // 내가 쓴 게시물
   const mypostlist = await posts.findAll({
     where : {userId},
@@ -160,52 +173,18 @@ async function checkMe(req, res) {
     // attributes: ['postId', 'thumbnailURL'],
 
   });
-  console.log(mypostlist);
+  // console.log(mypostlist);
   const mypostinfo = mypostlist.map((postinfo) => ({
     title : postinfo.title,
-    nickname : postinfo.nickname,
     commentNum : postinfo.commentNum,
-    likeNum : postinfo.likeNum
+    likeNum : postinfo.likeNum,
+    images : postinfo.images
   }))
-  console.log(mypostinfo, '여기에 images가 들어감?');
-  const mypostthumbnail = mypostlist.map((poststhumbnail) =>({
-    thumbnailURL : poststhumbnail.thumbnailURL
-  }))
-  console.log(mypostthumbnail, '이거 undefined?');
   res.json({
     mypostinfo,
-    mypostthumbnail
+
+    // mypostthumbnail
   })
-  // const mypageThumbnail = await images.findAll({
-  //   where: {userId},
-
-
-  // })
-
-  // const mypageThumbnailMap = mypageThumbnail.map(mypageThumbnailMap => mypageThumbnailMap.thumbnailURL)
-  // // console.log(mypageThumbnail.thumbnailURL, '여기도 안지나가나')
-  // console.log(mypageThumbnailMap, '여기는 지나가길')
-
-  // mypageThumbnailMap.forEach((element, i) => {
-  //   const thumbnailURL = mypageThumbnailMap[i]
-  //   console.log(thumbnailURL);
-
-  //   const mypageThumnail = mypageImage.map((mypageinfo) =>({
-  //   nickname : mypageinfo.nickname,
-  //   title : mypageinfo.title,
-  //   commentNum : mypageinfo.commentNum,
-  //   likeNum : mypageinfo.likeNum,
-  //   thumbnailURL : mypageinfo.thumbnailURL,
-  // }))
-
-  // res.json({
-  //   result : true,
-  //   // mypostlist,
-  //   // mylikelist,
-  //   mypageThumnail  //DB 수정이 필요
-  //        //DB 수정이 필요 
-  // })
-  // })
  }
 
 
@@ -230,7 +209,7 @@ async function checkMe(req, res) {
 // 마이페이지 정보 수정
 //닉네임
  async function MypagePutname (req, res) {
- try {
+ //try {
     const userId = res.locals.userId
     const {nickname} = req.body;
 
@@ -249,9 +228,9 @@ async function checkMe(req, res) {
       await users.update({nickname},{where:{userId}})
       res.status(200).send({result : true, message :"수정 완료"})
     }
-  } catch (error) {
-    res.status(400).send({result : false, errorMessage: "닉네임 수정 실패.",});
-  }
+  // } catch (error) {
+  //   res.status(400).send({result : false, errorMessage: "닉네임 수정 실패.",});
+  // }
  }
 
 //프로필이미지 수정하기
