@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
-const { images, posts, users, mypage, like, sequelize, Sequelize } = require("../models");
+const { images, posts, users, mypage, Like, sequelize, Sequelize } = require("../models");
 // const { users } = require('../models/index');
 // const posts = require('../models/posts');
 // const like = require('../models/like');
@@ -151,18 +151,38 @@ async function checkMe(req, res) {
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   // 좋아요 누른 게시물
 
-  const mylikelist = await posts.findAll({
+  const mylikelist = await Like.findAll({
     where : {userId},
-    include: [{
-      model: images,
-      attributes: ['postId', 'thumbnailURL']
-    }],
+    // include: [{
+    //   model: images,
+    //   attributes: ['postId', 'thumbnailURL']
+    // }],
   })
-  console.log(mylikelist, '좋아요 리스트 테스트');
-  
-  const mylikeinfo = mylikelist.map((likeinfo) =>({
+  // console.log(mylikelist, '좋아요 리스트 테스트');
+  const mylikespost = []
+  const mylikeinfo = mylikelist.map((likeinfo) =>(
+  likeinfo.postId));
+  // console.log(mylikeinfo , 'mylikeinfo');
+  for (i = 0; mylikeinfo.length > i; i++) {
+      const likepost = await posts.findOne ({
+        where : {postId : mylikeinfo[i]},
+        include: [{
+          model: images,
+          attributes: ['postId', 'thumbnailURL']
+        }],
+      })
+      // console.log(likepost, '이거 찍히나?');
+      const mylikepostlist = {
+        title : likepost.title,
+        commentNum : likepost.commentNum,
+        likeNum : likepost.likeNum,
+        images : likepost.images
 
-  }));
+      }
+      console.log(mylikepostlist, '여기 찍어주세요');
+      mylikespost.push(mylikepostlist);
+   }
+   
   // 내가 쓴 게시물
   const mypostlist = await posts.findAll({
     where : {userId},
@@ -182,7 +202,7 @@ async function checkMe(req, res) {
   }))
   res.json({
     mypostinfo,
-
+    mylikespost
     // mypostthumbnail
   })
  }
