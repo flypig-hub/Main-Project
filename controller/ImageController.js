@@ -1,10 +1,6 @@
 const { images, posts, sequelize, Sequelize } = require("../models");
-const path = require("path");
-const multerS3 = require("multer-s3");
-const multer = require("multer");
 const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require('uuid');
-const upload = require("../middlewares/S3-middleware")
 
 require("dotenv").config();
 
@@ -37,32 +33,31 @@ async function PostImage(req, res) {
 
 // 이미지 삭제
 async function DeleteImages(req, res) {
-  const { image } = req.body
-  console.log(image);
-  const fileName = JSON.stringify(image).slice(0, -1).split('images/')[1];
-  console.log(`images/${fileName}`);
+  const { image } = req.body;
+  // console.log(image);
 
-  // s3.getObject(
-  //   {
-  //     Bucket: process.env.AWS_BUCKET_NAME,
-  //     Key: `images/${fileName}`,
-  //   }),
-  //   console.log("지나가나요?");
+  const postImageKey = image.map((postImageKey) => postImageKey);
+  // console.log(postImageKey);
 
-  // 이미지 1개 삭제할 때
-  s3.deleteObject({
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `images/${fileName}`
-  }, function (err, data) {
-    if (err) { throw err; }
-    console.log('s3 deleteObject', data);
+  postImageKey.forEach((element, i) => {
+    const postImageKEY = postImageKey[i];
+    console.log(postImageKEY);
+    const s3 = new AWS.S3();
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+        }
+      };
+      s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      });
   });
 
   console.log("지나가나요?");
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
-
-
 
 module.exports.PostImage = PostImage;
 module.exports.DeleteImages = DeleteImages;

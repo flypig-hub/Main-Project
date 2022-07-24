@@ -11,7 +11,7 @@ const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const RoomRouter = require("./router/roomRouter");
-// const ImageRouter = require("./router/imageRouter");
+const ImageRouter = require("./router/imageRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
 app.use("/room", RoomRouter);
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
-// app.use("/image", ImageRouter);
+app.use("/image", ImageRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");

@@ -1,7 +1,7 @@
 const express = require("express");
 const PostController = require("../controller/postController");
 const authMiddleware = require("../middlewares/auth-middleware");
-const ImageController = require("../controller/ImageController");
+// const ImageController = require("../controller/ImageController");
 const upload = require("../middlewares/S3-middleware");
 const router = express.Router();
 
@@ -21,13 +21,14 @@ router.get('/:postId', PostController.GetPost);
 router.patch('/:postId', authMiddleware, upload.array('images', 8), PostController.ModifyPosting);
 
 
-// 게시글 삭제 API(email, articleId 같이 맞으면 삭제)
+// 게시글 삭제 API
 router.delete('/:postId', authMiddleware, PostController.DeletePost);
 
 
-// 이미지 조회
-router.delete('/images', authMiddleware, upload.array('images', 8), ImageController.DeleteImages)
+// 이미지 삭제
+// router.delete('/images', authMiddleware, ImageController.DeleteImages)
 
-router.post('/images', upload.array('images', 8), ImageController.PostImage)
+// 이미지 업로드
+// router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
 module.exports = router;

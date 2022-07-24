@@ -48,7 +48,7 @@ async function WritePosting(req, res) {
     commentNum: 0,
     likeNum: 0,
     isLike: isLike,
-    tagList: tagList
+    tagList
   });
 
   postImageKey.forEach((element, i) => {
@@ -70,6 +70,7 @@ async function WritePosting(req, res) {
       console.log(imagesInfo);
       return imagesInfo
     }
+
   });
     res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   } catch(e) {
@@ -166,7 +167,6 @@ async function GetPost(req, res) {
       islike: islike,
     });
   }
-
   res.send({ allPost });
  }
 
