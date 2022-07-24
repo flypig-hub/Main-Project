@@ -231,57 +231,17 @@ async function checkMe(req, res) {
 //닉네임
  async function MypagePutname (req, res) {
  try {
-    const image = req.files;
     const userId = res.locals.userId
-    const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
-    const userImageURL = image.map((userImageURL) => userImageURL.location);
     const {nickname} = req.body;
-    // console.log(image ,'이미지 찍히나요');
-    if (image.length > 0) {
-      const existImage = await images.findOne({where : {userId}})
-      
-    if (existImage) {
-      const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
-      {where :{userId},});
-      res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공합니다" })
-    }
-    } else{
-      
-      const puserImages = await images.findOne({where: {userId}});
-      // console.log(puserImages.userImageURL , '이미지');
-      const existUserImage = puserImages.userImageURL
-      const existUserImagekey = puserImages.userImageKEY
-      console.log(existUserImagekey, '키 로그');
-      // const s3 = new AWS.S3();
 
-      // if (images.userImageKEY !== null) {
-      //   const params = {
-      //     Bucket: process.env.AWS_BUCKET_NAME,
-      //     Delete: {
-      //       Objects: existUserImagekey.map(existUserImagekey => ({ Key: existUserImagekey })), 
-      //     }
-      //   };
-      //   s3.deleteObjects(params, function(err, data) {
-      //     if (err) console.log(err, err.stack); // error
-      //     else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-      //   });
-      // }
-      
-      
-      res.status(200).send({existUserImage, existUserImagekey, msg: "성공" })
-      
-    }
     
-    
-    
-
     const existnicName = await users.findOne({where : {nickname}});
-    const pnickname = await users.findOne({where : {userId}});
+    // const pnickname = await users.findOne({where : {userId}});
     // console.log(pnickname,'이거 찍히나');
     // console.log(pnickname.nickname,'닉네임');
-    if(pnickname.nickname == nickname) {
-      return
-    }
+    // if(pnickname.nickname == nickname) {
+    //   return
+    // }
     if(existnicName) {
       return res.status(400).send({result : false, errorMessage : "중복된 닉네임 사용중입니다."});
 
@@ -293,6 +253,30 @@ async function checkMe(req, res) {
     res.status(400).send({result : false, errorMessage: "닉네임 수정 실패.",});
   }
  }
+
+//프로필이미지 수정하기
+ async function MypagePutImage (req, res) {
+
+try {
+  
+  const image = req.files;
+  const userId = res.locals.userId
+  const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
+  const userImageURL = image.map((userImageURL) => userImageURL.location);
+  console.log(userImageKEY, userImageURL, '업로드까지');
+  const existImage = await images.findOne({where : {userId}})
+  if (existImage) {
+    const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
+    {where :{userId},});
+    res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
+  }  
+
+}catch(error){
+  res.status(400).send({result : false, errorMessage: "프로필사진 업데이트 실패",});
+}
+}
+
+
 
 
 // 사업자등록번호 검증
@@ -339,5 +323,5 @@ async function CNU_CK (req, res, next) {
 
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, CNU_CK,
+  checkMe, Mypage, MypagePutname, CNU_CK, MypagePutImage
 }
