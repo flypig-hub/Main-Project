@@ -15,42 +15,6 @@ const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
 });
-
-// AWS.config.update({
-//     region: process.env.AWS_BUCEKT_REGION,
-//     accessKeyId: process.env.AWS_ACCESS_KEY,
-//     secretAccessKey: process.env.AWS_SECRET_KEY,
-// });
-
-// const getUniqFileName = (originalname) => {
-//   const name = uuidv4();
-//   const ext = originalname.split('.').pop();
-//   return `${name}.${ext}`;
-// }
-
-// // multer를 사용하여 이미지를 업로드하는 미들웨어
-// const upload = multer({
-//   storage: multerS3({
-//     s3: new AWS.S3(),
-//     bucket: process.env.AWS_BUCKET_NAME,
-//     // acl: 'public-read',
-//     limits: { fileSize: 5 * 1024 * 1024 },
-//     contentType: multerS3.AUTO_CONTENT_TYPE,
-//     metadata: function(req, file, cb) {
-//         cb(null, { fieldName: file.fieldname });
-//     },
-//     key: function(req, file, cb) {
-//       const fileName = getUniqFileName(file.originalname);
-      
-//       file.newName = fileName;
-
-//       cb(null, `images/${fileName}`);
-//     },
-//   }),
-// });
-
-// module.exports = upload;
-
 // ==============================================================
 
 
@@ -73,57 +37,28 @@ async function PostImage(req, res) {
 
 // 이미지 삭제
 async function DeleteImages(req, res) {
-    // const image = req.body;
-    const { image } = req.body
-    console.log(image);
-    const fileName = JSON.stringify(image).slice(0, -1).split('images/')[1];
-    console.log(`images/${fileName}`);
+  const { image } = req.body
+  console.log(image);
+  const fileName = JSON.stringify(image).slice(0, -1).split('images/')[1];
+  console.log(`images/${fileName}`);
 
-    // s3.getObject(
-    //   {
-    //     Bucket: process.env.AWS_BUCKET_NAME,
-    //     Key: `images/${fileName}`,
-    //   }),
-    //   console.log("지나가나요?");
+  // s3.getObject(
+  //   {
+  //     Bucket: process.env.AWS_BUCKET_NAME,
+  //     Key: `images/${fileName}`,
+  //   }),
+  //   console.log("지나가나요?");
 
-    // 이미지 1개 삭제할 때
-    s3.deleteObject({
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `images/${fileName}`
-    }, function (err, data) {
-      if (err) { throw err; }
-      console.log('s3 deleteObject', data);
-    });
+  // 이미지 1개 삭제할 때
+  s3.deleteObject({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: `images/${fileName}`
+  }, function (err, data) {
+    if (err) { throw err; }
+    console.log('s3 deleteObject', data);
+  });
 
-    // 이미지 여러개 삭제할 때
-      // s3.deleteObjects({
-      // Bucket: process.env.AWS_BUCKET_NAME,
-      // Delete: [{
-      //      Objects: `images/${fileName}`
-      // }]
-      // }, function (err, data) {
-      //   if (err) { throw err; }
-      //   console.log('s3 deleteObject', data);
-      // });
-    
-      
-    // 이미지 여러개 삭제할 때
-    // const params = {
-    //   Bucket: process.env.AWS_BUCKET_NAME,
-    //   Delete: {
-    //     Objects: [
-    //       { Key: `images/${fileName}`}
-    //     ],
-    //     Quiet: false
-    //   }
-    // };
-    // s3.deleteObjects(params, (err, data) => {
-    //     if (err) { return reject(err); } else {
-    //       console.log('s3 deleteObject', data);
-    //     }
-    //   });
-
-    console.log("지나가나요?");
+  console.log("지나가나요?");
   res.send({ msg: "사진이 삭제되었습니다!" });
 };
 

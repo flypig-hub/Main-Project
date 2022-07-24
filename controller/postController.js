@@ -187,51 +187,8 @@ async function ModifyPosting(req, res) {
     } = req.body;
   const image = req.files;
 
-  // images DB에서 Key 찾아오기
-  const postImageInfo = await images.findAll({
-    where:{ postId }
-  });
-
-  const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
-  console.log(postImageKey);
-
-  postImageKey.forEach((element, i) => {
-    const postImageKEY = postImageKey[i];
-
-    if (postId) {
-    const s3 = new AWS.S3();
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Delete: {
-          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
-        }
-      };
-      s3.deleteObjects(params, function(err, data) {
-        if (err) console.log(err, err.stack); // error
-        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-      });
-    }
-  });
-
-  // image KEY값, URL 배열 만들기
-  const PostImageKey = image.map((postImageKey) => postImageKey.key);
-  const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
-  const thumbnailKEY = postImageKey[0];
-  const thumbnailURL = postImageUrl[0];
-  // console.log(postImageKey);
-
-  // images DB 수정
-  const ModifyImage = await images.update({
-    postImageKEY:PostImageKey.toString(),
-    postImageURL:postImageUrl.toString(),
-    thumbnailKEY:thumbnailKEY.toString(),
-    thumbnailURL:thumbnailURL.toString()
-  }, {
-    where: { postId }
-  })
-
   // posts DB 수정
-  const ModifyPost = await posts.update({
+  const updatePost = await posts.update({
     title:title,
     content:content,
     mainAddress:mainAddress,
@@ -245,8 +202,56 @@ async function ModifyPosting(req, res) {
     where: { postId },
   });
 
-  // console.log(ModifyImage);
-  res.status(200).send({ ModifyPost, ModifyImage, msg: "게시글이 수정되었습니다!" })
+  if (image) {
+    // images DB에서 키값 찾아오기
+    const postImageInfo = await images.findAll({ where:{ postId } });
+    const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
+
+    // S3 사진 삭제. 업로드는 미들웨어
+    postImageKey.forEach((element, i) => {
+      const postImageKEY = postImageKey[i];
+      const s3 = new AWS.S3();
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+        }
+      };
+      s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      });
+    });
+
+    // image KEY, URL 배열 만들기
+    const PostImagesKey = image.map((postImageKey) => postImageKey.key);
+    const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
+    const thumbnailKEY = PostImagesKey[0];
+    const thumbnailURL = postImagesUrl[0];
+    console.log(PostImagesKey);
+
+    // images DB 수정
+    PostImagesKey.forEach((element, i) => {
+      const postImageKEY = PostImagesKey[i];
+      const postImageURL = postImagesUrl[i];
+      
+      const imagesUpdate = images.update({
+        thumbnailURL: thumbnailURL.toString(),
+        thumbnailKEY: thumbnailKEY.toString(),
+        postImageURL: postImageURL,
+        postImageKEY: postImageKEY,
+      }, {
+        where: { postId: postId }
+      })
+    });
+    res.status(200).send({ updatePost, postImagesUrl, msg: "게시글이 수정되었습니다!" });
+  } else {
+    const findImages = await images.findAll({
+      where: { postId }
+    });
+    console.log(findImages);
+    res.status(200).send({ updatePost, findImages, msg: "수정된 내용이 없습니다!" });
+  };
 };
 
 
