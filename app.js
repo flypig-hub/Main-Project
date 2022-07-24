@@ -12,8 +12,9 @@ const LikeRouter = require("./router/likeRouter");
 const CommentRouter = require("./router/commentRouter");
 const RoomRouter = require("./router/roomRouter");
 const ImageRouter = require("./router/imageRouter");
+const HostRouter = require("./router/hostRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
-const port = 8080;
+const port = 3000;
 
 // const session = require("express-session")
 const webSocket = require("./socket");
@@ -63,6 +64,7 @@ app.use("/room", RoomRouter);
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
 app.use("/image", ImageRouter);
+app.use("/host", HostRouter)
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
