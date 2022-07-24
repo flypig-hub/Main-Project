@@ -8,6 +8,6 @@ const upload = require("../middlewares/S3-middleware");
 router.post('/', upload.array('images', 8),  ImageController.PostImage)
 
 // 이미지 삭제
-router.delete('/deleteimages', ImageController.DeleteImages)
+// router.delete('/deleteimages', ImageController.DeleteImages)
 
 module.exports = router;
