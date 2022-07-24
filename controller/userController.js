@@ -209,7 +209,7 @@ async function checkMe(req, res) {
 // 마이페이지 정보 수정
 //닉네임
  async function MypagePutname (req, res) {
- //try {
+ try {
     const userId = res.locals.userId
     const {nickname} = req.body;
 
@@ -226,11 +226,11 @@ async function checkMe(req, res) {
 
     }else{
       await users.update({nickname},{where:{userId}})
-      res.status(200).send({result : true, message :"수정 완료"})
+      res.status(200).send({nickname, result : true, message :"수정 완료"})
     }
-  // } catch (error) {
-  //   res.status(400).send({result : false, errorMessage: "닉네임 수정 실패.",});
-  // }
+  } catch (error) {
+    res.status(400).send({result : false, errorMessage: "닉네임 수정 실패.",});
+  }
  }
 
 //프로필이미지 수정하기
