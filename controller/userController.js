@@ -2,12 +2,13 @@ require('dotenv').config()
 
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
-const { images, posts, users, like, sequelize, Sequelize } = require("../models");
+const { images, posts, users, mypage, like, sequelize, Sequelize } = require("../models");
 // const { users } = require('../models/index');
 // const posts = require('../models/posts');
 // const like = require('../models/like');
 const axios = require('axios');
 const { cache } = require('ejs');
+
 
 //카카오 로그인
 const kakaoCallback = (req, res, next) => {
@@ -102,7 +103,7 @@ const naverCallback = (req, res, next) => {
 async function checkMe(req, res) {
     const {userId, nickname, userImageURL, email, host}  = res.locals
     
-    res.send({
+  res.send({
       success:true,
       email,
       userId,
@@ -112,69 +113,115 @@ async function checkMe(req, res) {
     });
   };
 
-// 마이페이지 정보 - 1
+// // 마이페이지 생성
+
+// async function CreateMypage (req, res) {
+//   const {userId} = res.locals
+  
+  
+//   const mypageinf = await posts.findAll({
+//     where : {userId}
+//   })
+
+//   const mypageinfmap = mypageinf.map((mypageinfo) =>({
+//     nickname : mypageinfo.nickname,
+//     title : mypageinfo.title,
+//     commentNum : mypageinfo.commentNum,
+//     likeNum : mypageinfo.likeNum,
+//   }))
+//   console.log(mypageinfmap,'여기가 포스트에서 가지고오는거');
+//   const mypagecreate = await mypage.create({
+//     mypageinfmap
+//     // thumbnailURL,
+//   })
+//   // const thumbnail = await images.findAll({
+//   //   where : {postId}
+//   // })
+//   console.log(mypageinfmap);
+//   res.status(200).send({mypagecreate});
+//   // res.json({
+//   //   mypageinf
+//   // })
+// }
+
+
+//마이페이지 정보 - 1
  async function Mypage (req, res) {
   const {userId} = res.locals;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
   // 내가 쓴 게시물
-  const mypageImage = await posts.findAll({
+  const mypostlist = await posts.findAll({
     where : {userId},
+    include: [{
+      model: images,
+      attributes: ['postId', 'thumbnailURL']
+    }],
+    // attributes: ['postId', 'thumbnailURL'],
 
   });
-
-  const mypageThumbnail = await images.findAll({
-    where: {userId},
-  })
-
-  const mypageThumbnailMap = mypageThumbnail.map(mypageThumbnailMap => mypageThumbnailMap.thumbnailURL)
-  // console.log(mypageThumbnail.thumbnailURL, '여기도 안지나가나')
-  console.log(mypageThumbnailMap, '여기는 지나가길')
-
-  mypageThumbnailMap.forEach((element, i) => {
-    const thumbnailURL = mypageThumbnailMap[i]
-    console.log(thumbnailURL);
-
-    const mypageThumnail = mypageImage.map((mypageinfo) =>({
-    nickname : mypageinfo.nickname,
-    title : mypageinfo.title,
-    commentNum : mypageinfo.commentNum,
-    likeNum : mypageinfo.likeNum,
-    thumbnailURL : mypageinfo.thumbnailURL,
+  console.log(mypostlist);
+  const mypostinfo = mypostlist.map((postinfo) => ({
+    title : postinfo.title,
+    nickname : postinfo.nickname,
+    commentNum : postinfo.commentNum,
+    likeNum : postinfo.likeNum
   }))
-
+  console.log(mypostinfo, '여기에 images가 들어감?');
+  const mypostthumbnail = mypostlist.map((poststhumbnail) =>({
+    thumbnailURL : poststhumbnail.thumbnailURL
+  }))
+  console.log(mypostthumbnail, '이거 undefined?');
   res.json({
-    result : true,
-    // mypostlist,
-    // mylikelist,
-    mypageThumnail  //DB 수정이 필요
-         //DB 수정이 필요 
+    mypostinfo,
+    mypostthumbnail
   })
-  })
+  // const mypageThumbnail = await images.findAll({
+  //   where: {userId},
 
-  
-  // const myposts = await posts.findAll({where : {userId}});
-  
-  // const mypostlist = myposts.map((a) => ({
-  //     postId : a.postId,
-  //     title : a.title,
-  //     commentNum : a.commentNum,
-  //     likeNum : a.likeNum
-  //    }));
-
-  // 좋아요 누른 게시물
-  // const likelist = await like.findAll({where : {userId}});
-  // const mylikelist = likelist.map((b) =>{
 
   // })
-  //  res.json({
-  //     result : true,
-  //     // mypostlist,
-  //     // mylikelist,
-  //     mypageThumnail  //DB 수정이 필요
-  //          //DB 수정이 필요 
-  //   })
+
+  // const mypageThumbnailMap = mypageThumbnail.map(mypageThumbnailMap => mypageThumbnailMap.thumbnailURL)
+  // // console.log(mypageThumbnail.thumbnailURL, '여기도 안지나가나')
+  // console.log(mypageThumbnailMap, '여기는 지나가길')
+
+  // mypageThumbnailMap.forEach((element, i) => {
+  //   const thumbnailURL = mypageThumbnailMap[i]
+  //   console.log(thumbnailURL);
+
+  //   const mypageThumnail = mypageImage.map((mypageinfo) =>({
+  //   nickname : mypageinfo.nickname,
+  //   title : mypageinfo.title,
+  //   commentNum : mypageinfo.commentNum,
+  //   likeNum : mypageinfo.likeNum,
+  //   thumbnailURL : mypageinfo.thumbnailURL,
+  // }))
+
+  // res.json({
+  //   result : true,
+  //   // mypostlist,
+  //   // mylikelist,
+  //   mypageThumnail  //DB 수정이 필요
+  //        //DB 수정이 필요 
+  // })
+  // })
  }
+
+
+// // 좋아요 누른 게시물
+//   const likelist = await like.findAll({where : {userId}});
+//   const mylikelist = likelist.map((b) =>{
+
+//   })
+//    res.json({
+//       result : true,
+//       // mypostlist,
+//       // mylikelist,
+//       mypageThumnail  //DB 수정이 필요
+//            //DB 수정이 필요 
+//     })
+//  }
 
 // 마이페이지 정보 - 2
  
@@ -184,11 +231,57 @@ async function checkMe(req, res) {
 //닉네임
  async function MypagePutname (req, res) {
  try {
+    const image = req.files;
     const userId = res.locals.userId
+    const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
+    const userImageURL = image.map((userImageURL) => userImageURL.location);
     const {nickname} = req.body;
+    // console.log(image ,'이미지 찍히나요');
+    if (image.length > 0) {
+      const existImage = await images.findOne({where : {userId}})
+      
+    if (existImage) {
+      const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
+      {where :{userId},});
+      res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공합니다" })
+    }
+    } else{
+      
+      const puserImages = await images.findOne({where: {userId}});
+      // console.log(puserImages.userImageURL , '이미지');
+      const existUserImage = puserImages.userImageURL
+      const existUserImagekey = puserImages.userImageKEY
+      console.log(existUserImagekey, '키 로그');
+      // const s3 = new AWS.S3();
+
+      // if (images.userImageKEY !== null) {
+      //   const params = {
+      //     Bucket: process.env.AWS_BUCKET_NAME,
+      //     Delete: {
+      //       Objects: existUserImagekey.map(existUserImagekey => ({ Key: existUserImagekey })), 
+      //     }
+      //   };
+      //   s3.deleteObjects(params, function(err, data) {
+      //     if (err) console.log(err, err.stack); // error
+      //     else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      //   });
+      // }
+      
+      
+      res.status(200).send({existUserImage, existUserImagekey, msg: "성공" })
+      
+    }
+    
+    
+    
 
     const existnicName = await users.findOne({where : {nickname}});
-    // res.locals.nickname = existnicName.nickname
+    const pnickname = await users.findOne({where : {userId}});
+    // console.log(pnickname,'이거 찍히나');
+    // console.log(pnickname.nickname,'닉네임');
+    if(pnickname.nickname == nickname) {
+      return
+    }
     if(existnicName) {
       return res.status(400).send({result : false, errorMessage : "중복된 닉네임 사용중입니다."});
 
@@ -201,27 +294,7 @@ async function checkMe(req, res) {
   }
  }
 
-//프로필이미지 수정하기
- async function MypagePutImage (req, res) {
 
-try {
-  
-  const image = req.files;
-  const userId = res.locals.userId
-  const userImageKEY = image.map((userImageKEY) => userImageKEY.key);
-  const userImageURL = image.map((userImageURL) => userImageURL.location);
-  console.log(userImageKEY, userImageURL, '업로드까지');
-  const existImage = await images.findOne({where : {userId}})
-  if (existImage) {
-    const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
-    {where :{userId},});
-    res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
-  }  
-
-}catch(error){
-  res.status(400).send({result : false, errorMessage: "프로필사진 업데이트 실패",});
-}
-}
 // 사업자등록번호 검증
 
 async function CNU_CK (req, res, next) {
@@ -266,5 +339,5 @@ async function CNU_CK (req, res, next) {
 
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, CNU_CK, MypagePutImage
+  checkMe, Mypage, MypagePutname, CNU_CK,
 }
