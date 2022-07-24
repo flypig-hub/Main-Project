@@ -28,7 +28,8 @@ router.delete('/:postId', authMiddleware, PostController.DeletePost);
 // 이미지 삭제
 router.delete('/images', authMiddleware, ImageController.DeleteImages)
 
+
 // 이미지 업로드
-// router.post('/images', upload.array('images', 8), ImageController.PostImage)
+router.post('/images', upload.array('images', 8), ImageController.PostImage)
 
 module.exports = router;
