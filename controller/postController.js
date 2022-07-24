@@ -231,17 +231,17 @@ async function ModifyPosting(req, res) {
     console.log(PostImagesKey);
 
     // images DB 수정
-    PostImagesKey.forEach((element, i) => {
+    postImageInfo.forEach((element, i) => {
       const postImageKEY = PostImagesKey[i];
       const postImageURL = postImagesUrl[i];
-      
+      console.log(postImageKEY);
       const imagesUpdate = images.update({
         thumbnailURL: thumbnailURL.toString(),
         thumbnailKEY: thumbnailKEY.toString(),
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
       }, {
-        where: { postId: postId }
+        where: { imageId: element.imageId }
       })
     });
     res.status(200).send({ updatePost, postImagesUrl, msg: "게시글이 수정되었습니다!" });
