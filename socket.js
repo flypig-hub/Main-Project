@@ -109,6 +109,7 @@ module.exports = (server, app) => {
         where: { roomId: roomId },
       });
       const leaveUser = await users.findOne({ where: { userId: userId } });
+      const userImageURL = await images.findOne({ where: { userId: userId } });
       const leavemsg = await Chats.findOne({
         where: {
           roomId: roomId,
@@ -125,7 +126,6 @@ module.exports = (server, app) => {
       const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
         (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
       );
-      const userImageURL = await images.findOne({ where: { userId: userId } });
       const roomUserNum = roomUsersId.length + 1;
       
       if (!leaveRoom) {
@@ -159,18 +159,14 @@ module.exports = (server, app) => {
         await Rooms.update(
           { hostId:leaveRoom.dataValues.roomUserId[0],
           hostNickname: leaveRoom.dataValues.roomUserNickname[0],
-          hostImg:leaveRoom.dataValues.roomUserImg[0]},
-          { where: { roomId: roomId } }
-        );
-        await Rooms.update(
-        {
+          hostImg:leaveRoom.dataValues.roomUserImg[0],
           roomUserId: roomUsersId,
           roomUserNickname: roomUsersNickname,
           roomUserImg: roomUsersImg,
-          roomUserNum: roomUserNum,
-        },
-        { where: { roomId: roomId } }
-      );
+          roomUserNum: roomUserNum},
+          { where: { roomId: roomId } }
+        );
+       
         
       }else{
         await Rooms.update(
