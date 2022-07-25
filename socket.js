@@ -2,8 +2,10 @@ const app = require("./app");
 const fs = require("fs");
 const {images, Chats, Rooms, users, sequelize, Sequelize } = require("./models");
 const Op = Sequelize.Op;
+const authMiddleware = require("../middlewares/auth-middleware");
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
+
 module.exports = (server, app) => {
   const io = require("socket.io")(server, {
     cors: {
@@ -12,6 +14,9 @@ module.exports = (server, app) => {
     },
   });
   app.set("io", io);
+//   io.use((socket, next) => {
+//     authMiddleware(socket.req, socket.res, next);
+//   });
   io.on("connection", (socket) => {
     socket.onAny((event) => {
       
