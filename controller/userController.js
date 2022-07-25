@@ -152,29 +152,29 @@ async function checkMe(req, res) {
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
   
-  // 저장한 게시물
-   const savepost = await save.findAll({
-    where : {userId},
-   })
-   const saveposts = [];
-   const savelist = savepost.map((saveinfo) =>(
-    saveinfo.postId));
-    for (j = 0; savelist.length > j; j++) {
-      const spost = await save.findOne ({
-        where : {postId : savelist[j]},
-        include : [{
-          model : images,
-          attributes: ['postId', 'thumbnailURL']
-        }],
-      }) 
-      const savepostlist = {
-        title : spost.title,
-        commentNum : spost.commentNum,
-        likeNum : spost.likeNum,
-        images : spost.images
-      }
-      savepostlist.push(saveposts)
-    }
+  // // 저장한 게시물
+  //  const savepost = await save.findAll({
+  //   where : {userId},
+  //  })
+  //  const saveposts = [];
+  //  const savelist = savepost.map((saveinfo) =>(
+  //   saveinfo.postId));
+  //   for (j = 0; savelist.length > j; j++) {
+  //     const spost = await save.findOne ({
+  //       where : {postId : savelist[j]},
+  //       include : [{
+  //         model : images,
+  //         attributes: ['postId', 'thumbnailURL']
+  //       }],
+  //     }) 
+  //     const savepostlist = {
+  //       title : spost.title,
+  //       commentNum : spost.commentNum,
+  //       likeNum : spost.likeNum,
+  //       images : spost.images
+  //     }
+  //     savepostlist.push(saveposts)
+  //   }
   
   // 좋아요 누른 게시물
   const mylikelist = await Like.findAll({
@@ -205,7 +205,7 @@ async function checkMe(req, res) {
         images : likepost.images
 
       }
-      console.log(mylikepostlist, '여기 찍어주세요');
+      // console.log(mylikepostlist, '여기 찍어주세요');
       mylikespost.push(mylikepostlist);
    }
    
@@ -241,13 +241,13 @@ async function checkMe(req, res) {
     images : hosts.images
   }));
 
-
+  console.log(hostinfo,'호스트 게시물 불러오기');
 
   res.json({
     mypostinfo, // 내가 쓴 게시물 목록
     mylikespost, // 좋아요를 누른 게시물 목록
     hostinfo, // 호스트 등록 시, 호스트 유저로 쓴 호스트 게시물
-    saveposts // 마음에 든 호스트 게시물을 저장한 목록
+   // saveposts // 마음에 든 호스트 게시물을 저장한 목록
 
     // mypostthumbnail
   })

@@ -14,6 +14,9 @@ module.exports = {
       title: {
         type: Sequelize.STRING
       },
+      nickname : {
+        type: Sequelize.STRING
+      },
       category: {
         type: Sequelize.STRING
       },
