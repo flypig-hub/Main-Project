@@ -21,9 +21,6 @@ module.exports = (server, app) => {
     },
   });
   app.set("io", io);
-  //   io.use((socket, next) => {
-  //     authMiddleware(socket.req, socket.res, next);
-  //   });
   io.on("connection", (socket) => {
     socket.onAny((event) => {
       console.log(`Socket Event:${event}`);
@@ -42,7 +39,6 @@ module.exports = (server, app) => {
           chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
         },
       });
-      console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
       if (!entermsg) {
         await Chats.create({
@@ -92,7 +88,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: userImg.dataValues.userImageURL,
       });
-      // console.log(room.title."에서 채팅합니다");
+      
       socket
         .to(room.title)
         .emit(
@@ -127,8 +123,6 @@ module.exports = (server, app) => {
       socket.leave(leaveRoom.title);
       
       if (!leavemsg) {
-        console.log(leaveRoom.title, "에서퇴장합니다");
-
         await Chats.create({
           userNickname: "system",
           userId: "system",
@@ -141,7 +135,6 @@ module.exports = (server, app) => {
       socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
      
       if (leaveRoom.dataValues.hostId == userId && leaveRoom.dataValues.roomUserId.length === 0){
-        console.log(roomId,"방은 제거 되었습니다.")
         await Rooms.destroy({where:{roomId:roomId}})
         
       } else if (leaveRoom.dataValues.hostId === userId) {
