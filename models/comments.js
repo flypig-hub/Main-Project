@@ -21,10 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      userId: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
       nickname: DataTypes.STRING,
       comment: DataTypes.STRING,
-      postId: DataTypes.STRING,
+      postId: DataTypes.INTEGER,
       userImage: DataTypes.STRING,
     },
     {
