@@ -3,18 +3,23 @@ const Op = Sequelize.Op;
 
 async function searchRoom(req, res) {
 const queryData = req.query;
-  console.log(queryData);
   const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] }); 
   let searchResult = [];
   for (i = 0; i < rooms.length; i++){
 
    let room = rooms[i]
     if (
-      room.title.includes(queryData.search) ||
-      room.hashTag.includes(queryData.search)
+      room.title.includes(queryData.search) 
     ) {
-      searchResult.push(room);
-    };
+      searchResult.push(room)
+    }else{
+    for (l = 0; l < room.hashTag.length; l++) {
+      const hashtag = room.hashTag[l];
+      if (hashtag.includes(queryData.search)) {
+        searchResult.push(room);
+       }
+      }
+    }  
   }
   res.status(200).send({msg:"룸 검색완료", searchResult})
 };
