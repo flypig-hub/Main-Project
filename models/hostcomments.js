@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+    
+    hostcomments.hasMany(models.images, { foreignKey: 'reviewId', sourceKey: 'reviewId', onDelete: 'CASCADE' });
     hostcomments.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });    
+    hostcomments.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });    
     }
   }
   hostcomments.init({

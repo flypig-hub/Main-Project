@@ -1,4 +1,5 @@
-const { Comments, sequelize, Sequelize } = require("../models");
+const { Comments, images, sequelize, Sequelize } = require("../models");
+
 
 //댓글 불러오기 API
 async function readComment(req, res) {
@@ -7,8 +8,12 @@ async function readComment(req, res) {
     
     const comments = await Comments.findAll({
       where: {
-        postId:postId,
+        postId
       },
+      include: [{
+        model: images,
+        attributes: ['commentid', 'userImageURL']
+      }],
       order: [
         ["commentid", "DESC"],
         
@@ -33,7 +38,7 @@ async function writeComment(req, res) {
     });
     return;
   }
-try {
+//try {
   if (!comment) {
     res.status(412).send({
       errorMessage: "댓글을 입력해 주세요.",
@@ -44,18 +49,22 @@ try {
   const comment_c = await Comments.create({
     postId: postId,
     userId: userId,
-    userImage: userImageURL,
+    userImageURL : userImageURL,
     comment: comment,
     nickname: nickname,
   });
+  const commentImg = await images.create({
+    commentId : comment_c.commentId,
+    userImageURL : userImageURL
+  })
 
-  res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
-} catch (err) {
-  // console.log(err);
-  res
-    .status(400)
-    .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
-}
+  res.status(201).send({comment_c, commentImg, msg: "댓글이 등록 되었습니다." });
+// } catch (err) {
+//   // console.log(err);
+//   res
+//     .status(400)
+//     .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
+// }
 }
 
 // 댓글 수정 API
