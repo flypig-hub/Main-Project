@@ -146,12 +146,12 @@ module.exports = (server, app) => {
       console.log(typeof leaveRoom.dataValues.hostId, typeof userId);
       if (leaveRoom.dataValues.hostId === userId) {
         await Rooms.update(
-          { hostId: leaveRoom.dataValues.userId[0] },
+          { hostId:leaveRoom.dataValues.roomUserId[0] },
           {hostImg:leaveRoom.dataValues.roomUserImg[0]},
           { where: { roomId: roomId } }
         );
       }
-      console.log("1.유저아이디 비교, 2.유저 url비교",typeof leaveRoom.dataValues.roomUserId[0],typeof userId,
+      console.log("1.유저아이디 비교, 2.유저 url비교",typeof leaveRoom.dataValues.roomUserId[0], leaveRoom.dataValues.roomUserId[0],typeof userId,userId,
                 leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId != userId
       ) ,leaveRoom.dataValues.roomUserImg.filter(
