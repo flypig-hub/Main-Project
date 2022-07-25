@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       users.hasMany(models.posts, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       users.hasMany(models.Like, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       users.hasMany(models.images, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+      users.hasMany(models.save, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
     }
   }
   users.init({
