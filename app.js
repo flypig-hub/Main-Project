@@ -9,7 +9,8 @@ const UserRouter = require("./router/userRouter");
 const passportConfig = require('./passport');
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
-// const SaveRouter = require("./router/saveRouter");
+const SaveRouter = require("./router/saveRouter");
+const ReviewRouter = require("./router/hostcommentRouter");
 const CommentRouter = require("./router/commentRouter");
 const RoomRouter = require("./router/roomRouter");
 const ImageRouter = require("./router/imageRouter");
@@ -18,7 +19,7 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 // const session = require("express-session")
-const webSocket = require("./socket");
+// const webSocket = require("./socket");
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
@@ -64,9 +65,10 @@ app.get('/', (req, res) => {
 app.use("/room", RoomRouter);
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
-// app.use("/save", SaveRouter);
+app.use("/save", SaveRouter);
 app.use("/image", ImageRouter);
-app.use("/host", HostRouter)
+app.use("/host", HostRouter);
+app.use("/review", ReviewRouter);
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
@@ -85,4 +87,4 @@ const server = app.listen(port, () => {
   console.log(port,"번 포트에서 대기 중");
 });
 
-webSocket(server, app);
+// webSocket(server, app);

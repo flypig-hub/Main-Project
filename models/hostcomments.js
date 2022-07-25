@@ -3,30 +3,31 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class saves extends Model {
+  class hostcomments extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-        saves.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
-        saves.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       // define association here
+    hostcomments.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });    
     }
   }
-  saves.init({
-    saveId : {
+  hostcomments.init({
+    reviewId : {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER
     },
     userId: DataTypes.INTEGER,
-    hostId: DataTypes.INTEGER
+    hostId: DataTypes.INTEGER,
+    nickname: DataTypes.STRING,
+    review: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'saves',
+    modelName: 'hostcomments',
   });
-  return saves;
+  return hostcomments;
 };

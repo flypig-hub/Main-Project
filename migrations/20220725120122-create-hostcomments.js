@@ -1,8 +1,8 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('saves', {
-      saveId: {
+    await queryInterface.createTable('hostcomments', {
+      reviewId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -13,6 +13,12 @@ module.exports = {
       },
       hostId: {
         type: Sequelize.INTEGER
+      },
+      nickname: {
+        type: Sequelize.STRING
+      },
+      review: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -25,6 +31,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('saves');
+    await queryInterface.dropTable('hostcomments');
   }
 };

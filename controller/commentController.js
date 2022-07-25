@@ -87,7 +87,7 @@ async function updateComment(req, res) {
        { comment: comment },
        { updatedAt: Date() }
      );
-      ;
+      
 
       res
         .status(200)

@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
-const { images, posts, users, hosts, Like, save, sequelize, Sequelize } = require("../models");
+const { images, posts, users, hosts, Like, saves, sequelize, Sequelize } = require("../models");
 // const { users } = require('../models/index');
 // const posts = require('../models/posts');
 // const like = require('../models/like');
@@ -152,37 +152,40 @@ async function checkMe(req, res) {
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
   
-  // // 저장한 게시물
-  //  const savepost = await save.findAll({
-  //   where : {userId},
-  //  })
-  //  const saveposts = [];
-  //  const savelist = savepost.map((saveinfo) =>(
-  //   saveinfo.postId));
-  //   for (j = 0; savelist.length > j; j++) {
-  //     const spost = await save.findOne ({
-  //       where : {postId : savelist[j]},
-  //       include : [{
-  //         model : images,
-  //         attributes: ['postId', 'thumbnailURL']
-  //       }],
-  //     }) 
-  //     const savepostlist = {
-  //       title : spost.title,
-  //       commentNum : spost.commentNum,
-  //       likeNum : spost.likeNum,
-  //       images : spost.images
-  //     }
-  //     savepostlist.push(saveposts)
-  //   }
+  // 저장한 게시물
+  const mysavelist = await saves.findAll({
+    where : {userId},
+
+  })
+  // console.log(mylikelist, '좋아요 리스트 테스트');
+  const mysavehost = []
+  const mysaveinfo = mysavelist.map((saveinfo) =>(
+  saveinfo.hostId));
+  // console.log(mylikeinfo , 'mylikeinfo');
+  for (i = 0; mysaveinfo.length > i; i++) {
+      const savehost = await hosts.findOne ({
+        where : {hostId : mysaveinfo[i]},
+        include: [{
+          model: images,
+          attributes: ['hostId', 'thumbnailURL']
+        }],
+      })
+      // console.log(likepost, '이거 찍히나?');
+      const mysavehostlist = {
+        title : savehost.title,
+        commentNum : savehost.commentNum,
+        likeNum : savehost.likeNum,
+        images : savehost.images
+
+      }
+      console.log(mysavehostlist, '여기 찍어주세요');
+      mysavehost.push(mysavehostlist);
+   }
   
   // 좋아요 누른 게시물
   const mylikelist = await Like.findAll({
     where : {userId},
-    // include: [{
-    //   model: images,
-    //   attributes: ['postId', 'thumbnailURL']
-    // }],
+
   })
   // console.log(mylikelist, '좋아요 리스트 테스트');
   const mylikespost = []
@@ -205,7 +208,7 @@ async function checkMe(req, res) {
         images : likepost.images
 
       }
-      // console.log(mylikepostlist, '여기 찍어주세요');
+      console.log(mylikepostlist, '여기 찍어주세요');
       mylikespost.push(mylikepostlist);
    }
    
@@ -241,35 +244,19 @@ async function checkMe(req, res) {
     images : hosts.images
   }));
 
-  console.log(hostinfo,'호스트 게시물 불러오기');
+  // console.log(hostinfo,'호스트 게시물 불러오기');
 
   res.json({
     mypostinfo, // 내가 쓴 게시물 목록
     mylikespost, // 좋아요를 누른 게시물 목록
     hostinfo, // 호스트 등록 시, 호스트 유저로 쓴 호스트 게시물
-   // saveposts // 마음에 든 호스트 게시물을 저장한 목록
+    mysavehost // 마음에 든 호스트 게시물을 저장한 목록
 
     // mypostthumbnail
   })
  }
 
 
-// // 좋아요 누른 게시물
-//   const likelist = await like.findAll({where : {userId}});
-//   const mylikelist = likelist.map((b) =>{
-
-//   })
-//    res.json({
-//       result : true,
-//       // mypostlist,
-//       // mylikelist,
-//       mypageThumnail  //DB 수정이 필요
-//            //DB 수정이 필요 
-//     })
-//  }
-
-// 마이페이지 정보 - 2
- 
 
 
 // 마이페이지 정보 수정
