@@ -2,7 +2,7 @@ const { Rooms, Chats, sequelize, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
 async function searchRoom(req, res) {
-const queryData = req.quary;
+const queryData = req.query;
   const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] }); 
   let searchResult = [];
   for (i = 0; i < rooms.length; i++){
@@ -19,7 +19,7 @@ const queryData = req.quary;
 };
  
 async function searchRoombyhashtag(req, res) {
-const queryData = req.quary;
+const queryData = req.query;
   const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
   let searchResult = [];
   for (i = 0; i < rooms.length; i++){
