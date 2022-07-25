@@ -62,6 +62,7 @@ async function hostCreateAcc(req, res) {
             const imagesInfo = images.create({
                 userId: userId,
                 nickname: nickname,
+                hostId: createAcc.hostId,
                 thumbnailURL: thumbnailURL.toString(),
                 thumbnailKEY: thumbnailKEY.toString(),
                 postImageURL: postImageURL,
@@ -80,8 +81,9 @@ async function hostCreateAcc(req, res) {
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {
     const findAllAcc = await hosts.findAll({
-        where: { hostId: { [Op.gt] : 0 } }
+        where: { hostId: { [Op.gt] : 0 } },
     });
+
     console.log(findAllAcc);
 
     res.status(200).send({ findAllAcc })

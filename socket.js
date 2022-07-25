@@ -72,7 +72,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: userImg.dataValues.userImageURL,
       });
-      console.log(room.title."에서 채팅합니다");
+      // console.log(room.title."에서 채팅합니다");
       socket.to(room.title).emit(
         "message",
         messageChat,
