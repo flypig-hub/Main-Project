@@ -140,8 +140,8 @@ module.exports = (server, app) => {
       
       socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
       
-      console.log(leaveRoom.dataValues.hostId == userId && leaveRoom.dataValues.roomUserId === [], leaveRoom.dataValues.hostId=== userId, leaveRoom.dataValues.roomUserId === [])
-      if (leaveRoom.dataValues.hostId == userId && leaveRoom.dataValues.roomUserId === []){
+      console.log(leaveRoom.dataValues.roomUserId === [],leaveRoom.dataValues.roomUserId.length === 0,leaveRoom.dataValues.roomUserId)
+      if (leaveRoom.dataValues.hostId == userId && leaveRoom.dataValues.roomUserId.length === 0){
         console.log(roomId,"방은 제거 되었습니다.")
         await Rooms.destroy({where:{roomId:roomId}})
         
