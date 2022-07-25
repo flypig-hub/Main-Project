@@ -151,14 +151,12 @@ module.exports = (server, app) => {
           { where: { roomId: roomId } }
         );
       }
-      console.log("1.유저아이디 비교, 2.유저 url비교",typeof leaveRoom.dataValues.roomUserId[0], leaveRoom.dataValues.roomUserId[0],typeof userId,userId,
-                leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId != userId
-      ) ,leaveRoom.dataValues.roomUserImg.filter(
+      console.log("1.룸유저이미지, 2.유저이미지 3.유저이미지 전체 4. 필터이미지 ",leaveRoom.dataValues.roomUserImg[0],leaveUserImg.dataValues.userImgURL,
+            leaveUserImg, leaveRoom.dataValues.roomUserImg.filter(
         (roomUsersImg) => roomUsersImg != leaveUserImg.dataValues.userImgURL
       ));
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId != userId
+        (roomUsersId) => roomUsersId !== Number(userId)
       );
       const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
         (roomUsersNickname) =>
