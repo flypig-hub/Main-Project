@@ -33,7 +33,7 @@ module.exports = (server, app) => {
         userNickname: "system",
         userId: "system",
         roomId: roomId,
-        chat: {[Op.notLike] :enterUser.dataValues.nickname + "님이 입장하셨습니다." },
+        chat: enterUser.dataValues.nickname + "님이 입장하셨습니다." ,
         userImg: null,
       });
       
