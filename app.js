@@ -19,7 +19,7 @@ const reqlogMiddleware = require("./middlewares/request-log-middleware");
 const port = 8080;
 
 // const session = require("express-session")
-// const webSocket = require("./socket");
+const webSocket = require("./socket");
 
 const corsOption = {
   origin: ["http://localhost:3000", "*",
@@ -87,4 +87,4 @@ const server = app.listen(port, () => {
   console.log(port,"번 포트에서 대기 중");
 });
 
-// webSocket(server, app);
+webSocket(server, app);
