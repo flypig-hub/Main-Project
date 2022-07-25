@@ -1,7 +1,7 @@
 const app = require("./app");
 const fs = require("fs");
 const {images, Chats, Rooms, users, sequelize, Sequelize } = require("./models");
-const { Op } = sequelize;
+const Op = Sequelize.Op;
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
 module.exports = (server, app) => {
@@ -33,7 +33,7 @@ module.exports = (server, app) => {
         userNickname: "system",
         userId: "system",
         roomId: roomId,
-        chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
+        chat: {[Op.notLike] :enterUser.dataValues.nickname + "님이 입장하셨습니다." },
         userImg: null,
       });
       
