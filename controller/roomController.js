@@ -62,10 +62,11 @@ async function Roomdetail(req, res) {
  
   let Room = await Rooms.findOne({ where: { roomId: roomId } });
   let loadChat = []
-
-  if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
-     loadChat = await Chats.findAll({ where: { roomId: roomId } });
-  }
+  console.log("1.룸2.룸유저ID,인클루드",Room,Room.roomUserId );
+  console.log(Room.roomUserId.includes(userId));
+//   if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
+//      loadChat = await Chats.findAll({ where: { roomId: roomId } });
+//   }
   let chatingRooms = await Rooms.findAll({
     where: {
       [Op.or]: [
