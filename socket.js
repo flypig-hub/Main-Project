@@ -128,9 +128,15 @@ module.exports = (server, app) => {
       );
       const roomUserNum = roomUsersId.length + 1;
       console.log("1차입니다-----",
-        roomUsersId,
-        roomUsersImg,
-        roomUserNum)
+        leaveRoom.dataValues.roomUserId.filter(
+        (roomUsersId) => roomUsersId !== Number(userId)
+      ),leaveRoom.dataValues.roomUserNickname.filter(
+        (roomUsersNickname) =>
+          roomUsersNickname !== leaveUser.dataValues.nickname
+      ),
+       leaveRoom.dataValues.roomUserImg.filter(
+        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
+      ),"아이디,닉네임,유알엘",Number(userId),leaveUser.dataValues.nickname,userImageURL.userImageURL)
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
