@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
-const { images, posts, users, hosts, Like, sequelize, Sequelize } = require("../models");
+const { images, posts, users, hosts, Like, save, sequelize, Sequelize } = require("../models");
 // const { users } = require('../models/index');
 // const posts = require('../models/posts');
 // const like = require('../models/like');
