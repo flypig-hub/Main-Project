@@ -63,7 +63,7 @@ async function hostCreateAcc(req, res) {
             const imagesInfo = images.create({
                 userId: userId,
                 nickname: nickname,
-                hostNumber: createAcc.hostId,
+                hostId: createAcc.hostId,
                 thumbnailURL: thumbnailURL.toString(),
                 thumbnailKEY: thumbnailKEY.toString(),
                 postImageURL: postImageURL,
@@ -71,7 +71,7 @@ async function hostCreateAcc(req, res) {
                 userImageURL: userImageURL,  
             })
         });
-        res.status(201).send({ createAcc, msg: "숙소 등록이 완료되었습니다!" })
+        res.status(201).send({ createAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
     } 
 };
 
@@ -80,16 +80,14 @@ async function hostCreateAcc(req, res) {
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {
     const findAllAcc = await hosts.findAll({
-        where: { hostId: { [Op.gt] : 0 } },
-    });
-    const findAllAccImages = await images.findAll({
-        where: { hostNumber: { [Op.gt] : 0 } },
+        include : [{
+            model: images,
+            required: true,
+            attributes: [ 'hostId', 'postImageURL' ]
+        }]
     });
 
-    const AllAccArr = findAllAcc.map((findAllAcc) => findAllAcc);
-    const AllAccImagesArr = findAllAccImages.map((findAllAccImages) => findAllAccImages);
-
-    res.send({ AllAccArr, AllAccImagesArr })
+    res.send({ findAllAcc })
 }
 
 
@@ -97,15 +95,16 @@ async function getAllAcc(req, res) {
 // 호스트 숙소 게시글 상세 조회
 async function getDetailAcc(req, res) {
     const { hostId } = req.params; 
-    const hostNumber = hostId
     const findAllAcc = await hosts.findOne({
         where: { hostId },
-    });
-    const findAllAccImages = await images.findOne({
-        where: { hostNumber: hostId }
+        include : [{
+            model: images,
+            required: true,
+            attributes: [ 'hostId', 'postImageURL' ]
+        }]
     });
 
-    res.send({ findAllAcc, findAllAccImages })
+    res.send({ findAllAcc })
 }
 
 
@@ -156,7 +155,7 @@ async function updateAcc(req, res) {
 
     if (image) {
         // images DB에서 키값 찾아오기
-        const postImageInfo = await images.findAll({ where: { hostNumber:hostId } });
+        const postImageInfo = await images.findAll({ where: { hostId } });
         const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
     
         // S3 사진 삭제. 업로드는 미들웨어
@@ -188,7 +187,7 @@ async function updateAcc(req, res) {
           const postImageURL = postImagesUrl[i];
           console.log(postImageKEY);
           const imagesUpdate = images.update({
-            hostNumber: updatedAcc.hostNumber,
+            hostId: hostId,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL,
@@ -201,7 +200,7 @@ async function updateAcc(req, res) {
         res.status(200).send({ updatedAcc, postImagesUrl, msg: "게시글이 수정되었습니다!" });
       } else {
         const findImages = await images.findAll({
-          where: { hostNumber: hostId }
+          where: { hostId }
         });
         console.log(findImages);
         res.status(200).send({ updateAcc, findImages, msg: "수정된 내용이 없습니다!" });
@@ -221,7 +220,7 @@ async function deleteAcc(req, res) {
     }
 
     const postImageInfo = await images.findAll({
-      where:{ hostNumber: hostId }
+      where:{ hostId }
     });
   
     const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
@@ -246,7 +245,7 @@ async function deleteAcc(req, res) {
     });
   
     const destroyHost = await hosts.destroy({ where: { hostId } });
-    const destroyImages = await images.destroy({ where: { hostNumber: hostId } });
+    const destroyImages = await images.destroy({ where: { hostId } });
   
     res.status(200).send({ msg: "게시글이 삭제되었습니다!" });
   }
