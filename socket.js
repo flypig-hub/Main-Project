@@ -116,27 +116,7 @@ module.exports = (server, app) => {
           chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
         },
       });
-       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId !== Number(userId)
-      );
-      const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
-        (roomUsersNickname) =>
-          roomUsersNickname !== leaveUser.dataValues.nickname
-      );
-      const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
-      );
-      const roomUserNum = roomUsersId.length + 1;
-      console.log("1차입니다-----",
-        leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId !== Number(userId)
-      ),leaveRoom.dataValues.roomUserNickname.filter(
-        (roomUsersNickname) =>
-          roomUsersNickname !== leaveUser.dataValues.nickname
-      ),
-       leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
-      ),"아이디,닉네임,유알엘",Number(userId),leaveUser.dataValues.nickname,userImageURL.userImageURL)
+     
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
@@ -168,6 +148,19 @@ module.exports = (server, app) => {
         roomUsersId,
  roomUsersImg,
      roomUserNum)
+        
+        let roomUsersId = leaveRoom.dataValues.roomUserId.filter(
+        (roomUsersId) => roomUsersId !== leaveRoom.dataValues.roomUserId[0]
+      );
+      let roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
+        (roomUsersNickname) =>
+          roomUsersNickname !== leaveRoom.dataValues.roomUserNickname[0]
+      );
+      let roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
+        (roomUsersImg) => roomUsersImg !== leaveRoom.dataValues.roomUserImg[0]
+      );
+        let roomUserNum = roomUsersId.length + 1;
+        
         await Rooms.update(
           { hostId:leaveRoom.dataValues.roomUserId[0],
           hostNickname: leaveRoom.dataValues.roomUserNickname[0],
@@ -181,6 +174,17 @@ module.exports = (server, app) => {
        
         
       }else{
+      let roomUsersId = leaveRoom.dataValues.roomUserId.filter(
+        (roomUsersId) => roomUsersId !== Number(userId)
+      );
+      let roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
+        (roomUsersNickname) =>
+          roomUsersNickname !== leaveUser.dataValues.nickname
+      );
+      let roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
+        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
+      );
+         let roomUserNum = roomUsersId.length + 1;
         await Rooms.update(
         {
           roomUserId: roomUsersId,
