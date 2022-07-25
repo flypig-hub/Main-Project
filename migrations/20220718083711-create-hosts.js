@@ -20,7 +20,7 @@ module.exports = {
       category: {
         type: Sequelize.STRING
       },
-      houstInfo: {
+      houseInfo: {
         type: Sequelize.STRING
       },
       mainAddress: {

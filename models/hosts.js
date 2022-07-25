@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     nickname: DataTypes.STRING,
     category: DataTypes.STRING,
-    houstInfo: DataTypes.STRING,
+    houseInfo: DataTypes.STRING,
     mainAddress: DataTypes.STRING,
     subAddress: DataTypes.STRING,
     stepSelect: DataTypes.STRING,
