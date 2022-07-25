@@ -3,19 +3,19 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class save extends Model {
+  class saves extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-        save.belongsTo(models.posts, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
-        save.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+        saves.belongsTo(models.posts, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
+        saves.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       // define association here
     }
   }
-  save.init({
+  saves.init({
     saveId : {
       allowNull: false,
       autoIncrement: true,
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     postId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'save',
+    modelName: 'saves',
   });
-  return save;
+  return saves;
 };
