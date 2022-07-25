@@ -152,7 +152,8 @@ module.exports = (server, app) => {
           { where: { roomId: roomId } }
         );
       }
-      
+      console.log("1.유저아이디 비교, 2.유저 url비교",leaveRoom.dataValues.roomUserId,userId,
+                  leaveRoom.dataValues.roomUserNickname,leaveUser.dataValues.nickname)
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId != userId
       );
