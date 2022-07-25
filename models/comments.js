@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
       nickname: DataTypes.STRING,
       comment: DataTypes.STRING,
       postId: DataTypes.INTEGER,
-      userImage: DataTypes.STRING,
     },
     {
       timestamp: true,
