@@ -100,17 +100,21 @@ module.exports = (server, app) => {
         });
         return;
       }
-      console.log(leaveRoom.title, "에서퇴장합니다");
+      
       socket.leave(leaveRoom.title);
+      const leavemsg = await Chats.findOne({where:{roomId:roomId, chat:leaveUser.dataValues.nickname + "님이 퇴장하셨습니다." }})
+      if(!leavemsg){
+      console.log(leaveRoom.title, "에서퇴장합니다");
+      
       await Chats.create({
-        userNickname: null,
-        userId: null,
-        roomId: null,
+        userNickname: "system",
+        userId: "system",
+        roomId: roomId,
         chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
         userImg: null,
       });
-      
-        socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
+      }
+      socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
       
       if (leaveUser.dataValues.userId == leaveRoom.dataValues.hostId) {
         await Rooms.update(
