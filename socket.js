@@ -113,10 +113,10 @@ module.exports = (server, app) => {
         socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
       
       if (leaveUser.dataValues.userId == leaveRoom.dataValues.hostId) {
-        await Rooms.update({
-          hostId: leaveRoom.dataValues.userId[0]
-        });
-      };
+        await Rooms.update(
+       {hostId: leaveRoom.dataValues.userId[0]},
+       {where:{roomId:roomId}}
+      );
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId != leaveUser.dataValues.userId
       );
