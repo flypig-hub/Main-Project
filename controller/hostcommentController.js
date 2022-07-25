@@ -26,7 +26,7 @@ async function readReview(req, res) {
 
 async function writeReview(req, res) {
     const {hostId} = req.params;
-    const {nickname, userId, userImage} = res.locals;
+    const {nickname, userId, userImageURL} = res.locals;
     const {review} = req.body;
 
     if (!userId) {
@@ -46,7 +46,7 @@ try {
         hostId:hostId,
         userId:userId,
         nickname:nickname,
-        userImage:userImage,
+        userImageURL:userImageURL,
         review:review,
     });
 
