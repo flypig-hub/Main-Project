@@ -9,6 +9,7 @@ const UserRouter = require("./router/userRouter");
 const passportConfig = require('./passport');
 const PostRouter = require("./router/postRouter");
 const LikeRouter = require("./router/likeRouter");
+// const SaveRouter = require("./router/saveRouter");
 const CommentRouter = require("./router/commentRouter");
 const RoomRouter = require("./router/roomRouter");
 const ImageRouter = require("./router/imageRouter");
@@ -63,6 +64,7 @@ app.get('/', (req, res) => {
 app.use("/room", RoomRouter);
 app.use("/post", PostRouter, CommentRouter);
 app.use("/like", LikeRouter);
+// app.use("/save", SaveRouter);
 app.use("/image", ImageRouter);
 app.use("/host", HostRouter)
 app.use('/oauth', express.urlencoded({ extended: false }), UserRouter)
