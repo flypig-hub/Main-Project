@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       posts.hasMany(models.images, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       posts.hasMany(models.Like, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
-      posts.hasMany(models.save, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
+      posts.hasMany(models.saves, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       posts.hasMany(models.Comments, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       //유저
       posts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
