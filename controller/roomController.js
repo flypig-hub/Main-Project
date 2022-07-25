@@ -129,9 +129,8 @@ async function createRoom(req, res) {
 
 async function enterRoom(req, res) {
   const { roomId } = req.params;
-  // const { userId, nickname, userImageURL } = res.locals;
-  const { userId, nickname, userImageURL } = req.body;
-  console.log("룸=",roomId, userId, nickname, userImageURL);
+  const { userId, nickname, userImageURL } = res.locals;
+  
   let room = await Rooms.findOne({ where: { roomId: roomId } });
  
   try {
@@ -167,9 +166,6 @@ async function exitRoom(req, res) {
 
   const room = await Rooms.findOne({ where: { roomId: roomId } });
   console.log(room.roomUserNickname, room.roomUserNickname.userId, userId);
-  // const roomUserNickname = room.roomUserNickname.filter(
-  //   (roomUser) => roomUser.userId !== userId
-  // );
 
   if (userId === room.hostId) {
     await Chats.destroy({ roomId: roomId });
@@ -203,6 +199,5 @@ module.exports = {
   enterRoom,
   exitRoom,
   searchRoombyhashtag,
-  kickUser,
   Roomdetail,
 };
