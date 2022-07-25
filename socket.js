@@ -1,6 +1,13 @@
 const app = require("./app");
 const fs = require("fs");
-const {images, Chats, Rooms, users, sequelize, Sequelize } = require("./models");
+const {
+  images,
+  Chats,
+  Rooms,
+  users,
+  sequelize,
+  Sequelize,
+} = require("./models");
 const Op = Sequelize.Op;
 const authMiddleware = require("./middlewares/auth-middleware");
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
@@ -14,57 +21,64 @@ module.exports = (server, app) => {
     },
   });
   app.set("io", io);
-//   io.use((socket, next) => {
-//     authMiddleware(socket.req, socket.res, next);
-//   });
+  //   io.use((socket, next) => {
+  //     authMiddleware(socket.req, socket.res, next);
+  //   });
   io.on("connection", (socket) => {
     socket.onAny((event) => {
-      
       console.log(`Socket Event:${event}`);
       console.log(socket.id);
-      
     });
     socket.on("join-room", async (roomId, userId) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
       const enterUser = await users.findOne({
-        where: { userId: userId }
+        where: { userId: userId },
       });
-      const entermsg = await Chats.findOne({where:{roomId:roomId, chat:enterUser.dataValues.nickname + "님이 입장하셨습니다." }})
+      const entermsg = await Chats.findOne({
+        where: {
+          roomId: roomId,
+          chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
+        },
+      });
       console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
-      if (!entermsg) { 
-      await Chats.create({
-        userNickname: "system",
-        userId: "system",
-        roomId: roomId,
-        chat: enterUser.dataValues.nickname + "님이 입장하셨습니다." ,
-        userImg: null,
-      });
+      if (!entermsg) {
+        await Chats.create({
+          userNickname: "system",
+          userId: "system",
+          roomId: roomId,
+          chat: enterUser.dataValues.nickname + "님이 입장하셨습니다.",
+          userImg: null,
+        });
       }
-       if (enterRoom.dataValues.hostId != Number(userId) && !enterRoom.dataValues.roomUserId.includes (Number(userId)))
-      {
-        let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
+      if (
+        enterRoom.dataValues.hostId != Number(userId) &&
+        !enterRoom.dataValues.roomUserId.includes(Number(userId))
+      ) {
+        let userImageURL = await images.findOne({
+          attributes: ["userImageURL"],
+          where: { userId: userId },
+        });
         enterRoom.roomUserId.push(Number(userId));
         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
-    let roomUserNum = enterRoom.roomUserNickname.length + 1;
-        console.log(userImageURL);
+        let roomUserNum = enterRoom.roomUserNickname.length + 1;
         enterRoom.roomUserImg.push(userImageURL.userImageURL);
 
-    await Rooms.update(
-      {
-        roomUserId: enterRoom.dataValues.roomUserId,
-        roomUserImg: enterRoom.dataValues.roomUserImg,
-        roomUserNickname: enterRoom.dataValues.roomUserNickname,
-        roomUserNum: roomUserNum
-      },
-      { where: { roomId: roomId } }
-    );
-        socket.to(enterRoom.title).emit("welcome", enterUser.dataValues.nickname);
+        await Rooms.update(
+          {
+            roomUserId: enterRoom.dataValues.roomUserId,
+            roomUserImg: enterRoom.dataValues.roomUserImg,
+            roomUserNickname: enterRoom.dataValues.roomUserNickname,
+            roomUserNum: roomUserNum,
+          },
+          { where: { roomId: roomId } }
+        );
+        socket
+          .to(enterRoom.title)
+          .emit("welcome", enterUser.dataValues.nickname);
       }
-      
-      
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
@@ -79,63 +93,90 @@ module.exports = (server, app) => {
         userImg: userImg.dataValues.userImageURL,
       });
       // console.log(room.title."에서 채팅합니다");
-      socket.to(room.title).emit(
-        "message",
-        messageChat,
-        chatUser.dataValues.nickname,
-        userImg.dataValues.userImageURL,
-        roomId
-      );
+      socket
+        .to(room.title)
+        .emit(
+          "message",
+          messageChat,
+          chatUser.dataValues.nickname,
+          userImg.dataValues.userImageURL,
+          roomId
+        );
     });
-    
+
     socket.on("leave-room", async (roomId, userId) => {
       const leaveRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
       const leaveUser = await users.findOne({ where: { userId: userId } });
-
+      const leavemsg = await Chats.findOne({
+        where: {
+          roomId: roomId,
+          chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
+        },
+      });
+      const leaveUserImg = await images.findOne({ where: { userId: userId } });
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
         });
         return;
       }
-      console.log(leaveRoom.title, "에서퇴장합니다");
+
       socket.leave(leaveRoom.title);
-      await Chats.create({
-        userNickname: null,
-        userId: null,
-        roomId: null,
-        chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
-        userImg: null,
-      });
       
-        socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
-      
-      if (leaveUser.dataValues.userId == leaveRoom.dataValues.hostId) {
-        await Rooms.update({
-          hostId: leaveUser.dataValues.userId
+      if (!leavemsg) {
+        console.log(leaveRoom.title, "에서퇴장합니다");
+
+        await Chats.create({
+          userNickname: "system",
+          userId: "system",
+          roomId: roomId,
+          chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
+          userImg: null,
         });
       };
-      const roomUsersId = leaveRoom.dataValues.roomuserId.filter(
-        (roomUsersId) => roomUsersId != leaveUser.dataValues.userId
+      socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
+      socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
+      console.log(
+        "is 호스트 = 이 유저?",
+        typeof leaveRoom.dataValues.hostId,
+        typeof userId
+      );
+      console.log(typeof leaveRoom.dataValues.hostId, typeof userId);
+      if (leaveRoom.dataValues.hostId === userId) {
+        await Rooms.update(
+          { hostId: leaveRoom.dataValues.userId[0] },
+          {hostImg:leaveRoom.dataValues.roomUserImg[0]},
+          { where: { roomId: roomId } }
+        );
+      }
+      console.log("1.유저아이디 비교, 2.유저 url비교",typeof leaveRoom.dataValues.roomUserId,typeof userId,
+                  leaveRoom.dataValues.roomUserNickname,leaveUser.dataValues.nickname, leaveRoom.dataValues.roomUserNickname.filter(
+        (roomUsersNickname) =>
+          roomUsersNickname != leaveUser.dataValues.nickname
+      );)
+      const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
+        (roomUsersId) => roomUsersId != userId
       );
       const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
-        (roomUsersNickname) => roomUsersNickname != leaveUser.dataValues.nickname
+        (roomUsersNickname) =>
+          roomUsersNickname != leaveUser.dataValues.nickname
       );
       const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg != leaveUser.dataValues.userImgURL
+        (roomUsersImg) => roomUsersImg != leaveUserImg.dataValues.userImgURL
       );
       const roomUserNum = roomUsersId.length + 1;
       await Rooms.update(
-        { roomuserId: roomUsersId },
-        { roomUserNickname: roomUsersNickname },
-        { roomUserImg: roomUsersImg },
-        { roomUserNum: roomUserNum },
+        {
+          roomuserId: roomUsersId,
+          roomUserNickname: roomUsersNickname,
+          roomUserImg: roomUsersImg,
+          roomUserNum: roomUserNum,
+        },
         { where: { roomId: roomId } }
       );
-      
-    })
-  
     });
+  });
 };
+
