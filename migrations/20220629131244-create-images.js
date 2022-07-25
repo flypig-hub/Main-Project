@@ -11,6 +11,9 @@ module.exports = {
       userId : {
         type: Sequelize.STRING
       },
+      hostNumber: {
+        type: Sequelize.INTEGER
+      },
       userImage: {
         type: Sequelize.STRING
       },
@@ -21,9 +24,6 @@ module.exports = {
         type: Sequelize.STRING
       },
       postId : {
-        type: Sequelize.INTEGER
-      },
-      hostNumber : {
         type: Sequelize.INTEGER
       },
       thumbnailKEY: {

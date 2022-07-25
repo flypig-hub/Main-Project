@@ -12,11 +12,11 @@ const {
 
 // 호스트 숙소 게시글 작성
 async function hostCreateAcc(req, res) {
-    const { userId, nickname, userImageURL } = res.locals;
-    const host = res.locals.host
-    if (host != true) {
-        res.send({ errorMessage : "호스트가 아닙니다!" })
-    };
+    // const { userId, nickname, userImageURL } = res.locals;
+    // const host = res.locals.host
+    // if (host != true) {
+    //     res.send({ errorMessage : "호스트가 아닙니다!" })
+    // };
     const { 
         title,
         category,
@@ -33,7 +33,7 @@ async function hostCreateAcc(req, res) {
     const image = req.files;
 
     const createAcc = await hosts.create({
-        userId,
+        // userId,
         title,
         category,
         houseinfo,
@@ -60,14 +60,14 @@ async function hostCreateAcc(req, res) {
         
         if (image) {
             const imagesInfo = images.create({
-                userId: userId,
-                nickname: nickname,
-                hostId: createAcc.hostId,
+                // userId: userId,
+                // nickname: nickname,
+                // hostId: createAcc.hostId,
                 thumbnailURL: thumbnailURL.toString(),
                 thumbnailKEY: thumbnailKEY.toString(),
                 postImageURL: postImageURL,
                 postImageKEY: postImageKEY,
-                userImageURL: userImageURL,  
+                // userImageURL: userImageURL,  
             })
         } else {
             res.send({ msg: "숙소 등록이 완료되었습니다!" })
@@ -83,9 +83,9 @@ async function getAllAcc(req, res) {
     const findAllAcc = await hosts.findAll({
         where: { hostId: { [Op.gt] : 0 } },
     });
-    const findAllAccArr = findAllAcc.map((findAllAcc) => findAllAcc);
-    console.log(findAllAccArr);
-    
+    // const findAllAccArr = findAllAcc.map((findAllAcc) => findAllAcc);
+    // console.log(findAllAccArr);
+
     const findAllAccImages = await images.findAll({
         where: { hostId: { [Op.gt] : 0 } },
     });

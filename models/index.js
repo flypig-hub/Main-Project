@@ -7,6 +7,8 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = require('../config/config.json')[env];
 const db = {};
+const hosts = require("./hosts");
+const images = require("./images");
 
 let sequelize;
 if (config.use_env_variable) {
