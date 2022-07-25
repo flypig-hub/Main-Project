@@ -114,9 +114,10 @@ module.exports = (server, app) => {
       
       if (leaveUser.dataValues.userId == leaveRoom.dataValues.hostId) {
         await Rooms.update(
-       {hostId: leaveRoom.dataValues.userId[0]},
-       {where:{roomId:roomId}}
-      );
+          { hostId: leaveRoom.dataValues.userId[0] },
+          { where: { roomId: roomId } }
+        )
+      };
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId != leaveUser.dataValues.userId
       );
