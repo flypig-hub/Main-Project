@@ -23,7 +23,7 @@ module.exports = {
       postId : {
         type: Sequelize.INTEGER
       },
-      hostId : {
+      hostNumber : {
         type: Sequelize.INTEGER
       },
       thumbnailKEY: {

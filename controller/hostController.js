@@ -83,6 +83,13 @@ async function getAllAcc(req, res) {
     const findAllAcc = await hosts.findAll({
         where: { hostId: { [Op.gt] : 0 } },
     });
+    const findAllAccImages = await images.findAll({
+        where: { hostId: { [Op.gt] : 0 } },
+    });
+
+    // if (findAllAcc.hostId === findAllAccImages.hostId) {
+
+    // }
 
     console.log(findAllAcc);
 

@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // hosts.hasMany(models.images, { foreignKey: 'imageId', sourceKey: 'hostId', onDelete: 'CASCADE' });
+      // hosts.hasMany(models.images, { foreignKey: 'hostNumber', sourceKey: 'hostId', as: 'hostId' });
     }
   }
   hosts.init({
