@@ -127,7 +127,10 @@ module.exports = (server, app) => {
         (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
       );
       const roomUserNum = roomUsersId.length + 1;
-      
+      console.log("1차입니다-----",
+        roomUsersId,
+        roomUsersImg,
+        roomUserNum)
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
@@ -155,9 +158,7 @@ module.exports = (server, app) => {
         await Rooms.destroy({where:{roomId:roomId}})
         
       } else if (leaveRoom.dataValues.hostId === userId) {
-        console.log(leaveRoom.dataValues.roomUserId[0],
-          leaveRoom.dataValues.roomUserNickname[0],
-     leaveRoom.dataValues.roomUserImg[0],
+        console.log("2차입니다-----",
         roomUsersId,
  roomUsersImg,
      roomUserNum)
