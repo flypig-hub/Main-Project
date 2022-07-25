@@ -3,6 +3,7 @@ const Op = Sequelize.Op;
 
 async function searchRoom(req, res) {
 const queryData = req.query;
+  console.log(queryData);
   const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] }); 
   let searchResult = [];
   for (i = 0; i < rooms.length; i++){
