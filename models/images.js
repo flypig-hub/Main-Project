@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       images.belongsTo(models.posts, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       images.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
-      images.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostNumber', onDelete: 'CASCADE' });
-      images.hasMany(models.hosts, { foreignKey: 'hostId', sourceKey: 'imageId', onDelete: 'CASCADE' });
+      images.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
+      images.hasMany(models.hosts, { foreignKey: 'imageId', sourceKey: 'imageId', onDelete: 'CASCADE' });
     }
   }
   images.init({
@@ -29,8 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     snsId : DataTypes.STRING,
     postId: DataTypes.INTEGER,
     hostId: DataTypes.INTEGER,
-    thumbnailKEY: DataTypes.INTEGER,
-    thumbnailURL: DataTypes.INTEGER,
+    thumbnailKEY: DataTypes.STRING,
+    thumbnailURL: DataTypes.STRING,
     postImageKEY: DataTypes.STRING,
     postImageURL: DataTypes.STRING,
     userImageKEY: DataTypes.STRING,
