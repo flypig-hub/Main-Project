@@ -34,10 +34,10 @@ async function PostImage(req, res) {
 // 이미지 삭제
 async function DeleteImages(req, res) {
   const { images } = req.body;
-  // console.log(image);
+  console.log(images);
 
   const postImageKey = images.map((postImageKey) => postImageKey);
-  // console.log(postImageKey);
+  console.log(postImageKey);
 
   postImageKey.forEach((element, i) => {
     const postImageKEY = postImageKey[i];

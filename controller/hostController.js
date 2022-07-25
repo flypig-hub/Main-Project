@@ -18,7 +18,6 @@ async function hostCreateAcc(req, res) {
     if (host != true) {
         res.send({ errorMessage : "호스트가 아닙니다!" })
     };
-
     const { 
         title,
         category,
@@ -67,8 +66,13 @@ async function hostCreateAcc(req, res) {
                 thumbnailKEY: thumbnailKEY.toString(),
                 postImageURL: postImageURL,
                 postImageKEY: postImageKEY,
-                userImageURL: userImageURL
-            })
+                userImageURL: userImageURL,  
+                }, { 
+                    include: [{
+                        association: hosts,
+                        include: { hostId: element.hostId }
+                    }]
+                })
         } else {
             res.send({ msg: "숙소 등록이 완료되었습니다!" })
         }
