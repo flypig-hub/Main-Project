@@ -35,7 +35,7 @@ async function writeReview(req, res) {
         });
         return;
     }
-try {
+//try {
     if(!review) {
         res.status(412).send({
           errorMessage:"후기를 입력해 주세요.",
@@ -52,9 +52,9 @@ try {
     });
 
     res.status(201).send({review_r, msg : "후기 작성 완료!"});
-} catch (error) {
-    res.status(400).send({result:false, errorMessage: "후기 작성을 할 수 없습니다."});
-}
+// } catch (error) {
+//     res.status(400).send({result:false, errorMessage: "후기 작성을 할 수 없습니다."});
+// }
 }
 
 //review 수정
