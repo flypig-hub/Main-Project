@@ -2,8 +2,10 @@ const app = require("./app");
 const fs = require("fs");
 const {images, Chats, Rooms, users, sequelize, Sequelize } = require("./models");
 const Op = Sequelize.Op;
+const authMiddleware = require("../middlewares/auth-middleware");
 const socket = require("socket.io-client")("https://mendorong-jeju.com");
 const server = require("http").createServer(app);
+
 module.exports = (server, app) => {
   const io = require("socket.io")(server, {
     cors: {
@@ -12,6 +14,9 @@ module.exports = (server, app) => {
     },
   });
   app.set("io", io);
+//   io.use((socket, next) => {
+//     authMiddleware(socket.req, socket.res, next);
+//   });
   io.on("connection", (socket) => {
     socket.onAny((event) => {
       
@@ -26,9 +31,10 @@ module.exports = (server, app) => {
       const enterUser = await users.findOne({
         where: { userId: userId }
       });
+      const entermsg = await Chats.findOne({where:{roomId:roomId, chat:enterUser.dataValues.nickname + "님이 입장하셨습니다." }})
       console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
-        
+      if (!entermsg) { 
       await Chats.create({
         userNickname: "system",
         userId: "system",
@@ -36,7 +42,7 @@ module.exports = (server, app) => {
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다." ,
         userImg: null,
       });
-   
+      }
        if (enterRoom.dataValues.hostId != Number(userId) && !enterRoom.dataValues.roomUserId.includes (Number(userId)))
       {
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
