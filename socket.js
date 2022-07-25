@@ -116,7 +116,7 @@ module.exports = (server, app) => {
           chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
         },
       });
-      const leaveUserImg = await images({ where: { userId: userId } });
+      const leaveUserImg = await images.findOne({ where: { userId: userId } });
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
