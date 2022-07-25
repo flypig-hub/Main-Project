@@ -136,13 +136,9 @@ module.exports = (server, app) => {
           userImg: null,
         });
       };
+      
       socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
-      console.log(
-        "is 호스트 = 이 유저?",
-        typeof leaveRoom.dataValues.hostId,
-        typeof userId
-      );
-      console.log(typeof leaveRoom.dataValues.hostId, typeof userId);
+      
       if (leaveRoom.dataValues.hostId === userId) {
         await Rooms.update(
           { hostId:leaveRoom.dataValues.roomUserId[0] },
@@ -150,25 +146,20 @@ module.exports = (server, app) => {
           { where: { roomId: roomId } }
         );
       }
-      console.log("1. 2.  ",leaveRoom.dataValues.roomUserId[0],Number(userId)
-                 ,
-             leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId !== Number(userId)
-      ));
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId != Number(userId)
+        (roomUsersId) => roomUsersId !== Number(userId)
       );
       const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
         (roomUsersNickname) =>
-          roomUsersNickname != leaveUser.dataValues.nickname
+          roomUsersNickname !== leaveUser.dataValues.nickname
       );
       const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg != userImageURL.userImageURL
+        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
       );
       const roomUserNum = roomUsersId.length + 1;
       await Rooms.update(
         {
-          roomuserId: roomUsersId,
+          roomUserId: roomUsersId,
           roomUserNickname: roomUsersNickname,
           roomUserImg: roomUsersImg,
           roomUserNum: roomUserNum,
