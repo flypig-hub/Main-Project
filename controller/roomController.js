@@ -30,7 +30,7 @@ async function Roomdetail(req, res) {
  
   let Room = await Rooms.findOne({ where: { roomId: roomId } });
   let loadChat = []
-  
+
   if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
      loadChat = await Chats.findAll({ where: { roomId: roomId } });
   }
@@ -42,22 +42,23 @@ async function Roomdetail(req, res) {
       ],
     },
   });
+  if(Room.hostId!=userId)
+  {
   Room.roomUserId.push(Number(userId));
   Room.roomUserNickname.push(nickname);
-  Room.roomUserImg.push(userImageURL);
-  let roomUserNum = Room.roomUserId.length + 1;
- Room = await Room.update(
-   {
-     roomUserId: Room.roomUserId,
-     roomUserNickname: Room.roomUserNickname,
-     roomUserImg: Room.roomUserImg,
-     roomUserNum: roomUserNum,
-   }
-   
+  let roomUserNum = enterRoom.roomUserNickname.length + 1;
+  console.log(userImageURL);
+  enterRoom.roomUserImg.push(userImage);
+  Room = await Room.update(
+    {
+      roomUserId: enterRoom.dataValues.roomUserId,
+      roomUserImg: enterRoom.dataValues.roomUserImg,
+      roomUserNickname: enterRoom.dataValues.roomUserNickname,
+      roomUserNum: roomUserNum,
+    }
   );
   chatingRooms.unshift(Room);
-  console.log("콘솔로그",Room.roomUserId,Room.roomUserNickname,Room.roomUserImg,roomUserNum);
-
+}
   res
     .status(200)
     .send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room, loadChat });
