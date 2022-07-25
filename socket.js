@@ -137,7 +137,6 @@ module.exports = (server, app) => {
         });
       };
       socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
-      socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
       console.log(
         "is 호스트 = 이 유저?",
         typeof leaveRoom.dataValues.hostId,
