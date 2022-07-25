@@ -146,25 +146,25 @@ module.exports = (server, app) => {
       console.log(typeof leaveRoom.dataValues.hostId, typeof userId);
       if (leaveRoom.dataValues.hostId === userId) {
         await Rooms.update(
-          { hostId: leaveRoom.dataValues.userId[0] },
+          { hostId:leaveRoom.dataValues.roomUserId[0] },
           {hostImg:leaveRoom.dataValues.roomUserImg[0]},
           { where: { roomId: roomId } }
         );
       }
-      console.log("1.유저아이디 비교, 2.유저 url비교",typeof leaveRoom.dataValues.roomUserId,typeof userId,
-                  leaveRoom.dataValues.roomUserNickname,leaveUser.dataValues.nickname, leaveRoom.dataValues.roomUserNickname.filter(
-        (roomUsersNickname) =>
-          roomUsersNickname != leaveUser.dataValues.nickname
+      console.log("1.룸유저이미지,1.5 leaveUserImg.userImgURL, 2.유저이미지dataValues 3.유저이미지_previousDataValues 4. 필터이미지 ",leaveRoom.dataValues.roomUserImg[0],leaveUserImg.userImgURL,
+                  leaveUserImg.dataValues.userImgURL,leaveUserImg._previousDataValues.userImgURL,
+             leaveRoom.dataValues.roomUserImg.filter(
+        (roomUsersImg) => roomUsersImg != leaveUserImg.userImgURL
       ));
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId != userId
+        (roomUsersId) => roomUsersId !== Number(userId)
       );
       const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
         (roomUsersNickname) =>
           roomUsersNickname != leaveUser.dataValues.nickname
       );
       const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg != leaveUserImg.dataValues.userImgURL
+        (roomUsersImg) => roomUsersImg != leaveUserImg.userImgURL
       );
       const roomUserNum = roomUsersId.length + 1;
       await Rooms.update(
