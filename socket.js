@@ -148,7 +148,7 @@ module.exports = (server, app) => {
       if (leaveRoom.dataValues.hostId === userId) {
         await Rooms.update(
           { hostId: leaveRoom.dataValues.userId[0] },
-          {hostImg:leaveUser.dataValues.userId[0]},
+          {hostImg:leaveRoom.dataValues.roomUserImg[0]},
           { where: { roomId: roomId } }
         );
       }
