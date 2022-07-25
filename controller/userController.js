@@ -353,7 +353,37 @@ async function CNU_CK (req, res, next) {
   next();
 };
 
+//다른 유저 정보 보기
+
+async function otherUser (req, res) {
+  const {userId} = req.params;
+try {
+  const otherpost = await posts.findAll({
+    where : {userId:userId},
+    include: [{
+      model: images,
+      attributes: ['postId', 'thumbnailURL']
+    }],
+  });
+  console.log(otherpost,"이거 나오지?");
+  const otherinfo = otherpost.map((o_post) =>({
+    title : o_post.title,
+    commentNum : o_post.commentNum,
+    likeNum : o_post.likeNum,
+    images : o_post.images
+  }));
+ // 해당 유저의 채팅방
+
+  res.status(200).send({ otherinfo, msg : "다른 유저의 정보입니다."});
+} catch (error) {
+  res.status(400).send({ otherinfo, errorMEssage : "다른 유저의 정보를 가지고 올수 없습니다."});
+}
+  
+  
+}
+
+
 module.exports = {
   kakaoCallback, googleCallback, naverCallback,
-  checkMe, Mypage, MypagePutname, CNU_CK, MypagePutImage
+  checkMe, Mypage, MypagePutname, CNU_CK, MypagePutImage, otherUser
 }
