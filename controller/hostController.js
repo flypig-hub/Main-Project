@@ -22,7 +22,7 @@ async function hostCreateAcc(req, res) {
     const { 
         title,
         category,
-        houseinfo,
+        houseInfo,
         mainAddress,
         subAddress,
         stepSelect,
@@ -37,7 +37,7 @@ async function hostCreateAcc(req, res) {
         userId,
         title,
         category,
-        houseinfo,
+        houseInfo,
         mainAddress,
         subAddress,
         stepSelect,
@@ -123,7 +123,7 @@ async function updateAcc(req, res) {
     const { 
         title,
         category,
-        houseinfo,
+        houseInfo,
         mainAddress,
         subAddress,
         stepSelect,
@@ -137,7 +137,7 @@ async function updateAcc(req, res) {
     const updateAcc = await hosts.update({
         title,
         category,
-        houseinfo,
+        houseInfo,
         mainAddress,
         subAddress,
         stepSelect,
