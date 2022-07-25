@@ -42,22 +42,19 @@ async function Roomdetail(req, res) {
       ],
     },
   });
-  if(Room.hostId!=userId)
-  {
-  Room.roomUserId.push(Number(userId));
-  Room.roomUserNickname.push(nickname);
-  let roomUserNum = enterRoom.roomUserNickname.length + 1;
-  console.log(userImageURL);
-  enterRoom.roomUserImg.push(userImage);
-  Room = await Room.update(
-    {
-      roomUserId: enterRoom.dataValues.roomUserId,
-      roomUserImg: enterRoom.dataValues.roomUserImg,
-      roomUserNickname: enterRoom.dataValues.roomUserNickname,
-      roomUserNum: roomUserNum,
-    }
-  );
-  chatingRooms.unshift(Room);
+  
+  if (Room.hostId != userId) {
+ Room.roomUserId.push(Number(userId));
+ Room.roomUserNickname.push(nickname);
+ Room.roomUserImg.push(userImageURL);
+ let roomUserNum = Room.roomUserId.length + 1;
+ Room = await Room.update({
+   roomUserId: Room.roomUserId,
+   roomUserNickname: Room.roomUserNickname,
+   roomUserImg: Room.roomUserImg,
+   roomUserNum: roomUserNum,
+ });
+ chatingRooms.unshift(Room); 
 }
   res
     .status(200)
