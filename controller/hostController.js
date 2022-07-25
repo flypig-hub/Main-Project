@@ -1,7 +1,5 @@
 const {
     posts,
-    Comments,
-    Like,
     users,
     images,
     hosts,
@@ -10,6 +8,7 @@ const {
   } = require("../models");
   const multiparty = require("multiparty");
   const AWS = require("aws-sdk");
+  const { Op } = require('sequelize');
 
 // 호스트 숙소 게시글 작성
 async function hostCreateAcc(req, res) {
@@ -79,7 +78,14 @@ async function hostCreateAcc(req, res) {
 
 
 // 호스트 숙소 게시글 전체 조회
+async function getAllAcc(req, res) {
+    const findAllAcc = await hosts.findAll({
+        where: { hostId: { [Op.gt] : 0 } }
+    });
+    console.log(findAllAcc);
 
+    res.status(200).send({ findAllAcc })
+}
 
 
 
@@ -102,3 +108,4 @@ async function hostCreateAcc(req, res) {
 
 
 module.exports.hostCreateAcc = hostCreateAcc;
+module.exports.getAllAcc = getAllAcc;
