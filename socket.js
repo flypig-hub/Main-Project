@@ -144,11 +144,7 @@ module.exports = (server, app) => {
         await Rooms.destroy({where:{roomId:roomId}})
         
       } else if (leaveRoom.dataValues.hostId === userId) {
-        console.log("2차입니다-----",
-        roomUsersId,
- roomUsersImg,
-     roomUserNum)
-        
+
         let roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId !== leaveRoom.dataValues.roomUserId[0]
       );
