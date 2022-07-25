@@ -1,5 +1,37 @@
 const { Rooms, Chats, sequelize, Sequelize } = require("../models");
 const Op = Sequelize.Op;
+
+async function searchRoom(req, res) {
+const queryData = req.quary;
+  const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] }); 
+  let searchResult = [];
+  for (i = 0; i < rooms.length; i++){
+
+   let room = rooms[i]
+    if (
+      room.title.includes(queryData.search) ||
+      room.hashTag.includes(queryData.search)
+    ) {
+      searchResult.push(room);
+    };
+  }
+  res.status(200).send({msg:"룸 검색완료", searchResult})
+};
+ 
+async function searchRoombyhashtag(req, res) {
+const queryData = req.quary;
+  const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
+  let searchResult = [];
+  for (i = 0; i < rooms.length; i++){
+
+   let room = rooms[i]
+    if (room.hashTag.includes(queryData.search)) {
+      searchResult.push(room);
+    };
+  }
+  res.status(200).send({msg:"룸 해쉬태그 검색완료", searchResult})
+}
+
 async function callchats(req, res) {
   try {
     const { postId } = req.params;
@@ -165,10 +197,12 @@ async function exitRoom(req, res) {
 
 module.exports = {
   callchats,
+  searchRoom,
   allRoomList,
   createRoom,
   enterRoom,
   exitRoom,
+  searchRoombyhashtag,
+  kickUser,
   Roomdetail,
 };
-
