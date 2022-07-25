@@ -64,7 +64,6 @@ module.exports = (server, app) => {
         enterRoom.roomUserId.push(Number(userId));
         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
         let roomUserNum = enterRoom.roomUserNickname.length + 1;
-        console.log(userImageURL);
         enterRoom.roomUserImg.push(userImageURL.userImageURL);
 
         await Rooms.update(
@@ -152,8 +151,11 @@ module.exports = (server, app) => {
           { where: { roomId: roomId } }
         );
       }
-      console.log("1.유저아이디 비교, 2.유저 url비교",leaveRoom.dataValues.roomUserId,userId,
-                  leaveRoom.dataValues.roomUserNickname,leaveUser.dataValues.nickname)
+      console.log("1.유저아이디 비교, 2.유저 url비교",typeof leaveRoom.dataValues.roomUserId,typeof userId,
+                  leaveRoom.dataValues.roomUserNickname,leaveUser.dataValues.nickname, leaveRoom.dataValues.roomUserNickname.filter(
+        (roomUsersNickname) =>
+          roomUsersNickname != leaveUser.dataValues.nickname
+      );)
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId != userId
       );
