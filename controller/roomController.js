@@ -44,20 +44,19 @@ async function Roomdetail(req, res) {
   });
   Room.roomUserId.push(Number(userId));
   Room.roomUserNickname.push(nickname);
-  let roomUserNum = enterRoom.roomUserNickname.length + 1;
-  console.log(userImageURL);
-  enterRoom.roomUserImg.push(userImage);
+  Room.roomUserImg.push(userImage);
+  let roomUserNum = Room.roomUserNickname.length + 1;
  Room = await Room.update(
    {
-     roomUserId: enterRoom.dataValues.roomUserId,
-     roomUserImg: enterRoom.dataValues.roomUserImg,
-     roomUserNickname: enterRoom.dataValues.roomUserNickname,
+     roomUserId: Room.roomUserId,
+     roomUserImg: Room.roomUserImg,
+     roomUserNickname: Room.roomUserImg,
      roomUserNum: roomUserNum,
    }
    
   );
   chatingRooms = chatingRooms.unshift(Room);
-  console.log(Room, chatingRooms);
+  console.log(Room, chatingRooms,Room.roomUserId,Room.roomUserImg,Room.roomUserImg,roomUserNum);
 
   res
     .status(200)
