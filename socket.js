@@ -117,7 +117,7 @@ module.exports = (server, app) => {
           hostId: leaveRoom.dataValues.userId[0]
         });
       };
-      const roomUsersId = leaveRoom.dataValues.roomuserId.filter(
+      const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId != leaveUser.dataValues.userId
       );
       const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
