@@ -36,11 +36,7 @@ module.exports = (server, app) => {
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다." ,
         userImg: null,
       });
-      
-      console.log(enterRoom.dataValues.roomUserNickname,"=룸유저닉네임")
-      console.log("1.enterRoom.dataValues.hostId 2.Number(userId) ",enterRoom.dataValues.hostId , Number(userId),typeof enterRoom.dataValues.hostId,typeof enterRoom.dataValues.roomUserId[0]);
-      
-      
+   
        if (enterRoom.dataValues.hostId != Number(userId) && !enterRoom.dataValues.roomUserId.includes (Number(userId)))
       {
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
@@ -66,11 +62,9 @@ module.exports = (server, app) => {
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
-      console.log(messageChat, userId, roomId);
       const chatUser = await users.findOne({ where: { userId: userId } });
       const userImg = await images.findOne({ where: { userId: userId } });
       const room = await Rooms.findOne({ where: { roomId: roomId } });
-      console.log(Object.values(chatUser), Object.values(userImg), chatUser.dataValues.nickname, userImg.dataValues.userImageURL);
       const newchat = await Chats.create({
         userNickname: chatUser.dataValues.nickname,
         userId: userId,
@@ -78,7 +72,7 @@ module.exports = (server, app) => {
         chat: messageChat,
         userImg: userImg.dataValues.userImageURL,
       });
-      console.log(room.title);
+      console.log(room.title."에서 채팅합니다");
       socket.to(room.title).emit(
         "message",
         messageChat,
@@ -89,7 +83,6 @@ module.exports = (server, app) => {
     });
     
     socket.on("leave-room", async (roomId, userId) => {
-      console.log(roomId);
       const leaveRoom = await Rooms.findOne({
         where: { roomId: roomId },
       });
