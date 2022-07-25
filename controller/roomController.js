@@ -23,14 +23,16 @@ async function allRoomList(req, res) {
     return res.status(400).send({ msg: "룸 조회가 되지 않았습니다." });
   }
 }
+
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
-  const { userId } = res.locals;
+  const { userId, nickname, userImage } = res.locals;
  
   let Room = await Rooms.findOne({ where: { roomId: roomId } });
   let loadChat = []
+  
   if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
-     loadChat = await Chats.findAll({ where: { roomId: roomId },order: [["createdAt"]], });
+     loadChat = await Chats.findAll({ where: { roomId: roomId } });
   }
   let chatingRooms = await Rooms.findAll({
     where: {
@@ -40,13 +42,27 @@ async function Roomdetail(req, res) {
       ],
     },
   });
- 
+  Room.roomUserId.push(Number(userId));
+  Room.roomUserNickname.push(nickname);
+  let roomUserNum = enterRoom.roomUserNickname.length + 1;
+  console.log(userImageURL);
+  enterRoom.roomUserImg.push(userImage);
+ Room = await Room.update(
+   {
+     roomUserId: enterRoom.dataValues.roomUserId,
+     roomUserImg: enterRoom.dataValues.roomUserImg,
+     roomUserNickname: enterRoom.dataValues.roomUserNickname,
+     roomUserNum: roomUserNum,
+   }
+   
+  );
+  chatingRooms = chatingRooms.unshift(Room);
+  console.log(Room, chatingRooms);
 
   res
     .status(200)
     .send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room, loadChat });
 }
- 
 
 async function createRoom(req, res) {
   try {
