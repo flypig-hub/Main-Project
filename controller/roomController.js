@@ -26,7 +26,7 @@ async function allRoomList(req, res) {
 
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
-  const { userId, nickname, userImage } = res.locals;
+  const { userId, nickname, userImageURL } = res.locals;
  
   let Room = await Rooms.findOne({ where: { roomId: roomId } });
   let loadChat = []
@@ -44,19 +44,19 @@ async function Roomdetail(req, res) {
   });
   Room.roomUserId.push(Number(userId));
   Room.roomUserNickname.push(nickname);
-  Room.roomUserImg.push(userImage);
-  let roomUserNum = Room.roomUserNickname.length + 1;
+  Room.roomUserImg.push(userImageURL);
+  let roomUserNum = Room.roomUserId.length + 1;
  Room = await Room.update(
    {
      roomUserId: Room.roomUserId,
+     roomUserNickname: Room.roomUserNickname,
      roomUserImg: Room.roomUserImg,
-     roomUserNickname: Room.roomUserImg,
      roomUserNum: roomUserNum,
    }
    
   );
-  chatingRooms = chatingRooms.unshift(Room);
-  console.log(Room, chatingRooms,Room.roomUserId,Room.roomUserImg,Room.roomUserImg,roomUserNum);
+  chatingRooms.unshift(Room);
+  console.log("콘솔로그",Room.roomUserId,Room.roomUserNickname,Room.roomUserImg,roomUserNum);
 
   res
     .status(200)
