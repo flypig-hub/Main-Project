@@ -3,39 +3,29 @@ const Op = Sequelize.Op;
 
 async function searchRoom(req, res) {
 const queryData = req.query;
-  const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] }); 
-  let searchResult = [];
-  for (i = 0; i < rooms.length; i++){
-
-   let room = rooms[i]
-    if (
-      room.title.includes(queryData.search) 
-    ) {
-      searchResult.push(room)
-    }else{
-    for (l = 0; l < room.hashTag.length; l++) {
-      const hashtag = room.hashTag[l];
-      if (hashtag.includes(queryData.search)) {
-        searchResult.push(room);
-       }
-      }
-    }  
-  }
-  res.status(200).send({msg:"룸 검색완료", searchResult})
+  const rooms = await Rooms.findAll({where: {
+      [Op.or]: [
+        { title: { [Op.substring]: queryData.search } },
+        { hashTag: { [Op.substring]: queryData.search } },
+      ],
+  },
+    order: [[
+      { title: { [Op.substring]: queryData.search } },"createdAt", "DESC"
+    ]]
+  });
+  res.status(200).send({msg:"룸 검색완료", rooms})
 };
  
 async function searchRoombyhashtag(req, res) {
 const queryData = req.query;
-  const rooms = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
-  let searchResult = [];
-  for (i = 0; i < rooms.length; i++){
-
-   let room = rooms[i]
-    if (room.hashTag.includes(queryData.search)) {
-      searchResult.push(room);
-    };
-  }
-  res.status(200).send({msg:"룸 해쉬태그 검색완료", searchResult})
+  const rooms = await Rooms.findAll({where: {
+         hashTag: { [Op.substring]: queryData.search }
+  },
+    order: [[
+      "createdAt", "DESC"
+    ]]
+  });
+  res.status(200).send({msg:"룸 해쉬태그 검색완료", rooms})
 }
 
 async function callchats(req, res) {
@@ -55,13 +45,26 @@ async function callchats(req, res) {
 async function allRoomList(req, res) {
   try {
     const allRoom = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
-
-    return res.status(200).send({ allRoom, msg: "룸을 조회했습니다" });
+    let isbest = [];
+    for (i = 0; i < allRoom.length; i++){
+      const room = allRoom[i]
+      for (l = 0; l < room.hashTag.length; l++) {
+        const hashtag = room.hashTag[l];
+        if (Object.values(isbest).includes(hashtag)) {
+         isbest.hashTag = isbest.hashTag += 1
+         } else { 
+        isbest.push({ hashtag: 1 });
+        }
+      }
+    }
+   Arrays.sort(isbest, Collections.reverseOrder());
+   const best = Object.keys(isbest)
+console.log(isbest, Object.keys(isbest));
+    return res.status(200).send({ best, msg: "룸을 조회했습니다" });
   } catch (err) {
     return res.status(400).send({ msg: "룸 조회가 되지 않았습니다." });
   }
 }
-
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImageURL } = res.locals;
