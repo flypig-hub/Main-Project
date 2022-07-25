@@ -151,11 +151,16 @@ module.exports = (server, app) => {
       
       socket.to(leaveRoom.title).emit("bye", leaveUser.dataValues.nickname);
       
-      if (leaveRoom.dataValues.hostId === userId &&leaveRoom.dataValues.roomUserId === []){
+      if (leaveRoom.dataValues.hostId === userId && leaveRoom.dataValues.roomUserId === []){
         await Rooms.destroy({where:{roomId:roomId}})
         
-      } else
-      if (leaveRoom.dataValues.hostId === userId) {
+      } else if (leaveRoom.dataValues.hostId === userId) {
+        console.log(leaveRoom.dataValues.roomUserId[0],
+          leaveRoom.dataValues.roomUserNickname[0],
+     leaveRoom.dataValues.roomUserImg[0],
+        roomUsersId,
+ roomUsersImg,
+     roomUserNum)
         await Rooms.update(
           { hostId:leaveRoom.dataValues.roomUserId[0],
           hostNickname: leaveRoom.dataValues.roomUserNickname[0],
