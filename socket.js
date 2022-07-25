@@ -16,7 +16,7 @@ module.exports = (server, app) => {
     socket.onAny((event) => {
       
       console.log(`Socket Event:${event}`);
-      console.log(io.sockets.adapter);
+      console.log(socket.id);
       
     });
     socket.on("join-room", async (roomId, userId) => {
@@ -136,9 +136,6 @@ module.exports = (server, app) => {
         { where: { roomId: roomId } }
       );
       
-      console.log(io.sockets.adapter)
-      
-     
     })
   
     });
