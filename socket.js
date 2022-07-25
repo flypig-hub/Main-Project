@@ -129,10 +129,10 @@ module.exports = (server, app) => {
       );
       const roomUserNum = roomUsersId.length + 1;
       await Rooms.update(
-        { roomuserId: roomUsersId },
-        { roomUserNickname: roomUsersNickname },
-        { roomUserImg: roomUsersImg },
-        { roomUserNum: roomUserNum },
+        { roomuserId: roomUsersId ,
+         roomUserNickname: roomUsersNickname ,
+         roomUserImg: roomUsersImg ,
+         roomUserNum: roomUserNum },
         { where: { roomId: roomId } }
       );
       
