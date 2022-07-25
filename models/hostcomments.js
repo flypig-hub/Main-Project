@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     hostId: DataTypes.INTEGER,
     nickname: DataTypes.STRING,
-    review: DataTypes.STRING
+    review: DataTypes.STRING,
+    starpoint: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'hostcomments',

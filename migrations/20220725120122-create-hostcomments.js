@@ -20,6 +20,9 @@ module.exports = {
       review: {
         type: Sequelize.STRING
       },
+      starpoint : {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

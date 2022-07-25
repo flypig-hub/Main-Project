@@ -27,7 +27,7 @@ async function readReview(req, res) {
 async function writeReview(req, res) {
     const {hostId} = req.params;
     const {nickname, userId, userImageURL} = res.locals;
-    const {review} = req.body;
+    const {review, starpoint} = req.body;
 
     if (!userId) {
         res.status(400).send({
@@ -48,6 +48,7 @@ try {
         nickname:nickname,
         userImageURL:userImageURL,
         review:review,
+        starpoint:starpoint
     });
 
     res.status(201).send({review_r, msg : "후기 작성 완료!"});
