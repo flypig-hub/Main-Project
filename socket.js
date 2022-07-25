@@ -115,7 +115,7 @@ module.exports = (server, app) => {
           chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
         },
       });
-      const leaveUserImg = await images.findOne({ where: { userId: userId } });
+      const userImageURL = await images.findOne({ where: { userId: userId } });
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
@@ -151,10 +151,10 @@ module.exports = (server, app) => {
           { where: { roomId: roomId } }
         );
       }
-      console.log("1.룸유저이미지,1.5 leaveUserImg.userImgURL, 2.유저이미지dataValues 3.유저이미지_previousDataValues 4. 필터이미지 ",leaveRoom.dataValues.roomUserImg[0],leaveUserImg.userImgURL,
-                  leaveUserImg.dataValues.userImgURL,leaveUserImg._previousDataValues.userImgURL,
+      console.log("1.룸유저이미지,1.5 leaveUserImg.userImgURL, 2.유저이미지dataValues 3.유저이미지_previousDataValues 4. 필터이미지 ",leaveRoom.dataValues.roomUserImg[0],userImageURL.userImageURL
+                 , userImageURL,userImageURL.dataValues.userImageURL,
              leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg != leaveUserImg.userImgURL
+        (roomUsersImg) => roomUsersImg != userImageURL.userImageURL
       ));
       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId !== Number(userId)
@@ -164,7 +164,7 @@ module.exports = (server, app) => {
           roomUsersNickname != leaveUser.dataValues.nickname
       );
       const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg != leaveUserImg.userImgURL
+        (roomUsersImg) => roomUsersImg != userImageURL.userImageURL
       );
       const roomUserNum = roomUsersId.length + 1;
       await Rooms.update(
