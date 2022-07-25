@@ -26,9 +26,10 @@ module.exports = (server, app) => {
       const enterUser = await users.findOne({
         where: { userId: userId }
       });
+      const entermsg = await Chats.findOne({where:{roomId:roomId, chat:enterUser.dataValues.nickname + "님이 입장하셨습니다." }})
       console.log(enterRoom.title, "로 입장합니다");
       socket.join(enterRoom.title);
-        
+      if (!entermsg) { 
       await Chats.create({
         userNickname: "system",
         userId: "system",
@@ -36,7 +37,7 @@ module.exports = (server, app) => {
         chat: enterUser.dataValues.nickname + "님이 입장하셨습니다." ,
         userImg: null,
       });
-   
+      }
        if (enterRoom.dataValues.hostId != Number(userId) && !enterRoom.dataValues.roomUserId.includes (Number(userId)))
       {
         let userImageURL = await images.findOne({attributes: ['userImageURL'],where:{userId:userId}})
