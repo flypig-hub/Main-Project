@@ -83,17 +83,19 @@ async function getAllAcc(req, res) {
     const findAllAcc = await hosts.findAll({
         where: { hostId: { [Op.gt] : 0 } },
     });
+    const findAllAccArr = findAllAcc.map((findAllAcc) => findAllAcc);
+    console.log(findAllAccArr);
+    
     const findAllAccImages = await images.findAll({
         where: { hostId: { [Op.gt] : 0 } },
     });
 
-    // if (findAllAcc.hostId === findAllAccImages.hostId) {
-
-    // }
-
-    console.log(findAllAcc);
-
-    res.status(200).send({ findAllAcc })
+    if (findAllAcc.hostId === findAllAccImages.hostId) {
+        const allAcc = {
+            findAllAcc, findAllAccImages
+        }
+        res.status(200).send({ allAcc })
+    }
 }
 
 

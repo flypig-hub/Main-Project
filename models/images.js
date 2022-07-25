@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       images.belongsTo(models.posts, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       images.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       
-      // images.hasMany(models.hosts, { foreignKey: 'hostId', sourceKey: 'imageId', onDelete: 'CASCADE' });
+      // images.hasMany(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
     }
   }
   images.init({
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     nickname: DataTypes.STRING,
     snsId : DataTypes.STRING,
     postId: DataTypes.INTEGER,
-    hostNumber: DataTypes.INTEGER,
+    hostId: DataTypes.INTEGER,
     thumbnailKEY: DataTypes.INTEGER,
     thumbnailURL: DataTypes.INTEGER,
     postImageKEY: DataTypes.STRING,
