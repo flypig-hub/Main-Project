@@ -11,6 +11,9 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
+      imageId : {
+        type: Sequelize.INTEGER
+      },
       imageNumber: {
         type: Sequelize.INTEGER
       },
