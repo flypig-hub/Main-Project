@@ -115,7 +115,19 @@ module.exports = (server, app) => {
           chat: leaveUser.dataValues.nickname + "님이 퇴장하셨습니다.",
         },
       });
+       const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
+        (roomUsersId) => roomUsersId !== Number(userId)
+      );
+      const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
+        (roomUsersNickname) =>
+          roomUsersNickname !== leaveUser.dataValues.nickname
+      );
+      const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
+        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
+      );
       const userImageURL = await images.findOne({ where: { userId: userId } });
+      const roomUserNum = roomUsersId.length + 1;
+      
       if (!leaveRoom) {
         res.status(400).send({
           errorMessage: "존재하지 않는 방입니다.",
@@ -141,8 +153,8 @@ module.exports = (server, app) => {
       
       if (leaveRoom.dataValues.hostId === userId &&leaveRoom.dataValues.roomUserId === []){
         await Rooms.destroy({where:{roomId:roomId}})
-        return
-      } 
+        
+      } else
       if (leaveRoom.dataValues.hostId === userId) {
         await Rooms.update(
           { hostId:leaveRoom.dataValues.roomUserId[0],
@@ -150,20 +162,7 @@ module.exports = (server, app) => {
           hostImg:leaveRoom.dataValues.roomUserImg[0]},
           { where: { roomId: roomId } }
         );
-      }
-      
-      const roomUsersId = leaveRoom.dataValues.roomUserId.filter(
-        (roomUsersId) => roomUsersId !== Number(userId)
-      );
-      const roomUsersNickname = leaveRoom.dataValues.roomUserNickname.filter(
-        (roomUsersNickname) =>
-          roomUsersNickname !== leaveUser.dataValues.nickname
-      );
-      const roomUsersImg = leaveRoom.dataValues.roomUserImg.filter(
-        (roomUsersImg) => roomUsersImg !== userImageURL.userImageURL
-      );
-      const roomUserNum = roomUsersId.length + 1;
-      await Rooms.update(
+        await Rooms.update(
         {
           roomUserId: roomUsersId,
           roomUserNickname: roomUsersNickname,
@@ -172,7 +171,18 @@ module.exports = (server, app) => {
         },
         { where: { roomId: roomId } }
       );
-      
+        
+      }else{
+        await Rooms.update(
+        {
+          roomUserId: roomUsersId,
+          roomUserNickname: roomUsersNickname,
+          roomUserImg: roomUsersImg,
+          roomUserNum: roomUserNum,
+        },
+        { where: { roomId: roomId } }
+      );
+      }
     });
   });
 };
