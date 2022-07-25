@@ -2,7 +2,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Chats", {
-      chatid: {
+      chatId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,

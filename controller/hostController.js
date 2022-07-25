@@ -34,6 +34,7 @@ async function hostCreateAcc(req, res) {
     const image = req.files;
 
     const createAcc = await hosts.create({
+        userId,
         title,
         category,
         houseinfo,
@@ -67,11 +68,6 @@ async function hostCreateAcc(req, res) {
                 postImageURL: postImageURL,
                 postImageKEY: postImageKEY,
                 userImageURL: userImageURL,  
-            }, { 
-                include: [{
-                    association: hosts,
-                    include: { hostId: element.hostId }
-                }]
             })
         } else {
             res.send({ msg: "숙소 등록이 완료되었습니다!" })

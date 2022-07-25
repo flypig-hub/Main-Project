@@ -14,7 +14,7 @@ const RoomRouter = require("./router/roomRouter");
 const ImageRouter = require("./router/imageRouter");
 const HostRouter = require("./router/hostRouter");
 const reqlogMiddleware = require("./middlewares/request-log-middleware");
-const port = 8080;
+const port = 3000;
 
 // const session = require("express-session")
 const webSocket = require("./socket");
