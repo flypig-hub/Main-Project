@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // hosts.belongsTo(models.images, { foreignKey: 'hostNumber', sourceKey: 'hostId'});
+      hosts.hasMany(models.images, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
+      
+      hosts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
     }
   }
   hosts.init({
@@ -23,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     userId: DataTypes.INTEGER,
     title: DataTypes.STRING,
+    nickname: DataTypes.STRING,
     category: DataTypes.STRING,
     houstInfo: DataTypes.STRING,
     mainAddress: DataTypes.STRING,
