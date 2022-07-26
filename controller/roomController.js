@@ -186,10 +186,10 @@ async function exitRoom(req, res) {
     );
     const roomUserNum = roomUsersId.length + 1;
     await room.update(
-      { roomuserId: roomUsersId },
-      { roomUserNickname: roomUsersNickname },
-      { roomUserImg: roomUsersImg },
-      { roomUserNum: roomUserNum }
+      { roomuserId: roomUsersId ,
+       roomUserNickname: roomUsersNickname ,
+       roomUserImg: roomUsersImg ,
+       roomUserNum: roomUserNum }
     );
   }
 }
