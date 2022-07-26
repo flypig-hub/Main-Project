@@ -52,19 +52,21 @@ async function allRoomList(req, res) {
         const hashtag = room.hashTag[l];
         if (Object.values(isbest).includes(hashtag)) {
          isbest.hashTag = isbest.hashTag += 1
-         } else { 
+         } 
+    else { 
         isbest.push({ hashtag: 1 });
-        }
       }
-    }
-   Arrays.sort(isbest, Collections.reverseOrder());
+      }
+      }
+   isbest.sort((a, b) => b - a);
    const best = Object.keys(isbest)
 console.log(isbest, Object.keys(isbest));
-    return res.status(200).send({ best, msg: "룸을 조회했습니다" });
+    return res.status(200).send({allRoom,best,  msg: "룸을 조회했습니다" });
   } catch (err) {
     return res.status(400).send({ msg: "룸 조회가 되지 않았습니다." });
   }
 }
+
 async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImageURL } = res.locals;
