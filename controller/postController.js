@@ -50,7 +50,7 @@ async function WritePosting(req, res) {
         // console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
         // const afterImages = afterImg.toString().split(',');
         // console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
-        const newContent = req.body.content.replace(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
+        const newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
         console.log(newContent);
       })
       
