@@ -238,7 +238,14 @@ async function GetPost(req, res) {
        }
      },
      order: [["likeNum", "DESC"]],
-     limit: 3
+     limit: 3,
+     include: [
+       {
+         model: images,
+         required: true,
+         attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+       },
+     ]
    });
   
   res.send({ allPost, outherPost });
