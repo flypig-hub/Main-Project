@@ -35,4 +35,3 @@ module.exports = (sequelize, DataTypes) => {
   });
   return hostcomments;
 };
-// dfd
