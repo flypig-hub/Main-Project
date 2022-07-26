@@ -27,7 +27,7 @@ async function WritePosting(req, res) {
     preImages
     } = req.body;
   const image = req.files;
-  // console.log(image.location);
+  console.log(req.body);
 
   let isLike = false;
 
@@ -67,7 +67,7 @@ async function WritePosting(req, res) {
     let images = image[i].location
     // console.log(images);
     let allImagesURL = PreImages.replace(`${ preImagesArr }`,`${ images }`)
-    console.log(allImagesURL);
+    // console.log(allImagesURL);
     preImagesURL.push(allImagesURL);
   }
   console.log(preImagesURL);
