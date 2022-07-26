@@ -193,8 +193,6 @@ async function GetPost(req, res) {
       },
     ],
   });
-  console.log(allPost);
-
  
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
@@ -216,10 +214,13 @@ async function GetPost(req, res) {
       islike = false;
     }
 
+    const newTag = allPost[0].tagList.split(",");
+    
     Object.assign(post, {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
+      tagList: newTag
     });
   await posts.update(
     {
@@ -331,7 +332,12 @@ async function ModifyPosting(req, res) {
         userImageURL: userImageURL,
       })
     });
-    res.status(200).send({ updatePost, postImagesUrl, msg: "게시글이 수정되었습니다!" });
+    const tagListArr = req.body.tagList.split(",");
+    console.log(tagListArr);
+    const findPost = await posts.findAll({
+      where: { postId }
+    });
+    res.status(200).send({ findPost, tagListArr, postImagesUrl, msg: "게시글이 수정되었습니다!" });
   } else {
     const findImages = await images.findAll({
       where: { postId }
