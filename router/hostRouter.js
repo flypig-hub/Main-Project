@@ -17,7 +17,7 @@ router.get('/',  HostController.getAllAcc)
 router.get('/:hostId',  HostController.getDetailAcc)
 
 
-// 호스트 숙소 전체 조회
+// 호스트 숙소 수정
 router.put('/:hostId',  authMiddleware, upload.array('images', 8), HostController.updateAcc)
 
 

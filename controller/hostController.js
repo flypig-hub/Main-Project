@@ -187,13 +187,12 @@ async function updateAcc(req, res) {
           const postImageURL = postImagesUrl[i];
           console.log(postImageKEY);
           const imagesUpdate = images.update({
-            hostId: hostId,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL,
             postImageKEY: postImageKEY,
           }, {
-            where: { imageId: element.imageId }
+            where: { hostId }
           })
         });
 

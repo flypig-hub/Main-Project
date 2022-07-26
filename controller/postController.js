@@ -206,6 +206,7 @@ async function ModifyPosting(req, res) {
   if (image) {
     // images DB에서 키값 찾아오기
     const postImageInfo = await images.findAll({ where:{ postId } });
+    console.log(postImageInfo.images.imageId);
     const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
 
     // S3 사진 삭제. 업로드는 미들웨어
@@ -242,7 +243,7 @@ async function ModifyPosting(req, res) {
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
       }, {
-        where: { imageId: element.imageId }
+        where: { id: element.imageId }
       })
     });
     res.status(200).send({ updatePost, postImagesUrl, msg: "게시글이 수정되었습니다!" });
