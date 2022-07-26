@@ -42,6 +42,8 @@ async function WritePosting(req, res) {
     const PreImages = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImages.split(',')
 
+    let resultString = ''
+
     let newArr = preImagesArr.map((element, i) => {
       let preImg = preImagesArr[i].substr(0, 63);
       let imgList = image[i].location;
@@ -52,8 +54,8 @@ async function WritePosting(req, res) {
         `${preImagesArr[i].substr(0, 63)}`,
         `${image[i].location}`
       )
-      console.log(newContent);
-      return newContent
+      resultString += newContent
+      console.log(resultString);
     })
 
     // for (let i = 0; i < preImagesArr.length; i++) {
