@@ -35,4 +35,4 @@ module.exports = (sequelize, DataTypes) => {
   });
   return reviews;
 };
-// dfd
+
