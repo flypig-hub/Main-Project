@@ -200,7 +200,7 @@ async function GetPostingList(req, res) {
     });
     
     let islike = await Like.findOne({
-      where: { userId: post.userId, postId: post.postId },
+      where: { userId: userId, postId: post.postId },
     });
 
     const likeNum = postLikes.length;
