@@ -290,6 +290,7 @@ async function GetPost(req, res) {
        }
      },
      order: [["likeNum", "DESC"]],
+     limit: 3
    });
   
   res.send({ allPost, outherPost });
