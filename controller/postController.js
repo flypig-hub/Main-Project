@@ -27,21 +27,36 @@ async function WritePosting(req, res) {
     preImages
     } = req.body;
   const image = req.files;
-  console.log(req.body);
-  console.log(req.body.preImages);
+  // console.log(req.body);
+  // console.log(req.body.preImages);
 
   let isLike = false;
+
+  let Content = [];
+  const PreImages = req.body.preImages
+  for (let i = 0; i < image.length; i++) {
+    let preImagesArr = PreImages.split(',')
+
+    let images = image[i].location
+    // let allImagesURL = PreImages.replace(`${ preImagesArr }`,`${ images }`)
+    let newContent = content.replace(`${ preImagesArr[i] }`,`${ images }`)
+    console.log(newContent, "뉴 컨텐츠???");
+    Content.push(newContent)
+    
+  }
+  console.log(Content);
 
   const postImageKey = image.map((postImageKey) => postImageKey.key);
   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
 
+
   const postInfo = await posts.create({
     userId,
     nickname,
     title,
-    content,
+    content: Content[0],
     mainAddress,
     subAddress,
     category,
@@ -55,17 +70,6 @@ async function WritePosting(req, res) {
     preImages
   });
 
-  let preImagesURL = [];
-  const PreImages = postInfo.type
-  for (let i = 0; i < image.length; i++) {
-    let preImagesArr = [];
-    preImagesArr.push(PreImages)
-
-    let images = image[i].location
-    let allImagesURL = PreImages.replace(`${ preImagesArr }`,`${ images }`)
-    preImagesURL.push(allImagesURL);
-  }
-  console.log(preImagesURL);
 
 if (image) {
   postImageKey.forEach((element, i) => {
@@ -84,7 +88,7 @@ if (image) {
     })
   })
 }
-res.status(201).send({ postInfo, postImageUrl, thumbnailURL, preImagesURL });
+res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   // if (image) {
   //   postImageKey.forEach((element, i) => {
   //     const postImageKEY = postImageKey[i];
