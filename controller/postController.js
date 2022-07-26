@@ -27,6 +27,9 @@ async function WritePosting(req, res) {
     } = req.body;
   const image = req.files;
 
+  const img_url = await req.files.location
+  console.log(img_url);
+  
   const postImageKey = image.map((postImageKey) => postImageKey.key);
   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
   const thumbnailKEY = postImageKey[0];
@@ -51,12 +54,11 @@ async function WritePosting(req, res) {
     tagList
   });
 
-  postImageKey.forEach((element, i) => {
-    const postImageKEY = postImageKey[i];
-    const postImageURL = postImageUrl[i];
-    console.log(postImageKEY, postImageURL);
-    
-    if (image) {
+  if (image) {
+    postImageKey.forEach((element, i) => {
+      const postImageKEY = postImageKey[i];
+      const postImageURL = postImageUrl[i];
+      console.log(postImageKEY, postImageURL);
       const imagesInfo = images.create({
         userId: userId,
         nickname: nickname,
@@ -69,11 +71,9 @@ async function WritePosting(req, res) {
       })
       console.log(imagesInfo);
       return imagesInfo
-    }
-
-  });
+    });
     res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  } catch(e) {
+  }} catch(e) {
     res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   }
 }

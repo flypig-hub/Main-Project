@@ -201,13 +201,7 @@ async function updateAcc(req, res) {
           })
         });
         res.status(200).send({ updatedAcc, postImagesUrl, msg: "게시글이 수정되었습니다!" });
-      } else {
-        const findImages = await images.findAll({
-          where: { hostId }
-        });
-        console.log(findImages);
-        res.status(200).send({ updateAcc, findImages, msg: "수정된 내용이 없습니다!" });
-      };
+      }
 }
 
 
