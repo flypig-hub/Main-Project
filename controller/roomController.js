@@ -45,23 +45,16 @@ async function callchats(req, res) {
 async function allRoomList(req, res) {
   try {
     const allRoom = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
-    let isbest = [];
-    for (i = 0; i < allRoom.length; i++){
-      const room = allRoom[i]
-      for (l = 0; l < room.hashTag.length; l++) {
-        const hashtag = room.hashTag[l];
-        if (Object.values(isbest).includes(hashtag)) {
-         isbest.hashTag = isbest.hashTag += 1
-         } 
-    else { 
-        isbest.push({ hashtag: 1 });
-      }
-      }
-      }
-   isbest.sort((a, b) => b - a);
-   const best = Object.keys(isbest)
-console.log(isbest, Object.keys(isbest));
-    return res.status(200).send({allRoom,best,  msg: "룸을 조회했습니다" });
+    let tags = [];
+    
+      for (i = 0; i < allRoom.length; i++) {
+        const room = allRoom[i]
+        for (l = 0; l < room.hashTag.length; l++) {
+          const hashtag = room.hashTag[l];
+          tags.push(hashtag);
+        }
+    }
+    return res.status(200).send({ allRoom, tags, msg: "룸을 조회했습니다" });
   } catch (err) {
     return res.status(400).send({ msg: "룸 조회가 되지 않았습니다." });
   }
