@@ -222,6 +222,7 @@ async function GetPostingList(req, res) {
 // 게시글 상세 조회
 async function GetPost(req, res) {
   const { postId } = req.params;
+  const { userId } = res.locals;
     const allPost = await posts.findAll({
       where: { postId },
       include: [{
@@ -246,7 +247,7 @@ async function GetPost(req, res) {
     const postLikes = await Like.findAll({ where: { postId: post.postId } });
     
     let islike = await Like.findOne({
-      where: { userId: post.userId, postId: post.postId },
+      where: { userId: userId, postId: post.postId },
     });
 
     const likeNum = postLikes.length;
