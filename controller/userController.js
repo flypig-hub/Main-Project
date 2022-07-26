@@ -237,6 +237,7 @@ async function checkMe(req, res) {
       attributes: ['hostId', 'thumbnailURL']
     }]
   });
+  console.log(hostpost, "으어엉어어어엉");
   const hostinfo = hostpost.map((hosts) =>({
     title : hosts.title,
     commentNum : hosts.commentNum,

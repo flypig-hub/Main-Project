@@ -14,6 +14,12 @@ module.exports = {
       hostId: {
         type: Sequelize.INTEGER
       },
+      reviewId : {
+        type: Sequelize.INTEGER
+      },
+      commentId : {
+        type: Sequelize.INTEGER
+      },
       userImage: {
         type: Sequelize.STRING
       },

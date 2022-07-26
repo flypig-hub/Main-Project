@@ -1,21 +1,28 @@
-const { hostcomments, sequelize, Sequelize } = require("../models");
+const { hostcomments, images, hosts, sequelize, Sequelize } = require("../models");
 
 //review 불러오기
 
 async function readReview(req, res) {
-    try {
+   try {
+        const {userId} = res.locals;
         const {hostId} = req.params;
-
+       
         const reviews = await hostcomments.findAll({
             where: {
-                hostId:hostId,
+                hostId
             },
+            include: [{
+                model: images,
+                attributes: ['reviewId', 'userImageURL']
+            }],
             order: [
                 ["reviewId", "DESC"],
                 
-             ],
+            ],
+                
+            
         });
-            res.status(200).send({reviews, msg : "후기를 읽어옵니다."});
+                    res.status(200).send({reviews,  msg : "후기를 읽어옵니다."});
 
     } catch (error) {
         res.status(400).send({errorMessage: "댓글 조회에 실패하였습니다." });
@@ -46,12 +53,16 @@ async function writeReview(req, res) {
         hostId:hostId,
         userId:userId,
         nickname:nickname,
-        userImageURL:userImageURL,
         review:review,
+        userImageURL:userImageURL,
         starpoint:starpoint
     });
+    const rimg = await images.create({
+        reviewId : review_r.reviewId,
+        userImageURL:userImageURL,
+    })
 
-    res.status(201).send({review_r, msg : "후기 작성 완료!"});
+    res.status(201).send({review_r, rimg, msg : "후기 작성 완료!"});
 // } catch (error) {
 //     res.status(400).send({result:false, errorMessage: "후기 작성을 할 수 없습니다."});
 // }

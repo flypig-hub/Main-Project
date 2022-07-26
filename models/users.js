@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       users.hasMany(models.images, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       users.hasMany(models.saves, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       users.hasMany(models.hosts, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+      users.hasMany(models.hostcomments, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+      
     }
   }
   users.init({
@@ -30,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     userImage: DataTypes.STRING,
     email:DataTypes.STRING,
     host:DataTypes.BOOLEAN,
+    
     }, {
     sequelize,
     modelName: 'users',
