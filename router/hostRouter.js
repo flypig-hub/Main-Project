@@ -15,7 +15,7 @@ router.get('/',  HostController.getAllAcc)
 // 숙소 검색하기
 router.get('/search', HostController.hostsearch)
 
-// 호스트 숙소 전체 조회
+// 호스트 숙소 상세 조회
 router.get('/:hostId',  HostController.getDetailAcc)
 
 

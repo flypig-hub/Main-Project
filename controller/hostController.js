@@ -3,6 +3,7 @@ const {
     users,
     images,
     hosts,
+    reviews,
     sequelize,
     Sequelize,
   } = require("../models");
@@ -45,6 +46,7 @@ async function hostCreateAcc(req, res) {
         link,
         hostContent,
         tagList,
+        average : 0,
     });
 
     if (image) {
@@ -113,7 +115,14 @@ async function getAllAcc(req, res) {
             attributes: [ 'hostId', 'postImageURL' ]
         }]
     });
-
+    // for (i = 0 ; i < findAllAcc.length; i++) {
+    //   const host = findAllAcc[i];
+    //   const hostaverage = await reviews.findAll({
+    //   where : {hostId : host.hostId},
+    // })};
+    // const average = hostaverage.length 
+    // console.log(average);
+    // console.log(starpoint_avg);
     res.send({ findAllAcc })
 }
 

@@ -14,6 +14,9 @@ module.exports = {
       reviewId: {
         type: Sequelize.INTEGER
       },
+      average: {
+        type: Sequelize.INTEGER
+      },
       title: {
         type: Sequelize.STRING
       },
