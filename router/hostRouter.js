@@ -12,6 +12,8 @@ router.post('/', authMiddleware, upload.array('images', 8), HostController.hostC
 // 호스트 숙소 전체 조회
 router.get('/',  HostController.getAllAcc)
 
+// 숙소 검색하기
+router.get('/search', HostController.hostsearch)
 
 // 호스트 숙소 전체 조회
 router.get('/:hostId',  HostController.getDetailAcc)
