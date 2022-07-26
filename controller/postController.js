@@ -32,29 +32,44 @@ async function WritePosting(req, res) {
     // console.log(req.body.content);
   const image = req.files;
 
+  const tagListArr = new Array(tagList)
+  console.log(tagListArr);
+
   let isLike = false;
 
     let beforeImg = [];
     let afterImg = [];
     const PreImages = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImages.split(',')
+
+    let newArr = preImagesArr.map((element, i) => {
+      let preImg = preImagesArr[i].substr(0, 63);
+      let imgList = image[i].location;
+      console.log(preImg);
+      console.log(imgList);
+
+      const newContent = req.body.content.replaceAll(
+        `${preImagesArr[i].substr(0, 63)}`,
+        `${image[i].location}`
+      )
+      console.log(newContent);
+      return newContent
+    })
+
     // for (let i = 0; i < preImagesArr.length; i++) {
-      preImagesArr.forEach((element, i) => {
-        let preImg = preImagesArr[i].substr(0, 63)
-        let imgList = image[i].location
-        console.log(preImg);
-        console.log(imgList);
-        // beforeImg.push(preImg);
-        // afterImg.push(imgList);
-        // const beforeImages = beforeImg.toString().split(',');
-        // console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
-        // const afterImages = afterImg.toString().split(',');
-        // console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
-        const newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
-        console.log(newContent);
-      })
+    //     let preImg = preImagesArr[i].substr(0, 63)
+    //     let imgList = image[i].location
+    //     console.log(preImg);
+    //     console.log(imgList);
+    //     beforeImg.push(preImg);
+    //     afterImg.push(imgList);
+    //     const beforeImages = beforeImg.toString().split(',');
+    //     console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
+    //     const afterImages = afterImg.toString().split(',');
+    //     console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
+    //     const newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
       
-      // console.log(newContent);
+    //   console.log(newContent);
     // }
     
 
@@ -102,7 +117,7 @@ if (image) {
     })
   })
 }
-res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
+res.status(201).send({ postInfo, tagListArr, postImageUrl, thumbnailURL });
   // } catch(e) {
   //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   // }
