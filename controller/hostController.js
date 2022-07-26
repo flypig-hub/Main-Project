@@ -74,6 +74,35 @@ async function hostCreateAcc(req, res) {
         res.status(201).send({ createAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
     } 
 };
+//호스트 숙소 검색하기
+
+async function hostsearch(req, res) {
+  const queryData = req.query;
+    const hostPost = await hosts.findAll({where: {
+        [Op.or]: [
+          { title: { [Op.substring]: queryData.search } },
+          { hostContent: { [Op.substring]: queryData.search } },
+        ],
+    },
+      order: [[
+        { title: { [Op.substring]: queryData.search } },"createdAt", "DESC"
+      ]]
+    });
+    res.status(200).send({msg:"숙소검색 완료", hostPost})
+  };
+   
+  // async function searchRoombyhashtag(req, res) {
+  // const queryData = req.query;
+  //   const rooms = await Rooms.findAll({where: {
+  //          hashTag: { [Op.substring]: queryData.search }
+  //   },
+  //     order: [[
+  //       "createdAt", "DESC"
+  //     ]]
+  //   });
+  //   res.status(200).send({msg:"룸 해쉬태그 검색완료", rooms})
+  // }
+ 
 
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {
@@ -251,3 +280,4 @@ module.exports.hostCreateAcc = hostCreateAcc;
 module.exports.getAllAcc = getAllAcc;
 module.exports.getDetailAcc = getDetailAcc;
 module.exports.updateAcc = updateAcc;
+module.exports.hostsearch = hostsearch;
