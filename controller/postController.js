@@ -205,7 +205,6 @@ async function GetPostingList(req, res) {
 
     const likeNum = postLikes.length;
     const commentNum = postComments.length;
-      // console.log("불린 전", userId, post.postId, i, "번째값입니다");
     if (islike) {
       islike = true;
     } else {
@@ -225,29 +224,36 @@ async function GetPostingList(req, res) {
 async function GetPost(req, res) {
   const { postId } = req.params;
   const { userId } = req.body;
-    const allPost = await posts.findAll({
-      where: { postId },
-      include: [{
+  const allPost = await posts.findAll({
+    where: { postId },
+    include: [
+      {
         model: images,
         required: false,
-        attributes: ['postId', 'postImageURL', 'thumbnailURL', 'userImageURL'],
-    },{
-      model: Comments,
-      required: false,
-      attributes: ['postId', 'comment']
-    },{
-      model: Like,
-      required: false,
-      attributes: ['userId', 'postId']
-    }]
+        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+      },
+      {
+        model: Comments,
+        required: false,
+        attributes: ["postId", "comment"],
+      },
+      {
+        model: Like,
+        required: false,
+        attributes: ["userId", "postId"],
+      },
+    ],
   });
   console.log(allPost);
 
+ 
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
-    const postComments = await Comments.findAll({ where: { postId: post.postId } });
+    const postComments = await Comments.findAll({
+      where: { postId: post.postId },
+    });
     const postLikes = await Like.findAll({ where: { postId: post.postId } });
-    
+
     let islike = await Like.findOne({
       where: { userId: userId, postId: post.postId },
     });
@@ -266,10 +272,27 @@ async function GetPost(req, res) {
       commentNum: commentNum,
       islike: islike,
     });
+  await posts.update(
+    {
+      likeNum: likeNum,
+      commentNum: commentNum,
+      islike: islike
+    },
+    { where: { postId: post.postId } }
+  );
   }
-  res.send({ allPost });
- }
-
+   const outherPost = await posts.findAll({
+     where: {
+       userId: userId,
+       postId: {
+         [Op.ne]: postId
+       }
+     },
+     order: [["likeNum", "DESC"]],
+   });
+  
+  res.send({ allPost, outherPost });
+}
 
 // 게시글 수정 (S3 기능 추가 예정)
 async function ModifyPosting(req, res) {
