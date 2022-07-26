@@ -46,7 +46,8 @@ module.exports = () => {
                             provider: 'kakao',
                             nickname : profile._json.properties.nickname,
                             host : false,
-                            email : profile._json.kakao_account.email
+                            email : profile._json.kakao_account.email,
+                            userImageURL : profile._json.properties.thumbnail_image
                         });
                         console.log(newUser, '새로운 유저');
                         console.log(profile._json.properties.thumbnail_image);                            

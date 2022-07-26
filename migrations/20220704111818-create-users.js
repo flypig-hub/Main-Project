@@ -14,7 +14,7 @@ module.exports = {
       nickname: {
         type: Sequelize.STRING
       },
-      userImage: {
+      userImageURL: {
         type: Sequelize.STRING
       },
       email : {

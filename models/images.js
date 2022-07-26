@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       images.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       images.belongsTo(models.hostcomments, { foreignKey: 'reviewId', sourceKey: 'reviewId', onDelete: 'CASCADE' });
       images.belongsTo(models.Comments, { foreignKey: 'commentId', sourceKey: 'commentId', onDelete: 'CASCADE' });
-      
+      images.belongsTo(models.users, { foreignKey: 'userImageURL', sourceKey: 'userImageURL', onDelete: 'CASCADE' });
     }
   }
   images.init({

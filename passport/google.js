@@ -40,7 +40,8 @@ module.exports = () => {
                             nickname: profile.displayName,
                             provider: 'google',
                             host : false,
-                            email : profile.emails[0].value
+                            email : profile.emails[0].value,
+                            userImageURL : profile.photos[0].value
                         });
                         const newUserImage = await images.create({
                             userId: newUser.userId,

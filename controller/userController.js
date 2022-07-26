@@ -301,7 +301,9 @@ try {
   if (existImage) {
     const userImages = await images.update({userImageKEY: userImageKEY.toString(),userImageURL: userImageURL.toString()},
     {where :{userId},});
-    res.status(200).send({userImages,userImageKEY, userImageURL, msg: "성공" })
+    const usersImages = await users.update({userImageURL: userImageURL.toString()},
+    {where :{userId},});
+    res.status(200).send({userImages,userImageKEY, userImageURL, usersImages, msg: "성공" })
   }  
 
 }catch(error){
@@ -358,7 +360,19 @@ async function CNU_CK (req, res, next) {
 
 async function otherUser (req, res) {
   const {userId} = req.params;
-try {
+  
+
+//try {
+  const otherPostuser = await users.findOne ({
+    where : {userId:userId},
+    include: [{
+      model: images,
+      attributes: ['userImageURL']
+    }],
+  });
+  // console.log(otherPostuser, '이거 나오는데');
+
+  
   const otherpost = await posts.findAll({
     where : {userId:userId},
     include: [{
@@ -366,19 +380,25 @@ try {
       attributes: ['postId', 'thumbnailURL']
     }],
   });
-  console.log(otherpost,"이거 나오지?");
+  // console.log(otherpost, '이거 나오는데22');
+  
   const otherinfo = otherpost.map((o_post) =>({
     title : o_post.title,
     commentNum : o_post.commentNum,
     likeNum : o_post.likeNum,
     images : o_post.images
-  }));
- // 해당 유저의 채팅방
 
-  res.status(200).send({ otherinfo, msg : "다른 유저의 정보입니다."});
-} catch (error) {
-  res.status(400).send({ otherinfo, errorMEssage : "다른 유저의 정보를 가지고 올수 없습니다."});
-}
+  }));
+  console.log(otherinfo);
+
+  res.json({
+    otherinfo,
+    userImageURL : otherPostuser.userImageURL,
+    nickname : otherPostuser.nickname,
+  })
+// } catch (error) {
+//   res.status(400).send({ otherinfo, errorMEssage : "다른 유저의 정보를 가지고 올수 없습니다."});
+// }
   
   
 }

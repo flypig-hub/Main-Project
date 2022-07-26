@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       users.hasMany(models.saves, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       users.hasMany(models.hosts, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
       users.hasMany(models.hostcomments, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+      users.hasMany(models.images, { foreignKey: 'userImageURL', sourceKey: 'userImageURL', onDelete: 'CASCADE' });
       
     }
   }
@@ -29,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     snsId: DataTypes.STRING,
     nickname: DataTypes.STRING,
-    userImage: DataTypes.STRING,
+    userImageURL: DataTypes.STRING,
     email:DataTypes.STRING,
     host:DataTypes.BOOLEAN,
     

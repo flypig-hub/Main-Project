@@ -33,7 +33,9 @@ module.exports = () => {
                      nickname: profile.name,    
                      provider: 'naver',
                      host : false,
-                     email : profile.email
+                     email : profile.email,
+                     userImageURL : profile.profileImage
+
                   });
                   const newUserImage = await images.create({
                      userId: newUser.userId,
