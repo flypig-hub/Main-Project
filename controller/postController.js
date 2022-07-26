@@ -180,7 +180,7 @@ async function WritePosting(req, res) {
 async function GetPostingList(req, res) {
   const user = res.locals;
   const {userId} = req.body;
-  console.log(userId);
+  console.log("유저아이디 = ------------------",userId);
   let allPost = await posts.findAll({
     include: [{
       model: images,
