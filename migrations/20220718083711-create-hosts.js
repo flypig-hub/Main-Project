@@ -44,6 +44,9 @@ module.exports = {
       hostContent: {
         type: Sequelize.STRING
       },
+      preImages: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

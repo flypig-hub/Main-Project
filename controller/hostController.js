@@ -44,7 +44,7 @@ async function hostCreateAcc(req, res) {
         stepInfo,
         link,
         hostContent,
-        tagList
+        tagList,
     });
 
     if (image) {
@@ -74,8 +74,6 @@ async function hostCreateAcc(req, res) {
         res.status(201).send({ createAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
     } 
 };
-
-
 
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {

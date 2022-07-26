@@ -12,7 +12,7 @@ const AWS = require("aws-sdk");
 
 // 게시글 작성(유저)
 async function WritePosting(req, res) {
-  try {
+  // try {
   const { userId, nickname, userImageURL } = res.locals;
   const {
     title,
@@ -23,19 +23,20 @@ async function WritePosting(req, res) {
     type,
     link,
     houseTitle,
-    tagList
+    tagList,
+    preImages
     } = req.body;
   const image = req.files;
+  // console.log(image.location);
 
-  const img_url = await req.files.location
-  console.log(img_url);
-  
+  let isLike = false;
+
   const postImageKey = image.map((postImageKey) => postImageKey.key);
   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
 
-  let isLike = false;
+  
 
   const postInfo = await posts.create({
     userId,
@@ -51,31 +52,67 @@ async function WritePosting(req, res) {
     commentNum: 0,
     likeNum: 0,
     isLike: isLike,
-    tagList
+    tagList,
+    preImages
   });
 
-  if (image) {
-    postImageKey.forEach((element, i) => {
-      const postImageKEY = postImageKey[i];
-      const postImageURL = postImageUrl[i];
-      console.log(postImageKEY, postImageURL);
-      const imagesInfo = images.create({
-        userId: userId,
-        nickname: nickname,
-        postId: postInfo.postId,
-        thumbnailURL: thumbnailURL.toString(),
-        thumbnailKEY: thumbnailKEY.toString(),
-        postImageURL: postImageURL,
-        postImageKEY: postImageKEY,
-        userImageURL: userImageURL
-      })
-      console.log(imagesInfo);
-      return imagesInfo
-    });
-    res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  }} catch(e) {
-    res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+  let preImagesURL = [];
+  const PreImages = postInfo.type
+  for (let i = 0; i < image.length; i++) {
+    let preImagesArr = [];
+    
+    preImagesArr.push(PreImages)
+    // console.log(preImagesArr);
+
+    let images = image[i].location
+    // console.log(images);
+    let allImagesURL = PreImages.replace(`${ preImagesArr }`,`${ images }`)
+    console.log(allImagesURL);
+    preImagesURL.push(allImagesURL);
   }
+  console.log(preImagesURL);
+
+if (image) {
+  postImageKey.forEach((element, i) => {
+    const postImageKEY = postImageKey[i];
+    const postImageURL = postImageUrl[i];
+    // console.log(postImageKEY, postImageURL)
+    const imagesInfo = images.create({
+      userId: userId,
+      nickname: nickname,
+      postId: postInfo.postId,
+      thumbnailURL: thumbnailURL.toString(),
+      thumbnailKEY: thumbnailKEY.toString(),
+      postImageURL: postImageURL,
+      postImageKEY: postImageKEY,
+      userImageURL: userImageURL
+    })
+  })
+}
+res.status(201).send({ postInfo, postImageUrl, thumbnailURL, preImagesURL });
+  // if (image) {
+  //   postImageKey.forEach((element, i) => {
+  //     const postImageKEY = postImageKey[i];
+  //     const postImageURL = postImageUrl[i];
+  //     // console.log(postImageKEY, postImageURL);
+  //     const imagesInfo = images.create({
+  //       userId: userId,
+  //       nickname: nickname,
+  //       postId: postInfo.postId,
+  //       thumbnailURL: thumbnailURL.toString(),
+  //       thumbnailKEY: thumbnailKEY.toString(),
+  //       postImageURL: postImageURL,
+  //       postImageKEY: postImageKEY,
+  //       userImageURL: userImageURL
+  //     })
+  //     // console.log(imagesInfo);
+  //     return imagesInfo
+  //   });
+  //   res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
+  // }
+  // } catch(e) {
+  //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+  // }
 }
 
 

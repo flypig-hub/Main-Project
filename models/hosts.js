@@ -36,7 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     stepSelect: DataTypes.STRING,
     stepInfo: DataTypes.STRING,
     link: DataTypes.STRING,
-    hostContent: DataTypes.STRING
+    hostContent: DataTypes.STRING,
+    preImages: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'hosts',
