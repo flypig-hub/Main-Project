@@ -9,6 +9,8 @@ const {
 } = require("../models");
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
+const Op = Sequelize.Op;
+
 
 async function WritePosting(req, res) {
   // try {
