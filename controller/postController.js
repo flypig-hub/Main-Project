@@ -179,7 +179,7 @@ async function WritePosting(req, res) {
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
   const user = res.locals;
-  const {userId} = req.body;
+  const {userId} = req.params;
   console.log("유저아이디 = ------------------",userId);
   let allPost = await posts.findAll({
     include: [{
@@ -222,8 +222,8 @@ async function GetPostingList(req, res) {
 
 // 게시글 상세 조회
 async function GetPost(req, res) {
-  const { postId } = req.params;
-  const { userId } = req.body;
+  const { postId,userId } = req.params;
+  
   const allPost = await posts.findAll({
     where: { postId },
     include: [
