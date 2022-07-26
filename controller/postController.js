@@ -28,6 +28,7 @@ async function WritePosting(req, res) {
     } = req.body;
   const image = req.files;
   console.log(req.body);
+  console.log(req.body.preImages);
 
   let isLike = false;
 
@@ -35,8 +36,6 @@ async function WritePosting(req, res) {
   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
-
-  
 
   const postInfo = await posts.create({
     userId,
@@ -60,14 +59,10 @@ async function WritePosting(req, res) {
   const PreImages = postInfo.type
   for (let i = 0; i < image.length; i++) {
     let preImagesArr = [];
-    
     preImagesArr.push(PreImages)
-    // console.log(preImagesArr);
 
     let images = image[i].location
-    // console.log(images);
     let allImagesURL = PreImages.replace(`${ preImagesArr }`,`${ images }`)
-    // console.log(allImagesURL);
     preImagesURL.push(allImagesURL);
   }
   console.log(preImagesURL);
