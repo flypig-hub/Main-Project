@@ -284,7 +284,7 @@ async function GetPost(req, res) {
   }
    const outherPost = await posts.findAll({
      where: {
-       userId: allPost.uesrID,
+       userId: allPost[0].uesrId,
        postId: {
          [Op.ne]: postId
        }
