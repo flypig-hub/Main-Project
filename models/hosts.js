@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       hosts.hasMany(models.images, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
-      hosts.hasMany(models.hostcomments, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
+      hosts.hasMany(models.reviews, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
       hosts.hasMany(models.saves, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });
       //유저
       hosts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     userId: DataTypes.INTEGER,
     reviewId : DataTypes.INTEGER,
+    average : DataTypes.INTEGER, 
     title: DataTypes.STRING,
     nickname: DataTypes.STRING,
     category: DataTypes.STRING,

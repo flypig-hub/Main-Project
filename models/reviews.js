@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class hostcomments extends Model {
+  class reviews extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -12,12 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     
-    hostcomments.hasMany(models.images, { foreignKey: 'reviewId', sourceKey: 'reviewId', onDelete: 'CASCADE' });
-    hostcomments.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });    
-    hostcomments.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });    
+    reviews.hasMany(models.images, { foreignKey: 'reviewId', sourceKey: 'reviewId', onDelete: 'CASCADE' });
+    reviews.belongsTo(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' });    
+    reviews.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });    
     }
   }
-  hostcomments.init({
+  reviews.init({
     reviewId : {
       allowNull: false,
       autoIncrement: true,
@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     starpoint: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'hostcomments',
+    modelName: 'reviews',
   });
-  return hostcomments;
+  return reviews;
 };
+
