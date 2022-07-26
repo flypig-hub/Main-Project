@@ -10,7 +10,6 @@ const {
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
 
-// 게시글 작성(유저)
 async function WritePosting(req, res) {
   // try {
   const { userId, nickname, userImageURL } = res.locals;
@@ -27,92 +26,154 @@ async function WritePosting(req, res) {
     preImages
     } = req.body;
   const image = req.files;
-  // console.log(req.body);
-  // console.log(req.body.preImages);
 
   let isLike = false;
-
-  let Content = [];
-  const PreImages = req.body.preImages
-  for (let i = 0; i < image.length; i++) {
-    let preImagesArr = PreImages.split(',')
-
-    let images = image[i].location
-    // let allImagesURL = PreImages.replace(`${ preImagesArr }`,`${ images }`)
-    let newContent = content.replace(`${ preImagesArr[i] }`,`${ images }`)
-    console.log(newContent, "뉴 컨텐츠???");
-    Content.push(newContent)
-    
-  }
-  console.log(Content);
 
   const postImageKey = image.map((postImageKey) => postImageKey.key);
   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
 
+    let Content = [];
+    const PreImages = req.body.preImages
+    // console.log(PreImages); //문자
+    let preImagesArr = PreImages.split(',')
+    // console.log(preImagesArr); //배열
+    let newContent = content
 
-  const postInfo = await posts.create({
-    userId,
-    nickname,
-    title,
-    content: Content[0],
-    mainAddress,
-    subAddress,
-    category,
-    type,
-    link,
-    houseTitle,
-    commentNum: 0,
-    likeNum: 0,
-    isLike: isLike,
-    tagList,
-    preImages
-  });
+    for (let i = 0; i < preImagesArr.length; i++) {
+      let newContent = content.replace(`${ preImagesArr }`,`${ image[i].location }`)
+      console.log(newContent, '지나가나요?');
+      Content.push(newContent)
+    }
+    console.log(Content);
 
+    const postInfo = await posts.create({
+      userId,
+      nickname,
+      title,
+      content: Content.toString(),
+      mainAddress,
+      subAddress,
+      category,
+      type,
+      link,
+      houseTitle,
+      commentNum: 0,
+      likeNum: 0,
+      isLike: isLike,
+      tagList,
+      preImages
+    });
+    console.log(postInfo);
 
-if (image) {
-  postImageKey.forEach((element, i) => {
-    const postImageKEY = postImageKey[i];
-    const postImageURL = postImageUrl[i];
-    // console.log(postImageKEY, postImageURL)
-    const imagesInfo = images.create({
-      userId: userId,
-      nickname: nickname,
-      postId: postInfo.postId,
-      thumbnailURL: thumbnailURL.toString(),
-      thumbnailKEY: thumbnailKEY.toString(),
-      postImageURL: postImageURL,
-      postImageKEY: postImageKEY,
-      userImageURL: userImageURL
+  if (image) {
+    postImageKey.forEach((element, i) => {
+      const postImageKEY = postImageKey[i];
+      const postImageURL = postImageUrl[i];
+      // console.log(postImageKEY, postImageURL)
+      const imagesInfo = images.create({
+        userId: userId,
+        nickname: nickname,
+        postId: postInfo.postId,
+        thumbnailURL: thumbnailURL.toString(),
+        thumbnailKEY: thumbnailKEY.toString(),
+        postImageURL: postImageURL,
+        postImageKEY: postImageKEY,
+        userImageURL: userImageURL
+      })
     })
-  })
-}
-res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  // if (image) {
-  //   postImageKey.forEach((element, i) => {
-  //     const postImageKEY = postImageKey[i];
-  //     const postImageURL = postImageUrl[i];
-  //     // console.log(postImageKEY, postImageURL);
-  //     const imagesInfo = images.create({
-  //       userId: userId,
-  //       nickname: nickname,
-  //       postId: postInfo.postId,
-  //       thumbnailURL: thumbnailURL.toString(),
-  //       thumbnailKEY: thumbnailKEY.toString(),
-  //       postImageURL: postImageURL,
-  //       postImageKEY: postImageKEY,
-  //       userImageURL: userImageURL
-  //     })
-  //     // console.log(imagesInfo);
-  //     return imagesInfo
-  //   });
-  //   res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  // }
+  }
+    res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
+    }
+
   // } catch(e) {
   //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   // }
-}
+
+
+// 게시글 작성(유저)
+// async function WritePosting(req, res) {
+//   // try {
+//   const { userId, nickname, userImageURL } = res.locals;
+//   const {
+//     title,
+//     content,
+//     mainAddress,
+//     subAddress,
+//     category,
+//     type,
+//     link,
+//     houseTitle,
+//     tagList,
+//     preImages
+//     } = req.body;
+//   const image = req.files;
+
+//   let isLike = false;
+
+//     let Content = [];
+//     const PreImages = req.body.preImages
+//     // console.log(PreImages); //문자
+//     let preImagesArr = PreImages.split(',')
+//     // console.log(preImagesArr); //배열
+//     let newContent = content
+
+//     for (let i = 0; i < preImagesArr.length; i++) {
+
+//       let newContent = content.replace(`${ preImagesArr }`,`${ image[i].location }`)
+//       console.log(newContent, '지나가나요?');
+
+//     }
+//     const ContentString = Content.toString()
+//     console.log(ContentString);
+
+    
+//   const postInfo = await posts.create({
+//     userId,
+//     nickname,
+//     title,
+//     content,
+//     mainAddress,
+//     subAddress,
+//     category,
+//     type,
+//     link,
+//     houseTitle,
+//     commentNum: 0,
+//     likeNum: 0,
+//     isLike: isLike,
+//     tagList,
+//     preImages
+//   });
+
+//   const postImageKey = image.map((postImageKey) => postImageKey.key);
+//   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
+//   const thumbnailKEY = postImageKey[0];
+//   const thumbnailURL = postImageUrl[0];
+
+// if (image) {
+//   postImageKey.forEach((element, i) => {
+//     const postImageKEY = postImageKey[i];
+//     const postImageURL = postImageUrl[i];
+//     // console.log(postImageKEY, postImageURL)
+//     const imagesInfo = images.create({
+//       userId: userId,
+//       nickname: nickname,
+//       postId: postInfo.postId,
+//       thumbnailURL: thumbnailURL.toString(),
+//       thumbnailKEY: thumbnailKEY.toString(),
+//       postImageURL: postImageURL,
+//       postImageKEY: postImageKEY,
+//       userImageURL: userImageURL
+//     })
+//   })
+// }
+// res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
+//   // } catch(e) {
+//   //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+//   // }
+// }
 
 
 // 게시글 전체 조회
