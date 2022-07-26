@@ -206,7 +206,7 @@ async function ModifyPosting(req, res) {
   if (image) {
     // images DB에서 키값 찾아오기
     const postImageInfo = await images.findAll({ where:{ postId } });
-    console.log(postImageInfo.images.imageId);
+    console.log(postImageInfo);
     const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
 
     // S3 사진 삭제. 업로드는 미들웨어
@@ -225,6 +225,9 @@ async function ModifyPosting(req, res) {
       });
     });
 
+    // images DB delete 
+    const deleteImages = await images.destroy({ where: { postId } })
+
     // image KEY, URL 배열 만들기
     const PostImagesKey = image.map((postImageKey) => postImageKey.key);
     const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
@@ -232,18 +235,20 @@ async function ModifyPosting(req, res) {
     const thumbnailURL = postImagesUrl[0];
     console.log(PostImagesKey);
 
-    // images DB 수정
-    postImageInfo.forEach((element, i) => {
+    // images DB create
+    PostImagesKey.forEach((element, i) => {
       const postImageKEY = PostImagesKey[i];
       const postImageURL = postImagesUrl[i];
       console.log(postImageKEY);
-      const imagesUpdate = images.update({
+      const imagesUpdate = images.create({
+        userId: userId,
+        nickname: nickname,
+        postId: postId,
         thumbnailURL: thumbnailURL.toString(),
         thumbnailKEY: thumbnailKEY.toString(),
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
-      }, {
-        where: { id: element.imageId }
+        userImageURL: userImageURL,
       })
     });
     res.status(200).send({ updatePost, postImagesUrl, msg: "게시글이 수정되었습니다!" });

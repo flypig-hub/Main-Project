@@ -173,6 +173,9 @@ async function updateAcc(req, res) {
             else { console.log("S3에서 삭제되었습니다"), data }; // deleted
           });
         });
+
+        // images DB delete
+        const deleteImages = await images.destroy({ where: { hostId } })
     
         // image KEY, URL 배열 만들기
         const PostImagesKey = image.map((postImageKey) => postImageKey.key);
@@ -181,21 +184,22 @@ async function updateAcc(req, res) {
         const thumbnailURL = postImagesUrl[0];
         console.log(PostImagesKey);
     
-        // images DB 수정
-        postImageInfo.forEach((element, i) => {
+        // images DB create
+        PostImagesKey.forEach((element, i) => {
           const postImageKEY = PostImagesKey[i];
           const postImageURL = postImagesUrl[i];
           console.log(postImageKEY);
-          const imagesUpdate = images.update({
+          const imagesUpdate = images.create({
+            userId: userId, 
+            nickname: nickname,
+            hostId: hostId,
             thumbnailURL: thumbnailURL.toString(),
             thumbnailKEY: thumbnailKEY.toString(),
             postImageURL: postImageURL,
             postImageKEY: postImageKEY,
-          }, {
-            where: { hostId }
+            userImageURL: userImageURL
           })
         });
-
         res.status(200).send({ updatedAcc, postImagesUrl, msg: "게시글이 수정되었습니다!" });
       } else {
         const findImages = await images.findAll({
