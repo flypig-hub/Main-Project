@@ -179,8 +179,7 @@ async function WritePosting(req, res) {
 // 게시글 전체 조회
 async function GetPostingList(req, res) {
   const user = res.locals;
-  const {userId} = req.params;
-  console.log("유저아이디 = ------------------",userId);
+  const queryData = req.query;
   let allPost = await posts.findAll({
     include: [{
       model: images,
@@ -200,7 +199,7 @@ async function GetPostingList(req, res) {
     });
     
     let islike = await Like.findOne({
-      where: { userId: userId, postId: post.postId },
+      where: { userId: queryData.userId, postId: post.postId },
     });
 
     const likeNum = postLikes.length;
@@ -222,8 +221,8 @@ async function GetPostingList(req, res) {
 
 // 게시글 상세 조회
 async function GetPost(req, res) {
-  const { postId,userId } = req.params;
-  
+  const { postId } = req.params;
+  const queryData   = req.query;
   const allPost = await posts.findAll({
     where: { postId },
     include: [
@@ -255,7 +254,7 @@ async function GetPost(req, res) {
     const postLikes = await Like.findAll({ where: { postId: post.postId } });
 
     let islike = await Like.findOne({
-      where: { userId: userId, postId: post.postId },
+      where: { userId: queryData.userId, postId: post.postId },
     });
 
     const likeNum = postLikes.length;
@@ -283,7 +282,7 @@ async function GetPost(req, res) {
   }
    const outherPost = await posts.findAll({
      where: {
-       userId: userId,
+       userId: queryData.userId,
        postId: {
          [Op.ne]: postId
        }
