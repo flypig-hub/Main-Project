@@ -138,7 +138,8 @@ res.status(201).send({ postInfo, tagListArr, postImageUrl, thumbnailURL });
 // 유저 커뮤니티 게시글 전체 조회
 async function GetPostingList(req, res) {
   const user = res.locals;
-  const queryData = req.query;
+  let queryData = {userId:0}
+      queryData = req.query;
   let allPost = await posts.findAll({
     include: [{
       model: images,
@@ -184,7 +185,8 @@ async function GetPostingList(req, res) {
 // 유저 커뮤니티 게시글 상세 조회
 async function GetPost(req, res) {
   const { postId } = req.params;
-  const queryData   = req.query;
+  let queryData = {userId:0}
+      queryData   = req.query;
   const allPost = await posts.findAll({
     where: { postId },
     include: [
