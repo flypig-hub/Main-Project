@@ -138,8 +138,9 @@ res.status(201).send({ postInfo, tagListArr, postImageUrl, thumbnailURL });
 // 유저 커뮤니티 게시글 전체 조회
 async function GetPostingList(req, res) {
   const user = res.locals;
-  let queryData = {userId:0}
-      queryData = req.query;
+  let queryData = req.query;
+  if (queryData.userId === undefined)
+  {queryData.userId = 0}
   let allPost = await posts.findAll({
     include: [{
       model: images,
@@ -185,8 +186,9 @@ async function GetPostingList(req, res) {
 // 유저 커뮤니티 게시글 상세 조회
 async function GetPost(req, res) {
   const { postId } = req.params;
-  let queryData = {userId:0}
-      queryData   = req.query;
+  let queryData   = req.query;
+  if (queryData.userId === undefined)
+  {queryData.userId = 0}
   const allPost = await posts.findAll({
     where: { postId },
     include: [
@@ -260,7 +262,7 @@ async function GetPost(req, res) {
   );
   }
 
-  // 유저가 다녀온 다른 숙소 보여주기
+  // 작성자의 다른 숙소 보여주기
   const outherPost = await posts.findAll({
     where: {
        userId: allPost[0].userId,
