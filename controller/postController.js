@@ -182,7 +182,7 @@ async function GetPost(req, res) {
   let queryData   = req.query;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
-  const allPost = await posts.findAll({
+  const post = await posts.findAll({
     where: { postId },
     include: [
       {
@@ -205,8 +205,6 @@ async function GetPost(req, res) {
   console.log(allPost[0].houseTitle);
 
  
-  for (i = 0; i < allPost.length; i++) {
-    let post = allPost[i];
     const postComments = await Comments.findAll({
       where: { postId: post.postId },
     });
@@ -227,8 +225,8 @@ async function GetPost(req, res) {
 
     // tagList 배열화
     let newTaglist = [];
-    if (allPost[0].tagList) {
-    const newTag = allPost[0].tagList.split(",");
+    if (post[0].tagList) {
+    const newTag = post[0].tagList.split(",");
       newTaglist.push(newTag);
     }
     
@@ -246,26 +244,75 @@ async function GetPost(req, res) {
     },
     { where: { postId: post.postId } }
   );
-  }
+  
 
   // 작성자의 다른 숙소 보여주기
-  const outherPost = await posts.findAll({
+   const outherPosts = await posts.findAll({
     where: {
-       userId: allPost[0].userId,
-       postId: {
-         [Op.ne]: postId
-       }
-     },
-     order: [["likeNum", "DESC"]],
-     limit: 3,
-     include: [
-       {
-         model: images,
-         required: true,
-         attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
-       },
-     ]
-   });
+      userId: post.userId,
+      postId: {
+        [Op.ne]: postId,
+      },
+    },
+    order: [["likeNum", "DESC"]],
+    limit: 3,
+    include: [
+      {
+        model: images,
+        required: true,
+        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+      },
+    ],
+  });
+  for (i = 0; outherPosts.length > i; i++){
+    const outherPost = outherPosts[i];
+     const outherPostComments = await Comments.findAll({
+       where: { postId: outherPost.postId },
+     });
+     const outherPostLikes = await Like.findAll({
+       where: { postId: outherPost.postId },
+     });
+
+     let islike = await Like.findOne({
+       where: { userId: queryData.userId, postId: outherPost.postId },
+     });
+
+     const likeNum = outherPostLikes.length;
+     const commentNum = outherPostComments.length;
+
+     if (islike) {
+       islike = true;
+     } else {
+       islike = false;
+    }
+    
+    Object.assign(post, {
+      likeNum: likeNum,
+      commentNum: commentNum,
+      islike: islike,
+    });
+    await posts.update(
+      {
+        likeNum: likeNum,
+        commentNum: commentNum,
+        islike: islike
+      },
+      { where: { postId: post.postId } }
+    );
+    outherPost = {
+    postId,
+    userId,
+    title,
+    commentNum,
+    likeNum,
+    isLike,
+    houseTitle,
+    postImageURL,
+    thumbnailURL,
+    userImageURL,
+  };
+  }
+  
 
    let hostTitle = [];
    let hostNumber = []
