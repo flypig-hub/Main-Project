@@ -1,5 +1,6 @@
 const express = require("express");
 const PostController = require("../controller/postController");
+const userIdMiddleware = require("../middlewares/userId-middleware");
 const authMiddleware = require("../middlewares/auth-middleware");
 const ImageController = require("../controller/ImageController");
 const upload = require("../middlewares/S3-middleware");
@@ -10,11 +11,11 @@ router.post('/', authMiddleware, upload.array('images', 8), PostController.Write
 
 
 // 게시글 조회 API
-router.get('/', PostController.GetPostingList);
+router.get("/", userIdMiddleware, PostController.GetPostingList);
 
 
 // 게시글 상세 조회 API
-router.get('/:postId', PostController.GetPost);
+router.get('/:postId',userIdMiddleware, PostController.GetPost);
 
 
 // 게시글 수정 API
