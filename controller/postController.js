@@ -240,19 +240,22 @@ async function GetPost(req, res) {
     }
 
     // tagList 배열화
-    let newTaglist = [];
+    let newTagStr = '';
+    let newTagList = [];
     if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(" ");
-    console.log(newTag, "이거 확인");
-    newTaglist.push(newTag)
+    console.log(newTag);
+    // newTaglist.push(newTag)
+    newTagStr += newTag
+    newTagList.push(newTagStr)
     }
-    console.log(newTaglist);
+    console.log(newTagList, "이거 확인");
     
     Object.assign(allPost[0], {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
-      tagList: newTaglist
+      tagList: newTagList
     });
   await posts.update(
     {
@@ -415,107 +418,108 @@ async function GetPost(req, res) {
 
 
 // 유저 커뮤니티 게시글 수정
-async function ModifyPosting(req, res) {
-  const { userId, userImageURL, nickname } = res.locals;
-  const { postId } = req.params;
-  const {
-    title,
-    content,
-    mainAddress,
-    subAddress,
-    category,
-    type,
-    link,
-    houseTitle,
-    tagList
-    } = req.body;
-  const image = req.files;
-  console.log(image);
+// async function ModifyPosting(req, res) {
+//   const { userId, userImageURL, nickname } = res.locals;
+//   const { postId } = req.params;
+//   const {
+//     title,
+//     content,
+//     mainAddress,
+//     subAddress,
+//     category,
+//     type,
+//     link,
+//     houseTitle,
+//     tagList,
+//     existImages
+//     } = req.body;
+//   const image = req.files;
+//   console.log(image);
 
-  // posts DB 수정
-  const updatePost = await posts.update({
-    title:title,
-    content:content,
-    mainAddress:mainAddress,
-    subAddress:subAddress,
-    category:category,
-    type:type,
-    link:link,
-    houseTitle:houseTitle,
-    tagList:tagList
-  },{
-    where: { postId },
-  });
+//   // posts DB 수정
+//   const updatePost = await posts.update({
+//     title:title,
+//     content:content,
+//     mainAddress:mainAddress,
+//     subAddress:subAddress,
+//     category:category,
+//     type:type,
+//     link:link,
+//     houseTitle:houseTitle,
+//     tagList:tagList
+//   },{
+//     where: { postId },
+//   });
 
-  if (image.length > 0) {
-    // images DB에서 키값 찾아오기
-    const postImageInfo = await images.findAll({ where:{ postId } });
-    const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
+//   if (image.length > 0) {
+//     // images DB에서 키값 찾아오기
+//     const postImageInfo = await images.findAll({ where:{ postId } });
+//     const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
 
-    // S3 사진 삭제. 업로드는 미들웨어
-    postImageKey.forEach((element, i) => {
-      const postImageKEY = postImageKey[i];
-      const s3 = new AWS.S3();
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Delete: {
-          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
-        }
-      };
-      s3.deleteObjects(params, function(err, data) {
-        if (err) console.log(err, err.stack); // error
-        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-      });
-    });
+//     // S3 사진 삭제. 업로드는 미들웨어
+//     postImageKey.forEach((element, i) => {
+//       const postImageKEY = postImageKey[i];
+//       const s3 = new AWS.S3();
+//       const params = {
+//         Bucket: process.env.AWS_BUCKET_NAME,
+//         Delete: {
+//           Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+//         }
+//       };
+//       s3.deleteObjects(params, function(err, data) {
+//         if (err) console.log(err, err.stack); // error
+//         else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+//       });
+//     });
 
-    // images DB delete 
-    const deleteImages = await images.destroy({ where: { postId } })
+//     // images DB delete 
+//     const deleteImages = await images.destroy({ where: { postId } })
 
-    // image KEY, URL 배열 만들기
-    const PostImagesKey = image.map((postImageKey) => postImageKey.key);
-    const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
-    const thumbnailKEY = PostImagesKey[0];
-    const thumbnailURL = postImagesUrl[0];
+//     // image KEY, URL 배열 만들기
+//     const PostImagesKey = image.map((postImageKey) => postImageKey.key);
+//     const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
+//     const thumbnailKEY = PostImagesKey[0];
+//     const thumbnailURL = postImagesUrl[0];
 
-    // images DB create
-    PostImagesKey.forEach((element, i) => {
-      const postImageKEY = PostImagesKey[i];
-      const postImageURL = postImagesUrl[i];
-      console.log(postImageKEY);
-      const imagesUpdate = images.create({
-        userId: userId,
-        nickname: nickname,
-        postId: postId,
-        thumbnailURL: thumbnailURL.toString(),
-        thumbnailKEY: thumbnailKEY.toString(),
-        postImageURL: postImageURL,
-        postImageKEY: postImageKEY,
-        userImageURL: userImageURL,
-      })
-    });
-    const tagListArr = req.body.tagList.split(",");
-    console.log("지나가나??");
+//     // images DB create
+//     PostImagesKey.forEach((element, i) => {
+//       const postImageKEY = PostImagesKey[i];
+//       const postImageURL = postImagesUrl[i];
+//       console.log(postImageKEY);
+//       const imagesUpdate = images.create({
+//         userId: userId,
+//         nickname: nickname,
+//         postId: postId,
+//         thumbnailURL: thumbnailURL.toString(),
+//         thumbnailKEY: thumbnailKEY.toString(),
+//         postImageURL: postImageURL,
+//         postImageKEY: postImageKEY,
+//         userImageURL: userImageURL,
+//       })
+//     });
+//     const tagListArr = req.body.tagList.split(",");
+//     console.log("지나가나??");
 
-    const findPost = await posts.findAll({
-      where: { postId }
-    });
-    res.status(200).send({ findPost, tagListArr, postImagesUrl, msg: "게시글이 수정되었습니다!" });
-  } else {
-    const findImages = await images.findAll({
-      where: { postId },
-      attributes: ['postImageURL', 'thumbnailURL']
-    });
-    // console.log(findImages);
+//     const findPost = await posts.findAll({
+//       where: { postId }
+//     });
+//     res.status(200).send({ findPost, tagListArr, postImagesUrl, msg: "게시글이 수정되었습니다!" });
+//   } else {
+//     const findImages = await images.findAll({
+//       where: { postId },
+//       attributes: ['postImageURL', 'thumbnailURL']
+//     });
+//     // console.log(findImages);
     
-    const tagListArr = req.body.tagList.split(",");
-    console.log(tagListArr);
+//     const tagListArr = req.body.tagList.split(",");
+//     console.log(tagListArr);
 
-    const findPost = await posts.findAll({
-      where: { postId }
-    });
-    res.status(200).send({ findPost, tagListArr, findImages, msg: "게시글이 수정되었습니다!" });
-  };
-};
+//     const findPost = await posts.findAll({
+//       where: { postId }
+//     });
+//     res.status(200).send({ findPost, tagListArr, findImages, msg: "게시글이 수정되었습니다!" });
+//   };
+// };
 
 
 // 유저 커뮤니티 게시글 삭제
@@ -561,3 +565,92 @@ module.exports.GetPostingList = GetPostingList;
 module.exports.GetPost = GetPost;
 module.exports.ModifyPosting = ModifyPosting;
 module.exports.DeletePost = DeletePost;
+
+
+
+// async function ModifyPosting(req, res) {
+//   const { userId, userImageURL, nickname } = res.locals;
+//   const { postId } = req.params;
+//   const {
+//     title,
+//     content,
+//     mainAddress,
+//     subAddress,
+//     category,
+//     type,
+//     link,
+//     houseTitle,
+//     tagList,
+//     existImages
+//     } = req.body;
+//   const image = req.files;
+//   console.log(image);
+
+//   const findImageInfo = await images.findAll({
+//     where: { postId },
+//     attributes: ['postImageKEY', 'postImageURL']
+//   })
+//   console.log(findImageInfo);
+
+//   const deleteImages = await images.destroy({
+//     where: { postId }
+//   })
+
+//   // 새로운 사진 형태
+//   // existImages = [{
+//     // existImagesKEY : images/001744b2-bca4-4097-a6a0-fcdbf0f0c44e.PNG, 
+//     // existImagesURL : s3://yushin-s3/images/001744b2-bca4-4097-a6a0-fcdbf0f0c44e.PNG
+//     // }, {
+//     // existImagesKEY : images/0022707f-1490-4072-9f61-c3faefed3d28.PNG, 
+//     // existImagesURL : s3://yushin-s3/images/0022707f-1490-4072-9f61-c3faefed3d28.PNG
+//   // }]
+
+//   // 이전 사진 + 새로운 사진 풀어서 DB 저장
+//   const existImagesKEY = Object.values(existImages)
+//   const existImagesURL = Object.keys(existImages)
+
+//   const PostImageKey = image.map((postImageKey) => postImageKey.key);
+//   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
+//   const thumbnailKEY = PostImageKey[0];
+//   const thumbnailURL = postImageUrl[0];
+
+//   const imageKey = PostImageKey.push(existImagesKEY);
+//   const imageURL = postImageUrl.push(existImagesURL);
+
+//   imageKey.forEach((element, i) => {
+//     const ImageKey = imageKey[i];
+//     const ImageURL = imageURL[i];
+
+//     const imageSave = images.create({
+//       userId: userId,
+//       nickname: nickname,
+//       postId: postId,
+//       postImageKEY : ImageKey,
+//       postImageURL : ImageURL,
+//       thumbnailKEY : thumbnailKEY,
+//       thumbnailURL : thumbnailURL,
+//       userImageURL
+//     })
+//   })
+
+//   // S3 사진 삭제. 업로드는 미들웨어
+//   const postImageInfo = await images.findAll({ where:{ postId } });
+//   const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
+//   postImageKey.forEach((element, i) => {
+//     const postImageKEY = postImageKey[i];
+//     const s3 = new AWS.S3();
+//     const params = {
+//       Bucket: process.env.AWS_BUCKET_NAME,
+//       Delete: {
+//         Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+//       }
+//     };
+//     s3.deleteObjects(params, function(err, data) {
+//       if (err) console.log(err, err.stack); // error
+//       else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+//     });
+//   });
+
+
+//   res.send({})
+// }
