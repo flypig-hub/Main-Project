@@ -433,108 +433,108 @@ async function GetPost(req, res) {
 
 
 // 유저 커뮤니티 게시글 수정
-// async function ModifyPosting(req, res) {
-//   const { userId, userImageURL, nickname } = res.locals;
-//   const { postId } = req.params;
-//   const {
-//     title,
-//     content,
-//     mainAddress,
-//     subAddress,
-//     category,
-//     type,
-//     link,
-//     houseTitle,
-//     tagList,
-//     existImages
-//     } = req.body;
-//   const image = req.files;
-//   console.log(image);
+async function ModifyPosting(req, res) {
+  const { userId, userImageURL, nickname } = res.locals;
+  const { postId } = req.params;
+  const {
+    title,
+    content,
+    mainAddress,
+    subAddress,
+    category,
+    type,
+    link,
+    houseTitle,
+    tagList,
+    existImages
+    } = req.body;
+  const image = req.files;
+  console.log(image);
 
-//   // posts DB 수정
-//   const updatePost = await posts.update({
-//     title:title,
-//     content:content,
-//     mainAddress:mainAddress,
-//     subAddress:subAddress,
-//     category:category,
-//     type:type,
-//     link:link,
-//     houseTitle:houseTitle,
-//     tagList:tagList
-//   },{
-//     where: { postId },
-//   });
+  // posts DB 수정
+  const updatePost = await posts.update({
+    title:title,
+    content:content,
+    mainAddress:mainAddress,
+    subAddress:subAddress,
+    category:category,
+    type:type,
+    link:link,
+    houseTitle:houseTitle,
+    tagList:tagList
+  },{
+    where: { postId },
+  });
 
-//   if (image.length > 0) {
-//     // images DB에서 키값 찾아오기
-//     const postImageInfo = await images.findAll({ where:{ postId } });
-//     const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
+  if (image.length > 0) {
+    // images DB에서 키값 찾아오기
+    const postImageInfo = await images.findAll({ where:{ postId } });
+    const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
 
-//     // S3 사진 삭제. 업로드는 미들웨어
-//     postImageKey.forEach((element, i) => {
-//       const postImageKEY = postImageKey[i];
-//       const s3 = new AWS.S3();
-//       const params = {
-//         Bucket: process.env.AWS_BUCKET_NAME,
-//         Delete: {
-//           Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
-//         }
-//       };
-//       s3.deleteObjects(params, function(err, data) {
-//         if (err) console.log(err, err.stack); // error
-//         else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-//       });
-//     });
+    // S3 사진 삭제. 업로드는 미들웨어
+    postImageKey.forEach((element, i) => {
+      const postImageKEY = postImageKey[i];
+      const s3 = new AWS.S3();
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+        }
+      };
+      s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      });
+    });
 
-//     // images DB delete 
-//     const deleteImages = await images.destroy({ where: { postId } })
+    // images DB delete 
+    const deleteImages = await images.destroy({ where: { postId } })
 
-//     // image KEY, URL 배열 만들기
-//     const PostImagesKey = image.map((postImageKey) => postImageKey.key);
-//     const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
-//     const thumbnailKEY = PostImagesKey[0];
-//     const thumbnailURL = postImagesUrl[0];
+    // image KEY, URL 배열 만들기
+    const PostImagesKey = image.map((postImageKey) => postImageKey.key);
+    const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
+    const thumbnailKEY = PostImagesKey[0];
+    const thumbnailURL = postImagesUrl[0];
 
-//     // images DB create
-//     PostImagesKey.forEach((element, i) => {
-//       const postImageKEY = PostImagesKey[i];
-//       const postImageURL = postImagesUrl[i];
-//       console.log(postImageKEY);
-//       const imagesUpdate = images.create({
-//         userId: userId,
-//         nickname: nickname,
-//         postId: postId,
-//         thumbnailURL: thumbnailURL.toString(),
-//         thumbnailKEY: thumbnailKEY.toString(),
-//         postImageURL: postImageURL,
-//         postImageKEY: postImageKEY,
-//         userImageURL: userImageURL,
-//       })
-//     });
-//     const tagListArr = req.body.tagList.split(",");
-//     console.log("지나가나??");
+    // images DB create
+    PostImagesKey.forEach((element, i) => {
+      const postImageKEY = PostImagesKey[i];
+      const postImageURL = postImagesUrl[i];
+      console.log(postImageKEY);
+      const imagesUpdate = images.create({
+        userId: userId,
+        nickname: nickname,
+        postId: postId,
+        thumbnailURL: thumbnailURL.toString(),
+        thumbnailKEY: thumbnailKEY.toString(),
+        postImageURL: postImageURL,
+        postImageKEY: postImageKEY,
+        userImageURL: userImageURL,
+      })
+    });
+    const tagListArr = req.body.tagList.split(",");
+    console.log("지나가나??");
 
-//     const findPost = await posts.findAll({
-//       where: { postId }
-//     });
-//     res.status(200).send({ findPost, tagListArr, postImagesUrl, msg: "게시글이 수정되었습니다!" });
-//   } else {
-//     const findImages = await images.findAll({
-//       where: { postId },
-//       attributes: ['postImageURL', 'thumbnailURL']
-//     });
-//     // console.log(findImages);
+    const findPost = await posts.findAll({
+      where: { postId }
+    });
+    res.status(200).send({ findPost, tagListArr, postImagesUrl, msg: "게시글이 수정되었습니다!" });
+  } else {
+    const findImages = await images.findAll({
+      where: { postId },
+      attributes: ['postImageURL', 'thumbnailURL']
+    });
+    // console.log(findImages);
     
-//     const tagListArr = req.body.tagList.split(",");
-//     console.log(tagListArr);
+    const tagListArr = req.body.tagList.split(",");
+    console.log(tagListArr);
 
-//     const findPost = await posts.findAll({
-//       where: { postId }
-//     });
-//     res.status(200).send({ findPost, tagListArr, findImages, msg: "게시글이 수정되었습니다!" });
-//   };
-// };
+    const findPost = await posts.findAll({
+      where: { postId }
+    });
+    res.status(200).send({ findPost, tagListArr, findImages, msg: "게시글이 수정되었습니다!" });
+  };
+};
 
 
 // 유저 커뮤니티 게시글 삭제
