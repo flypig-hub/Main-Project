@@ -253,11 +253,13 @@ async function GetPost(req, res) {
     // tagList 배열화
     let newTaglist = [];
     if (allPost[0].tagList) {
-    const newTag = allPost[0].tagList.split(",");
-      newTaglist.push(newTag);
+    const newTag = allPost[0].tagList.split(" ");
+    console.log(newTag, "이거 확인");
+    newTaglist.push(newTag)
     }
+    console.log(newTaglist);
     
-    Object.assign(allPost, {
+    Object.assign(allPost[0], {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
@@ -267,7 +269,7 @@ async function GetPost(req, res) {
     {
       likeNum: likeNum,
       commentNum: commentNum,
-      islike: islike
+      islike: islike,
     },
     { where: { postId: allPost[0].postId } }
   );
@@ -350,8 +352,6 @@ async function GetPost(req, res) {
       let housetitle = findHostId[i].title
       houseTitle.push(housetitle);
     }
-    console.log(allPost[0].houseTitle, "이건??");
-    console.log(houseTitle.indexOf(allPost[0].houseTitle), "?????");
 
   let findAllAcc = [];
   if (houseTitle.indexOf(allPost[0].houseTitle) != -1) {
@@ -364,8 +364,7 @@ async function GetPost(req, res) {
         attributes: ["postImageURL", "thumbnailURL"],
       }],
     })
-    console.log(findAllAcc);
-
+    
     const findStar = await reviews.findAll({
       where:{ hostId: findAllAcc[0].hostId },
       attributes: ['starpoint']
