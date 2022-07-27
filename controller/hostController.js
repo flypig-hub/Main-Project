@@ -121,7 +121,7 @@ async function getAllAcc(req, res) {
       }]}
   );
   //개별 객체 for문
-  console.log(findAllAcc.length);
+  
   for ( j = 0 ; findAllAcc.length > j; j++ ){
     const hoststar = findAllAcc[j]
     
@@ -149,7 +149,7 @@ async function getAllAcc(req, res) {
       } else {
         isSave = false;
       }
-      console.log(isSave, i,'찍히나');
+      
   let averageStarpoint = 0   
 
       if (findStar.length){
@@ -178,6 +178,9 @@ async function getAllAcc(req, res) {
 // 호스트 숙소 게시글 상세 조회
 async function getDetailAcc(req, res) {
   const { hostId } = req.params; 
+  let queryData   = req.query;
+  if (queryData.userId === undefined)
+  {queryData.userId = 0}
   const findAllAcc = await hosts.findOne({
       where: { hostId },
       include : [{
@@ -198,6 +201,16 @@ async function getDetailAcc(req, res) {
     
     starsum.push(star.dataValues.starpoint);
     
+    let isSave = await saves.findOne({
+      where : {hostId :hoststar.hostId, userId: queryData.userId}
+    });
+    
+    if (isSave) {
+      isSave = true;
+    } else {
+      isSave = false;
+    }
+
     }
     
     if (findStar.length){
@@ -205,10 +218,12 @@ async function getDetailAcc(req, res) {
       let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
  
       Object.assign(findAllAcc,{
-       average: averageStarpoint
+       average: averageStarpoint,
+       isSave:isSave
      })
      await hosts.update(
-       {average: averageStarpoint},
+       {average: averageStarpoint,
+        isSave:isSave},
        {where:{hostId:findAllAcc.hostId}}
      )
     }
