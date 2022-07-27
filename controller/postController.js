@@ -273,6 +273,7 @@ async function ModifyPosting(req, res) {
     tagList
     } = req.body;
   const image = req.files;
+  console.log(image);
 
   // posts DB 수정
   const updatePost = await posts.update({
@@ -347,7 +348,7 @@ async function ModifyPosting(req, res) {
       where: { postId },
       attributes: ['postImageURL', 'thumbnailURL']
     });
-    console.log(findImages);
+    // console.log(findImages);
     
     const tagListArr = req.body.tagList.split(",");
     console.log(tagListArr);
