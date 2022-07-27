@@ -342,20 +342,16 @@ async function GetPost(req, res) {
   
 
    let hostTitle = [];
-   let hostNumber = []
    let findHostId = await hosts.findAll({
     attributes: [ 'title' ],
    })
    for (let i = 0; i < findHostId.length; i++) {
     let hosttitle = findHostId[i].title
-    let hostnumber = findHostId[i].hostId
-    hostNumber.push(hostnumber);
     hostTitle.push(hosttitle);
    }
 
   // 이 글에 나온 숙소 찾아오기
-  // let findAcco = []
-  if (hostTitle.indexOf()) {
+  if (hostTitle.indexOf(post[0].hostTitle) != -1) {
     let findAllAcc = await hosts.findAll({
       where: { title: post[0].houseTitle },
       attritutes : [ 'hostId' ],
