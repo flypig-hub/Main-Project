@@ -198,6 +198,11 @@ async function GetPostingList(req, res) {
       commentNum: commentNum,
       islike: islike,
     });
+    await posts.update(
+      {likeNum: likeNum,
+       commentNum: commentNum
+      },
+      {where:{postId:post.postId}})
   }
   res.send({Top5post, allPost });
 }
@@ -275,72 +280,95 @@ async function GetPost(req, res) {
   );
   
 
-  // 작성자의 다른 숙소 보여주기
-  //  const outherPosts = await posts.findAll({
-  //   where: {
-  //     userId: post[0].userId,
-  //     postId: {
-  //       [Op.ne]: postId,
-  //     },
-  //   },
-  //   order: [["likeNum", "DESC"]],
-  //   limit: 3,
-  //   include: [
-  //     {
-  //       model: images,
-  //       required: true,
-  //       attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
-  //     },
-  //   ],
-  // });
-  // for (i = 0; outherPosts.length > i; i++){
-  //   const outherPost = outherPosts[i];
-  //    const outherPostComments = await Comments.findAll({
-  //      where: { postId: outherPost.postId },
-  //    });
-  //    const outherPostLikes = await Like.findAll({
-  //      where: { postId: outherPost.postId },
-  //    });
+  작성자의 다른 숙소 보여주기
+   const outherPosts = await posts.findAll({
+    where: {
+      userId: post[0].userId,
+      postId: {
+        [Op.ne]: postId,
+      },
+    },
+    order: [["likeNum", "DESC"]],
+    limit: 3,
+    include: [
+      {
+        model: images,
+        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+      },
+    ],
+  });
+  for (i = 0; outherPosts.length > i; i++){
+    const outherPost = outherPosts[i];
+     const outherPostComments = await Comments.findAll({
+       where: { postId: outherPost.postId },
+     });
+     const outherPostLikes = await Like.findAll({
+       where: { postId: outherPost.postId },
+     });
 
-  //    let islike = await Like.findOne({
-  //      where: { userId: queryData.userId, postId: outherPost.postId },
-  //    });
+     let islike = await Like.findOne({
+       where: { userId: queryData.userId, postId: outherPost.postId },
+     });
 
-  //    const likeNum = outherPostLikes.length;
-  //    const commentNum = outherPostComments.length;
+     const likeNum = outherPostLikes.length;
+     const commentNum = outherPostComments.length;
 
-  //    if (islike) {
-  //      islike = true;
-  //    } else {
-  //      islike = false;
-  //   }
+     if (islike) {
+       islike = true;
+     } else {
+       islike = false;
+    }
     
-  //   Object.assign(post, {
-  //     likeNum: likeNum,
-  //     commentNum: commentNum,
-  //     islike: islike,
-  //   });
-  //   await posts.update(
-  //     {
-  //       likeNum: likeNum,
-  //       commentNum: commentNum,
-  //       islike: islike
-  //     },
-  //     { where: { postId: post.postId } }
-  //   );
-  //   outherPost = {
-  //   postId,
-  //   userId,
-  //   title,
-  //   commentNum,
-  //   likeNum,
-  //   isLike,
-  //   houseTitle,
-  //   postImageURL,
-  //   thumbnailURL,
-  //   userImageURL,
-  // };
-  // }
+    Object.assign(post, {
+      likeNum: likeNum,
+      commentNum: commentNum,
+      islike: islike,
+    });
+    await posts.update(
+      {
+        likeNum: likeNum,
+        commentNum: commentNum,
+        islike: islike
+      },
+      { where: { postId: post.postId } }
+    );
+    Object.defineProperties(outherPost, {
+      content: {
+        enumerable: false,
+      },
+      commentId: {
+        enumerable: false,
+      },
+      commentNum: { value: commentNum, enumerable: true },
+      likeNum: { value: likeNum, enumerable: false },
+      islike: { value: islike, enumerable: false },
+      mainAddress: {
+        enumerable: false,
+      },
+      subAddress: {
+        enumerable: false,
+      },
+      category: {
+        enumerable: false,
+      },
+      type: {
+        enumerable: false,
+      },
+      link: {
+        enumerable: false,
+      },
+      houseTitle: {
+        enumerable: false,
+      },
+      tagList: {
+        enumerable: false,
+      },
+      preImages: {
+        enumerable: false,
+      },
+    });
+    
+  }
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
