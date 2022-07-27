@@ -163,7 +163,7 @@ async function getAllAcc(req, res) {
       })
       await hosts.update(
         {average: averageStarpoint,
-         isSave:isSave},
+         },
         {where:{hostId:hoststar.hostId}}
         
       )
@@ -190,7 +190,7 @@ async function getDetailAcc(req, res) {
       }]
   });
 
-  
+
   let isSave = await saves.findOne({
     where : {hostId : hostId, userId: queryData.userId}
   });
@@ -228,7 +228,7 @@ async function getDetailAcc(req, res) {
      })
      await hosts.update(
        {average: averageStarpoint,
-       isSave:isSave
+   
       },
        {where:{hostId:findAllAcc.hostId}}
      )

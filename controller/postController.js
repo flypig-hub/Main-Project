@@ -363,8 +363,22 @@ async function GetPost(req, res) {
     // console.log(findHostId[0].title);
     let houseTitle = [];
     for (let i = 0; i < findHostId.length; i++) {
-      let housetitle = findHostId[i].title
-      houseTitle.push(housetitle);
+      let house = findHostId[i]
+      houseTitle.push(house.title);
+
+      let isSave = await saves.findOne({
+        where :{hostId :house.hostId, userId: queryData.userId}
+      });
+      if (isSave) {
+        isSave = true;
+      } else {
+        isSave = false;
+      }
+
+      Object.assign(findAllAcc[0],{
+          isSave:isSave,
+          
+       });
     }
 
   let findAllAcc = [];
@@ -383,27 +397,22 @@ async function GetPost(req, res) {
       where:{ hostId: findAllAcc[0].hostId },
       attributes: ['starpoint']
     })
-    
+
+
     starsum =[];
     for (i = 0; findStar.length > i; i++) {
      const star = findStar[i]
       starsum.push(star.dataValues.starpoint);
       }
-      // let isSave = await saves.findOne({
-      //   where :{hostId :findHostId.hostId, userId: queryData.userId}
-      // });
-      // if (isSave) {
-      //   isSave = true;
-      // } else {
-      //   isSave = false;
-      // }
+    
 
       if (findStar.length){
         const numStar = findStar.length
         let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
         
         Object.assign(findAllAcc[0],{
-          average: averageStarpoint
+          average: averageStarpoint,
+          
        })
 
        await hosts.update(
