@@ -88,74 +88,74 @@ async function hostCreateAcc(req, res) {
 async function hostsearch(req, res) {
   const queryData = req.query;
   let key = {};
-  console.log(queryData.search);
-  if (queryData.search === "Eastarea") {
-    key = {
-      [Op.or]: [
-        {
-          mainAddress: {
-            [Op.substring]: "제주시",
+    
+      queryData.search === "Eastarea"
+    ? (key = {
+        [Op.or]: [
+          {
+            mainAddress: {
+              [Op.substring]: "제주시",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "조천읍",
+          {
+            mainAddress: {
+              [Op.substring]: "조천읍",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "애월읍",
+          {
+            mainAddress: {
+              [Op.substring]: "애월읍",
+            },
           },
-        },
-      ]
-    };
-  } else if (queryData.search === "Westarea") {
-    key = {
-      [Op.or]: [
-        {
-          mainAddress: {
-            [Op.substring]: "한림읍",
+        ],
+      })
+    : queryData.search === "Westarea"
+    ? (key = {
+        [Op.or]: [
+          {
+            mainAddress: {
+              [Op.substring]: "한림읍",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "한경면",
+          {
+            mainAddress: {
+              [Op.substring]: "한경면",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "대정읍",
+          {
+            mainAddress: {
+              [Op.substring]: "대정읍",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "안덕면",
+          {
+            mainAddress: {
+              [Op.substring]: "안덕면",
+            },
           },
-        },
-      ],
-    };
-  } else if (queryData.search === "Southarea") {
-    key = {
-      [Op.or]: [
-        {
-          mainAddress: {
-            [Op.substring]: "중문",
+        ],
+      })
+    : queryData.search === "Southarea"
+    ? (key = {
+        [Op.or]: [
+          {
+            mainAddress: {
+              [Op.substring]: "중문",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "서귀포시",
+          {
+            mainAddress: {
+              [Op.substring]: "서귀포시",
+            },
           },
-        },
-        {
-          mainAddress: {
-            [Op.substring]: "남원읍",
+          {
+            mainAddress: {
+              [Op.substring]: "남원읍",
+            },
           },
-        },
-      ],
-    };
-  } else if (queryData.search === "Northarea") { 
-      key = {
+        ],
+      })
+    : queryData.search === "Northarea"
+    ? (key = {
         [Op.or]: [
           {
             mainAddress: {
@@ -178,9 +178,9 @@ async function hostsearch(req, res) {
             },
           },
         ],
-      };
-  }
-console.log(key);
+      })
+    : (key = {});
+    
   const hostPost = await hosts.findAll({
     where: key,
     order: [["createdAt", "DESC"]],
