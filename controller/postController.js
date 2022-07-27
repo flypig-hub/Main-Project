@@ -39,7 +39,7 @@ async function WritePosting(req, res) {
 
     let beforeImg = [];
     let afterImg = [];
-    const PreImages = req.body.preImages.replace(/\s'/g, "")
+    const PreImages = req.body.preImages.replace(/\s'/g, "").split('')
     console.log(PreImages);
     let preImagesArr = PreImages.split(',')
     console.log(preImagesArr);
