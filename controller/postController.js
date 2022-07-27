@@ -381,7 +381,7 @@ async function GetPost(req, res) {
       starsum.push(star.dataValues.starpoint);
       }
       let isSave = await saves.findOne({
-        where :{hostId :hoststar.hostId, userId: queryData.userId}
+        where :{hostId :findHostId.hostId, userId: queryData.userId}
       });
       if (isSave) {
         isSave = true;
