@@ -279,8 +279,6 @@ async function GetPost(req, res) {
     { where: { postId: allPost[0].postId } }
   );
   
-
-  작성자의 다른 숙소 보여주기
    const outherPosts = await posts.findAll({
     where: {
       userId: post[0].userId,
