@@ -227,7 +227,7 @@ async function GetPost(req, res) {
       },
     ],
   });
-  console.log(allPost[0].houseTitle);
+  // console.log(allPost[0].houseTitle);
 
  
     const postComments = await Comments.findAll({
