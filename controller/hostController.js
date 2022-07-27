@@ -163,7 +163,7 @@ async function getAllAcc(req, res) {
       })
       await hosts.update(
         {average: averageStarpoint,
-         isSave:isSave},
+          isSave:isSave},
         {where:{hostId:hoststar.hostId}}
         
       )
@@ -189,29 +189,34 @@ async function getDetailAcc(req, res) {
           attributes: [ 'hostId', 'postImageURL' ]
       }]
   });
+
+
+  let isSave = await saves.findOne({
+    where : {hostId : hostId, userId: queryData.userId}
+  });
   
+  if (isSave) {
+    isSave = true;
+  } else {
+    isSave = false;
+  }
+  
+
   const findStar = await reviews.findAll({
     where:{hostId},
     attributes: ['starpoint']
   })
-  
+
+
+
   starsum =[];
   for (i = 0; findStar.length > i; i++) {
    const star = findStar[i]
     
     starsum.push(star.dataValues.starpoint);
     
-    let isSave = await saves.findOne({
-      where : {hostId :hoststar.hostId, userId: queryData.userId}
-    });
-    
-    if (isSave) {
-      isSave = true;
-    } else {
-      isSave = false;
-    }
 
-    }
+  }
     
     if (findStar.length){
       const numStar = findStar.length
@@ -223,7 +228,8 @@ async function getDetailAcc(req, res) {
      })
      await hosts.update(
        {average: averageStarpoint,
-        isSave:isSave},
+        isSave:isSave
+      },
        {where:{hostId:findAllAcc.hostId}}
      )
     }

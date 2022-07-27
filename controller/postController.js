@@ -132,7 +132,6 @@ async function GetPostingList(req, res) {
     limit : 5,
     
   });
-  console.log(Top5, '이미지 오나요');
   const Top5post = Top5.map((tpost)=>({
     postId : tpost.postId,
     title : tpost.title,
@@ -141,9 +140,7 @@ async function GetPostingList(req, res) {
     commentNum : tpost.commentNum,
     images : tpost.images
   }));
-  console.log(Top5post, '이거 맞나');
-
-  // console.log(Top5, '이거 찍히나');
+ 
  
   let allPost = await posts.findAll({
     include: [{
@@ -273,7 +270,7 @@ async function GetPost(req, res) {
         [Op.ne]: postId,
       },
     },
-    order: [["likeNum", "DESC"]],
+    order: [["commentNum", "DESC"]],
     limit: 3,
     include: [
       {
@@ -307,13 +304,18 @@ async function GetPost(req, res) {
     await posts.update(
       {
         likeNum: likeNum,
-        commentNum: commentNum,
-        islike: islike
+        commentNum: commentNum
       },
       { where: { postId: allPost[0].postId } }
     );
-    Object.defineProperties(outherPost, {
+   Object.defineProperties(outherPost.dataValues, {
+      title: {
+        enumerable: true,
+      },
       content: {
+        enumerable: false,
+      },
+      hostId: {
         enumerable: false,
       },
       commentId: {
@@ -346,19 +348,39 @@ async function GetPost(req, res) {
       preImages: {
         enumerable: false,
       },
+      createdAt: {
+        enumerable: false,
+      },
+      updatedAt: {
+        enumerable: false,
+      },
     });
+    
     
   }
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
-    attributes: [ 'title' ],
+    attributes: [ 'title', 'hostId' ],
     })
-    // console.log(findHostId[0].title);
+    
     let houseTitle = [];
     for (let i = 0; i < findHostId.length; i++) {
-      let housetitle = findHostId[i].title
-      houseTitle.push(housetitle);
+      let house = findHostId[i]
+      houseTitle.push(house.title);
+      
+      let isSave = await saves.findOne({
+        where :{hostId :house.hostId, userId: queryData.userId}
+      });
+      if (isSave) {
+        isSave = true;
+      } else {
+        isSave = false;
+      }
+      Object.assign(house,{
+          isSave:isSave,
+          
+       });
     }
 
   let findAllAcc = [];
@@ -377,20 +399,14 @@ async function GetPost(req, res) {
       where:{ hostId: findAllAcc[0].hostId },
       attributes: ['starpoint']
     })
-    
+
+
     starsum =[];
     for (i = 0; findStar.length > i; i++) {
      const star = findStar[i]
       starsum.push(star.dataValues.starpoint);
       }
-      let isSave = await saves.findOne({
-        where :{hostId :hoststar.hostId, userId: queryData.userId}
-      });
-      if (isSave) {
-        isSave = true;
-      } else {
-        isSave = false;
-      }
+    
 
       if (findStar.length){
         const numStar = findStar.length
@@ -398,18 +414,17 @@ async function GetPost(req, res) {
         
         Object.assign(findAllAcc[0],{
           average: averageStarpoint,
-        isSave:isSave
+          
        })
 
        await hosts.update(
-        {average: averageStarpoint,
-          isSave:isSave},
+        {average: averageStarpoint},
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
-    res.send({ allPost, findAllAcc });
+    res.send({ allPost, findAllAcc, outherPosts  });
   } else {
-    res.send({ allPost, findAllAcc });
+    res.send({ allPost, findAllAcc , outherPosts });
   }
 }
 
