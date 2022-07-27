@@ -413,9 +413,9 @@ async function GetPost(req, res) {
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
-    res.send({ allPost, findAllAcc });
+    res.send({ allPost, findAllAcc, outherPosts  });
   } else {
-    res.send({ allPost, findAllAcc });
+    res.send({ allPost, findAllAcc , outherPosts });
   }
 }
 
