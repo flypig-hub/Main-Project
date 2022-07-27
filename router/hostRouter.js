@@ -1,6 +1,7 @@
 const express = require("express");
 const HostController = require("../controller/hostController");
 const authMiddleware = require("../middlewares/auth-middleware");
+const userIdMiddleware = require("../middlewares/userId-middleware");
 const upload = require("../middlewares/S3-middleware");
 const router = express.Router();
 
@@ -10,13 +11,13 @@ router.post('/', authMiddleware, upload.array('images', 8), HostController.hostC
 
 
 // 호스트 숙소 전체 조회
-router.get('/',  HostController.getAllAcc)
+router.get('/', userIdMiddleware, HostController.getAllAcc)
 
 // 숙소 검색하기
-router.get('/search', HostController.hostsearch)
+router.get("/search", userIdMiddleware, HostController.hostsearch);
 
 // 호스트 숙소 상세 조회
-router.get('/:hostId',  HostController.getDetailAcc)
+router.get("/:hostId", userIdMiddleware, HostController.getDetailAcc);
 
 
 // 호스트 숙소 수정
