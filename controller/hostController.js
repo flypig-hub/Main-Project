@@ -4,6 +4,7 @@ const {
     images,
     hosts,
     reviews,
+    saves,
     sequelize,
     Sequelize,
   } = require("../models");
@@ -47,6 +48,7 @@ async function hostCreateAcc(req, res) {
       link,
       hostContent,
       tagList,
+      isSave: false,
       average : 0,
     });
 
@@ -109,6 +111,9 @@ async function hostsearch(req, res) {
 
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {
+  let queryData   = req.query;
+  if (queryData.userId === undefined)
+  {queryData.userId = 0}
   const findAllAcc = await hosts.findAll({
       include : [{
           model: images,
@@ -117,6 +122,7 @@ async function getAllAcc(req, res) {
       }]
   });
   //개별 객체 for문
+  console.log(findAllAcc.length);
   for ( j = 0 ; findAllAcc.length > j; j++ ){
     const hoststar = findAllAcc[j]
     
@@ -128,23 +134,40 @@ async function getAllAcc(req, res) {
     
     // 별점 평균 for 문
     starsum =[];
+    
+    
     for (i = 0; findStar.length > i; i++) {
       const star = findStar[i]
       
       starsum.push(star.dataValues.starpoint);
       }
+      let isSave = await saves.findOne({
+        where :{hostId :hoststar.hostId, userId: queryData.userId}
+      });
+      
+      if (isSave) {
+        isSave = true;
+      } else {
+        isSave = false;
+      }
+      console.log(isSave, i,'찍히나');
+  let averageStarpoint = 0   
+
       if (findStar.length){
         const numStar = findStar.length
-        let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
-        
-        Object.assign(hoststar,{
-          average: averageStarpoint
-        })
-        await hosts.update(
-          {average: averageStarpoint},
-          {where:{hostId:hoststar.hostId}}
-        )
+        averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
       }
+
+      Object.assign(hoststar,{
+        average: averageStarpoint,
+        isSave:isSave
+      })
+      await hosts.update(
+        {average: averageStarpoint,
+         isSave:isSave},
+        {where:{hostId:hoststar.hostId}}
+        
+      )
         //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
       // averageStarpoint = String(averageStarpoint) 
   }
