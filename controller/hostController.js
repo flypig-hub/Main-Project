@@ -132,21 +132,19 @@ async function getAllAcc(req, res) {
       const star = findStar[i]
       
       starsum.push(star.dataValues.starpoint);
-      
-  
       }
-      
-      const numStar = findStar.length
-      let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
-      
-      Object.assign(hoststar,{
-        average: averageStarpoint
-      })
-      await hosts.update(
-        {average: averageStarpoint},
-        {where:{hostId:hoststar.hostId}}
-      )
-      
+      if (findStar.length){
+        const numStar = findStar.length
+        let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
+        
+        Object.assign(hoststar,{
+          average: averageStarpoint
+        })
+        await hosts.update(
+          {average: averageStarpoint},
+          {where:{hostId:hoststar.hostId}}
+        )
+      }
         //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
       // averageStarpoint = String(averageStarpoint) 
   }
@@ -166,6 +164,7 @@ async function getDetailAcc(req, res) {
           attributes: [ 'hostId', 'postImageURL' ]
       }]
   });
+  
   const findStar = await reviews.findAll({
     where:{hostId},
     attributes: ['starpoint']
@@ -179,16 +178,20 @@ async function getDetailAcc(req, res) {
     
     }
     
-     const numStar = findStar.length
-     let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
-
-     Object.assign(findAllAcc,{
-      average: averageStarpoint
-    })
-    await hosts.update(
-      {average: averageStarpoint},
-      {where:{hostId:findAllAcc.hostId}}
-    )
+    if (findStar.length){
+      const numStar = findStar.length
+      let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
+ 
+      Object.assign(findAllAcc,{
+       average: averageStarpoint
+     })
+     await hosts.update(
+       {average: averageStarpoint},
+       {where:{hostId:findAllAcc.hostId}}
+     )
+    }
+   
+  
        //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
      // averageStarpoint = String(averageStarpoint)
     res.send({ findAllAcc})
