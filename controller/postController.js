@@ -389,27 +389,25 @@ async function GetPost(req, res) {
      const star = findStar[i]
       starsum.push(star.dataValues.starpoint);
       }
-      let isSave = await saves.findOne({
-        where :{hostId :findHostId.hostId, userId: queryData.userId}
-      });
-      if (isSave) {
-        isSave = true;
-      } else {
-        isSave = false;
-      }
+      // let isSave = await saves.findOne({
+      //   where :{hostId :findHostId.hostId, userId: queryData.userId}
+      // });
+      // if (isSave) {
+      //   isSave = true;
+      // } else {
+      //   isSave = false;
+      // }
 
       if (findStar.length){
         const numStar = findStar.length
         let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
         
         Object.assign(findAllAcc[0],{
-          average: averageStarpoint,
-        isSave:isSave
+          average: averageStarpoint
        })
 
        await hosts.update(
-        {average: averageStarpoint,
-          isSave:isSave},
+        {average: averageStarpoint},
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
