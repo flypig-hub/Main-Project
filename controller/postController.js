@@ -356,7 +356,7 @@ async function ModifyPosting(req, res) {
     const findPost = await posts.findAll({
       where: { postId }
     });
-    res.status(200).send({ findPost, tagListArr, findImages, msg: "수정된 내용이 없습니다!" });
+    res.status(200).send({ findPost, tagListArr, findImages, msg: "게시글이 수정되었습니다!" });
   };
 };
 
