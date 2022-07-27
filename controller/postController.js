@@ -323,7 +323,7 @@ async function GetPost(req, res) {
         commentNum: commentNum,
         islike: islike
       },
-      { where: { postId: allPost.postId } }
+      { where: { postId: allPost[0].postId } }
     );
     Object.defineProperties(outherPost, {
       content: {
