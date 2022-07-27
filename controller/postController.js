@@ -140,7 +140,7 @@ async function GetPostingList(req, res) {
     include : [{
       model : images,
       required : true,
-      attributes : ['postId' , 'thumbnailURL']
+      attributes : ['postId' , 'thumbnailURL' , 'userImageURL']
     }],
     order : [[
       "likeNum", "DESC"
@@ -148,6 +148,7 @@ async function GetPostingList(req, res) {
     limit : 5,
     
   });
+  console.log(Top5, '이미지 오나요');
   const Top5post = Top5.map((tpost)=>({
     postId : tpost.postId,
     title : tpost.title,
