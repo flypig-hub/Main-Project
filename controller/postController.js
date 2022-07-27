@@ -267,7 +267,7 @@ async function GetPost(req, res) {
         [Op.ne]: postId,
       },
     },
-    order: [["likeNum", "DESC"]],
+    order: [["commentNum", "DESC"]],
     limit: 3,
     include: [
       {
