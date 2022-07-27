@@ -111,7 +111,7 @@ async function hostsearch(req, res) {
 
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {
-  let queryData   = req.query;
+  let queryData = res.locals;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
   const findAllAcc = await hosts.findAll(
@@ -178,7 +178,7 @@ async function getAllAcc(req, res) {
 // 호스트 숙소 게시글 상세 조회
 async function getDetailAcc(req, res) {
   const { hostId } = req.params; 
-  let queryData   = req.query;
+  let queryData = res.locals;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
   const findAllAcc = await hosts.findOne({
