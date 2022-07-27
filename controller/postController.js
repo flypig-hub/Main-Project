@@ -34,12 +34,6 @@ async function WritePosting(req, res) {
     // console.log(req.body.content);
   const image = req.files;
 
-  const findAcc = await hosts.findOne({
-    where: { title: req.body.houseTitle },
-    attributes: ['hostId']
-  })
-  console.log(findAcc.hostId);
-
   const tagListArr = new Array(tagList)
   console.log(tagListArr);
 
@@ -89,7 +83,6 @@ async function WritePosting(req, res) {
     
   const postInfo = await posts.create({
     userId,
-    hostId: findAcc.hostId,
     nickname,
     title,
     content,
@@ -207,17 +200,10 @@ async function GetPost(req, res) {
         required: false,
         attributes: ["userId", "postId"],
       },
-      {
-        model: hosts,
-        required: false,
-        attributes: ["hostId", "title", "hostContent", ],
-        include: [{
-          model: images,
-          attributes: [ 'thumbnailURL', 'postImageURL' ]
-        }]
-      },
     ],
   });
+  console.log(allPost[0].houseTitle);
+
  
   for (i = 0; i < allPost.length; i++) {
     let post = allPost[i];
@@ -281,40 +267,64 @@ async function GetPost(req, res) {
      ]
    });
 
+   let hostTitle = [];
+   let hostNumber = []
+   let findHostId = await hosts.findAll({
+    attributes: [ 'title' ],
+   })
+   for (let i = 0; i < findHostId.length; i++) {
+    let hosttitle = findHostId[i].title
+    let hostnumber = findHostId[i].hostId
+    hostNumber.push(hostnumber);
+    hostTitle.push(hosttitle);
+   }
 
   // 이 글에 나온 숙소 찾아오기
-    const otherAcc = await hosts.findAll({
-      attritutes : [ 'hostId', 'userId', 'title', 'hostContent' ],
+  // let findAcco = []
+  if (hostTitle.indexOf()) {
+    let findAllAcc = await hosts.findAll({
+      where: { title: allPost[0].houseTitle },
+      attritutes : [ 'hostId' ],
       include: [{
-        model : reviews,
+        model: images,
         required: false,
-        attributes: [ 'starpoint' ]
-      }]
+        attributes: ["postImageURL", "thumbnailURL"],
+      }],
     })
 
-  //   const star = await reviews.findAll({
-  //     where: { hostId: otherAcc[0].hostId },
-  //     attritutes: ['starpoint']
-  //   })
-  //   console.log(star[0].starpoint);
+    const findStar = await reviews.findAll({
+      where:{ hostId: findAllAcc[0].hostId },
+      attributes: ['starpoint']
+    })
+    
+    starsum =[];
+    for (i = 0; findStar.length > i; i++) {
+     const star = findStar[i]
+      starsum.push(star.dataValues.starpoint);
+      }
+      
+      if (findStar.length){
+        const numStar = findStar.length
+        let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
+        
+        Object.assign(findAllAcc[0],{
+         average: averageStarpoint
+       })
 
-  //   let otherHostAcc = [];
-  //   for (let i = 0; i < otherAcc.length; i++) {
-  //     if (allPost[0].houseTitle === otherAcc[0].title) {
-  //     const newAcc = await hosts.findOne({
-  //       where: { title: allPost[0].houseTitle },
-  //       attributes : ['hostId', 'userId', 'title', 'hostContent'],
-  //     })
-  //     console.log(newAcc);
-  //     console.log(allPost[0].houseTitle);
-  //   }
-  //   return
-  // }
-
-    // res.send({ otherAcc });
-
-  res.send({ allPost, outherPost });
+       await hosts.update(
+         {average: averageStarpoint},
+         {where:{hostId:findAllAcc[0].hostId}}
+      )
+    }
+    res.send({ findAllAcc })
+  } else {
+    res.send({ allPost, outherPost });
+  }
 }
+
+  
+
+
 
 // 유저 커뮤니티 게시글 수정
 async function ModifyPosting(req, res) {
