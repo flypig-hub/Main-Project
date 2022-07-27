@@ -6,6 +6,7 @@ const {
   images,
   hosts,
   reviews,
+  saves,
   sequelize,
   Sequelize,
 } = require("../models");
@@ -181,6 +182,11 @@ async function GetPostingList(req, res) {
       commentNum: commentNum,
       islike: islike,
     });
+    await posts.update(
+      {likeNum: likeNum,
+       commentNum: commentNum
+      },
+      {where:{postId:post.postId}})
   }
   res.send({Top5post, allPost });
 }
@@ -257,73 +263,89 @@ async function GetPost(req, res) {
     { where: { postId: allPost[0].postId } }
   );
   
+   const outherPosts = await posts.findAll({
+    where: {
+      userId: allPost[0].userId,
+      postId: {
+        [Op.ne]: postId,
+      },
+    },
+    order: [["likeNum", "DESC"]],
+    limit: 3,
+    include: [
+      {
+        model: images,
+        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+      },
+    ],
+  });
+  for (i = 0; outherPosts.length > i; i++){
+    const outherPost = outherPosts[i];
+     const outherPostComments = await Comments.findAll({
+       where: { postId: outherPost.postId },
+     });
+     const outherPostLikes = await Like.findAll({
+       where: { postId: outherPost.postId },
+     });
 
-  // 작성자의 다른 숙소 보여주기
-  //  const outherPosts = await posts.findAll({
-  //   where: {
-  //     userId: post[0].userId,
-  //     postId: {
-  //       [Op.ne]: postId,
-  //     },
-  //   },
-  //   order: [["likeNum", "DESC"]],
-  //   limit: 3,
-  //   include: [
-  //     {
-  //       model: images,
-  //       required: true,
-  //       attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
-  //     },
-  //   ],
-  // });
-  // for (i = 0; outherPosts.length > i; i++){
-  //   const outherPost = outherPosts[i];
-  //    const outherPostComments = await Comments.findAll({
-  //      where: { postId: outherPost.postId },
-  //    });
-  //    const outherPostLikes = await Like.findAll({
-  //      where: { postId: outherPost.postId },
-  //    });
+     let islike = await Like.findOne({
+       where: { userId: queryData.userId, postId: outherPost.postId },
+     });
 
-  //    let islike = await Like.findOne({
-  //      where: { userId: queryData.userId, postId: outherPost.postId },
-  //    });
+     const likeNum = outherPostLikes.length;
+     const commentNum = outherPostComments.length;
 
-  //    const likeNum = outherPostLikes.length;
-  //    const commentNum = outherPostComments.length;
-
-  //    if (islike) {
-  //      islike = true;
-  //    } else {
-  //      islike = false;
-  //   }
+     if (islike) {
+       islike = true;
+     } else {
+       islike = false;
+    }
     
-  //   Object.assign(post, {
-  //     likeNum: likeNum,
-  //     commentNum: commentNum,
-  //     islike: islike,
-  //   });
-  //   await posts.update(
-  //     {
-  //       likeNum: likeNum,
-  //       commentNum: commentNum,
-  //       islike: islike
-  //     },
-  //     { where: { postId: post.postId } }
-  //   );
-  //   outherPost = {
-  //   postId,
-  //   userId,
-  //   title,
-  //   commentNum,
-  //   likeNum,
-  //   isLike,
-  //   houseTitle,
-  //   postImageURL,
-  //   thumbnailURL,
-  //   userImageURL,
-  // };
-  // }
+    await posts.update(
+      {
+        likeNum: likeNum,
+        commentNum: commentNum,
+        islike: islike
+      },
+      { where: { postId: allPost[0].postId } }
+    );
+    Object.defineProperties(outherPost, {
+      content: {
+        enumerable: false,
+      },
+      commentId: {
+        enumerable: false,
+      },
+      commentNum: { value: commentNum, enumerable: true },
+      likeNum: { value: likeNum, enumerable: true },
+      islike: { value: islike, enumerable: true },
+      mainAddress: {
+        enumerable: false,
+      },
+      subAddress: {
+        enumerable: false,
+      },
+      category: {
+        enumerable: false,
+      },
+      type: {
+        enumerable: false,
+      },
+      link: {
+        enumerable: false,
+      },
+      houseTitle: {
+        enumerable: false,
+      },
+      tagList: {
+        enumerable: false,
+      },
+      preImages: {
+        enumerable: false,
+      },
+    });
+    
+  }
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
@@ -358,17 +380,27 @@ async function GetPost(req, res) {
      const star = findStar[i]
       starsum.push(star.dataValues.starpoint);
       }
-      
+      let isSave = await saves.findOne({
+        where :{hostId :hoststar.hostId, userId: queryData.userId}
+      });
+      if (isSave) {
+        isSave = true;
+      } else {
+        isSave = false;
+      }
+
       if (findStar.length){
         const numStar = findStar.length
         let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
         
         Object.assign(findAllAcc[0],{
-         average: averageStarpoint
+          average: averageStarpoint,
+        isSave:isSave
        })
 
        await hosts.update(
-         {average: averageStarpoint},
+        {average: averageStarpoint,
+          isSave:isSave},
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
