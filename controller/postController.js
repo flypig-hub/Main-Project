@@ -358,14 +358,14 @@ async function GetPost(req, res) {
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
-    attributes: [ 'title' ],
+    attributes: [ 'title', 'hostId' ],
     })
-    // console.log(findHostId[0].title);
+    
     let houseTitle = [];
     for (let i = 0; i < findHostId.length; i++) {
       let house = findHostId[i]
       houseTitle.push(house.title);
-
+      
       let isSave = await saves.findOne({
         where :{hostId :house.hostId, userId: queryData.userId}
       });
@@ -374,8 +374,7 @@ async function GetPost(req, res) {
       } else {
         isSave = false;
       }
-
-      Object.assign(findAllAcc[0],{
+      Object.assign(house,{
           isSave:isSave,
           
        });
