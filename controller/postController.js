@@ -38,31 +38,31 @@ async function WritePosting(req, res) {
 
   let isLike = false;
 
-    let beforeImg = [];
-    let afterImg = [];
-    const PreImages = req.body.preImages.replace(/\s'/g, "").split('')
-    console.log(PreImages);
-    let preImagesArr = PreImages.split(',')
-    console.log(preImagesArr);
+  //   let beforeImg = [];
+  //   let afterImg = [];
+  //   const PreImages = req.body.preImages.replace(/\s'/g, "").split('')
+  //   console.log(PreImages);
+  //   let preImagesArr = PreImages.split(',')
+  //   console.log(preImagesArr);
 
-  for (let i = 0; i < preImagesArr.length; i++) {
-      let preImg = preImagesArr[i].substr(0, 63)
-      let imgList = image[i].location
-      let newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
+  // for (let i = 0; i < preImagesArr.length; i++) {
+  //     let preImg = preImagesArr[i].substr(0, 63)
+  //     let imgList = image[i].location
+  //     let newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
 
-      // console.log(preImg, "지나가는지 확인하기");
-      // console.log(imgList, "이번엔 제발 잘 되야하는데");
-      beforeImg.push(preImg);
-      afterImg.push(imgList);
-    }
-    const beforeImages = beforeImg.toString().split(',');
-      console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
-      const afterImages = afterImg.toString().split(',');
-      console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
-      console.log(newContent);
+  //     // console.log(preImg, "지나가는지 확인하기");
+  //     // console.log(imgList, "이번엔 제발 잘 되야하는데");
+  //     beforeImg.push(preImg);
+  //     afterImg.push(imgList);
+  //   }
+  //   const beforeImages = beforeImg.toString().split(',');
+  //     console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
+  //     const afterImages = afterImg.toString().split(',');
+  //     console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
+  //     console.log(newContent);
 
-    // const ContentString = Content.toString()
-    // console.log(ContentString);
+  //   // const ContentString = Content.toString()
+  //   // console.log(ContentString);
 
     
   const postInfo = await posts.create({
