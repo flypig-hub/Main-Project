@@ -281,7 +281,7 @@ async function GetPost(req, res) {
   
    const outherPosts = await posts.findAll({
     where: {
-      userId: post[0].userId,
+      userId: allPost[0].userId,
       postId: {
         [Op.ne]: postId,
       },
@@ -317,18 +317,13 @@ async function GetPost(req, res) {
        islike = false;
     }
     
-    Object.assign(post, {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    });
     await posts.update(
       {
         likeNum: likeNum,
         commentNum: commentNum,
         islike: islike
       },
-      { where: { postId: post.postId } }
+      { where: { postId: allPost.postId } }
     );
     Object.defineProperties(outherPost, {
       content: {
@@ -338,8 +333,8 @@ async function GetPost(req, res) {
         enumerable: false,
       },
       commentNum: { value: commentNum, enumerable: true },
-      likeNum: { value: likeNum, enumerable: false },
-      islike: { value: islike, enumerable: false },
+      likeNum: { value: likeNum, enumerable: true },
+      islike: { value: islike, enumerable: true },
       mainAddress: {
         enumerable: false,
       },
