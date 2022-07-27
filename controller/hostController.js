@@ -35,19 +35,19 @@ async function hostCreateAcc(req, res) {
     const image = req.files;
 
     const createAcc = await hosts.create({
-      postId,
-        userId,
-        title,
-        category,
-        houseInfo,
-        mainAddress,
-        subAddress,
-        stepSelect,
-        stepInfo,
-        link,
-        hostContent,
-        tagList,
-        average : 0,
+      // postId,
+      userId,
+      title,
+      category,
+      houseInfo,
+      mainAddress,
+      subAddress,
+      stepSelect,
+      stepInfo,
+      link,
+      hostContent,
+      tagList,
+      average : 0,
     });
 
     if (image) {
@@ -170,7 +170,7 @@ async function getDetailAcc(req, res) {
     where:{hostId},
     attributes: ['starpoint']
   })
-  console.log(findStar, '왜 안옴?');
+  
   starsum =[];
   for (i = 0; findStar.length > i; i++) {
    const star = findStar[i]
@@ -181,9 +181,17 @@ async function getDetailAcc(req, res) {
     
      const numStar = findStar.length
      let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
+
+     Object.assign(findAllAcc,{
+      average: averageStarpoint
+    })
+    await hosts.update(
+      {average: averageStarpoint},
+      {where:{hostId:findAllAcc.hostId}}
+    )
        //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
      // averageStarpoint = String(averageStarpoint)
-    res.send({ findAllAcc, averageStarpoint })
+    res.send({ findAllAcc})
 }
 
 
