@@ -355,7 +355,7 @@ async function GetPost(req, res) {
   // let findAcco = []
   if (hostTitle.indexOf()) {
     let findAllAcc = await hosts.findAll({
-      where: { title: allPost[0].houseTitle },
+      where: { title: post[0].houseTitle },
       attritutes : [ 'hostId' ],
       include: [{
         model: images,
@@ -390,7 +390,7 @@ async function GetPost(req, res) {
     }
     res.send({ findAllAcc })
   } else {
-    res.send({ allPost, outherPost });
+    res.send({ post, outherPost });
   }
 }
 
