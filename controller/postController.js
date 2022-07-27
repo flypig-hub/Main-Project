@@ -214,10 +214,10 @@ async function GetPost(req, res) {
       islike = false;
     }
 
-    let newTaglist = '';
+    let newTaglist = [];
     if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(",");
-      newTaglist += newTag;
+      newTaglist.push(newTag);
     }
     console.log(newTaglist);
     
@@ -225,7 +225,7 @@ async function GetPost(req, res) {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
-      tagList: [newTaglist]
+      tagList: newTaglist
     });
   await posts.update(
     {
