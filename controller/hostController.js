@@ -114,13 +114,12 @@ async function getAllAcc(req, res) {
   let queryData   = req.query;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
-  const findAllAcc = await hosts.findAll({
-      include : [{
+  const findAllAcc = await hosts.findAll(
+    {  include : [{
           model: images,
-          required: true,
-          attributes: [ 'hostId', 'postImageURL', ]
-      }]
-  });
+          attributes: [ 'hostId', 'postImageURL' ]
+      }]}
+  );
   //개별 객체 for문
   console.log(findAllAcc.length);
   for ( j = 0 ; findAllAcc.length > j; j++ ){
@@ -168,8 +167,8 @@ async function getAllAcc(req, res) {
         {where:{hostId:hoststar.hostId}}
         
       )
-        //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
-      // averageStarpoint = String(averageStarpoint) 
+        // 위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
+      averageStarpoint = String(averageStarpoint) 
   }
     res.send({ findAllAcc })
   }
