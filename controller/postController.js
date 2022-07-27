@@ -136,6 +136,9 @@ async function GetPostingList(req, res) {
       required: true,
       attributes: ['postId', 'postImageURL', 'thumbnailURL', 'userImageURL']
     }],
+    order : [[
+      "createdAt", "DESC"
+    ]]
   });
 
   for (i = 0; i < allPost.length; i++) {
