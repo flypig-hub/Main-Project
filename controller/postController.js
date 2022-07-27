@@ -6,6 +6,7 @@ const {
   images,
   hosts,
   reviews,
+  saves,
   sequelize,
   Sequelize,
 } = require("../models");
@@ -396,17 +397,27 @@ async function GetPost(req, res) {
      const star = findStar[i]
       starsum.push(star.dataValues.starpoint);
       }
-      
+      let isSave = await saves.findOne({
+        where :{hostId :hoststar.hostId, userId: queryData.userId}
+      });
+      if (isSave) {
+        isSave = true;
+      } else {
+        isSave = false;
+      }
+
       if (findStar.length){
         const numStar = findStar.length
         let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
         
         Object.assign(findAllAcc[0],{
-         average: averageStarpoint
+          average: averageStarpoint,
+        isSave:isSave
        })
 
        await hosts.update(
-         {average: averageStarpoint},
+        {average: averageStarpoint,
+          isSave:isSave},
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
