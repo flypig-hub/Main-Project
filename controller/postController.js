@@ -134,6 +134,31 @@ async function GetPostingList(req, res) {
   let queryData = req.query;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
+  
+  // Top 5 게시물
+  let Top5 = await posts.findAll({
+    include : [{
+      model : images,
+      required : true,
+      attributes : ['postId' , 'thumbnailURL']
+    }],
+    order : [[
+      "likeNum", "DESC"
+    ]],
+    limit : 5,
+    
+  });
+  const Top5post = Top5.map((tpost)=>({
+    title : tpost.title,
+    nickname : tpost.nickname,
+    likeNum : tpost.likeNum,
+    commentNum : tpost.commentNum,
+    images : tpost.images
+  }));
+  console.log(Top5post, '이거 맞나');
+
+  // console.log(Top5, '이거 찍히나');
+ 
   let allPost = await posts.findAll({
     include: [{
       model: images,
@@ -172,7 +197,7 @@ async function GetPostingList(req, res) {
       islike: islike,
     });
   }
-  res.send({ allPost });
+  res.send({Top5post, allPost });
 }
 
 
