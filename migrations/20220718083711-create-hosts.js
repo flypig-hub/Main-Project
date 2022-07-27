@@ -29,6 +29,9 @@ module.exports = {
       houseInfo: {
         type: Sequelize.STRING
       },
+      isSave: {
+        type: Sequelize.BOOLEAN
+      },
       mainAddress: {
         type: Sequelize.STRING
       },
