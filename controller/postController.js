@@ -233,12 +233,12 @@ async function GetPost(req, res) {
 
  
     const postComments = await Comments.findAll({
-      where: { postId: post.postId },
+      where: { postId: post[0].postId },
     });
-    const postLikes = await Like.findAll({ where: { postId: post.postId } });
+    const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
 
     let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: post.postId },
+      where: { userId: queryData.userId, postId: post[0].postId },
     });
 
     const likeNum = postLikes.length;
@@ -269,89 +269,94 @@ async function GetPost(req, res) {
       commentNum: commentNum,
       islike: islike
     },
-    { where: { postId: post.postId } }
+    { where: { postId: post[0].postId } }
   );
   
 
   // 작성자의 다른 숙소 보여주기
-   const outherPosts = await posts.findAll({
-    where: {
-      userId: post.userId,
-      postId: {
-        [Op.ne]: postId,
-      },
-    },
-    order: [["likeNum", "DESC"]],
-    limit: 3,
-    include: [
-      {
-        model: images,
-        required: true,
-        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
-      },
-    ],
-  });
-  for (i = 0; outherPosts.length > i; i++){
-    const outherPost = outherPosts[i];
-     const outherPostComments = await Comments.findAll({
-       where: { postId: outherPost.postId },
-     });
-     const outherPostLikes = await Like.findAll({
-       where: { postId: outherPost.postId },
-     });
+  //  const outherPosts = await posts.findAll({
+  //   where: {
+  //     userId: post[0].userId,
+  //     postId: {
+  //       [Op.ne]: postId,
+  //     },
+  //   },
+  //   order: [["likeNum", "DESC"]],
+  //   limit: 3,
+  //   include: [
+  //     {
+  //       model: images,
+  //       required: true,
+  //       attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+  //     },
+  //   ],
+  // });
+  // for (i = 0; outherPosts.length > i; i++){
+  //   const outherPost = outherPosts[i];
+  //    const outherPostComments = await Comments.findAll({
+  //      where: { postId: outherPost.postId },
+  //    });
+  //    const outherPostLikes = await Like.findAll({
+  //      where: { postId: outherPost.postId },
+  //    });
 
-     let islike = await Like.findOne({
-       where: { userId: queryData.userId, postId: outherPost.postId },
-     });
+  //    let islike = await Like.findOne({
+  //      where: { userId: queryData.userId, postId: outherPost.postId },
+  //    });
 
-     const likeNum = outherPostLikes.length;
-     const commentNum = outherPostComments.length;
+  //    const likeNum = outherPostLikes.length;
+  //    const commentNum = outherPostComments.length;
 
-     if (islike) {
-       islike = true;
-     } else {
-       islike = false;
-    }
+  //    if (islike) {
+  //      islike = true;
+  //    } else {
+  //      islike = false;
+  //   }
     
-    Object.assign(post, {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    });
-    await posts.update(
-      {
-        likeNum: likeNum,
-        commentNum: commentNum,
-        islike: islike
-      },
-      { where: { postId: post.postId } }
-    );
-    outherPost = {
-    postId,
-    userId,
-    title,
-    commentNum,
-    likeNum,
-    isLike,
-    houseTitle,
-    postImageURL,
-    thumbnailURL,
-    userImageURL,
-  };
-  }
+  //   Object.assign(post, {
+  //     likeNum: likeNum,
+  //     commentNum: commentNum,
+  //     islike: islike,
+  //   });
+  //   await posts.update(
+  //     {
+  //       likeNum: likeNum,
+  //       commentNum: commentNum,
+  //       islike: islike
+  //     },
+  //     { where: { postId: post.postId } }
+  //   );
+  //   outherPost = {
+  //   postId,
+  //   userId,
+  //   title,
+  //   commentNum,
+  //   likeNum,
+  //   isLike,
+  //   houseTitle,
+  //   postImageURL,
+  //   thumbnailURL,
+  //   userImageURL,
+  // };
+  // }
   
+    // 이 글에 나온 숙소 찾아오기
+    
+    
+      let findHostId = await hosts.findAll({
+      attributes: [ 'title' ],
+    })
+    // console.log(findHostId[0].title);
+    let houseTitle = [];
+    for (let i = 0; i < findHostId.length; i++) {
+      let housetitle = findHostId[i].title
+      houseTitle.push(housetitle);
+    }
+    console.log(post[0].houseTitle, "이건??");
+    console.log(houseTitle.indexOf(post[0].houseTitle), "?????");
 
-   let hostTitle = [];
-   let findHostId = await hosts.findAll({
-    attributes: [ 'title' ],
-   })
-   for (let i = 0; i < findHostId.length; i++) {
-    let hosttitle = findHostId[i].title
-    hostTitle.push(hosttitle);
-   }
-
-  // 이 글에 나온 숙소 찾아오기
-  if (hostTitle.indexOf(post[0].hostTitle) != -1) {
+  let findAllAcc = [];
+  if (houseTitle.indexOf(post[0].houseTitle) != -1) {
     let findAllAcc = await hosts.findAll({
       where: { title: post[0].houseTitle },
       attritutes : [ 'hostId' ],
@@ -361,6 +366,7 @@ async function GetPost(req, res) {
         attributes: ["postImageURL", "thumbnailURL"],
       }],
     })
+    console.log(findAllAcc);
 
     const findStar = await reviews.findAll({
       where:{ hostId: findAllAcc[0].hostId },
@@ -386,9 +392,9 @@ async function GetPost(req, res) {
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
-    res.send({ findAllAcc })
+    res.send({ post, findAllAcc });
   } else {
-    res.send({ post, outherPost });
+    res.send({ post, findAllAcc });
   }
 }
 
