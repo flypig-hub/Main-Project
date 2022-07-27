@@ -214,18 +214,18 @@ async function GetPost(req, res) {
       islike = false;
     }
 
-    // let newTaglist = [];
-    // if (allPost[0].tagList) {
+    let newTaglist = '';
+    if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(",");
-    //   newTaglist.push(newTag);
-    // }
-    // console.log(newTaglist);
+      newTaglist += newTag;
+    }
+    console.log(newTaglist);
     
     Object.assign(post, {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
-      tagList: newTaglist
+      tagList: [newTaglist]
     });
   await posts.update(
     {
