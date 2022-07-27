@@ -132,7 +132,6 @@ async function GetPostingList(req, res) {
     limit : 5,
     
   });
-  console.log(Top5, '이미지 오나요');
   const Top5post = Top5.map((tpost)=>({
     postId : tpost.postId,
     title : tpost.title,
@@ -141,9 +140,7 @@ async function GetPostingList(req, res) {
     commentNum : tpost.commentNum,
     images : tpost.images
   }));
-  console.log(Top5post, '이거 맞나');
-
-  // console.log(Top5, '이거 찍히나');
+ 
  
   let allPost = await posts.findAll({
     include: [{
@@ -304,13 +301,18 @@ async function GetPost(req, res) {
     await posts.update(
       {
         likeNum: likeNum,
-        commentNum: commentNum,
-        islike: islike
+        commentNum: commentNum
       },
       { where: { postId: allPost[0].postId } }
     );
-    Object.defineProperties(outherPost, {
+   Object.defineProperties(outherPost.dataValues, {
+      title: {
+        enumerable: true,
+      },
       content: {
+        enumerable: false,
+      },
+      hostId: {
         enumerable: false,
       },
       commentId: {
@@ -343,7 +345,14 @@ async function GetPost(req, res) {
       preImages: {
         enumerable: false,
       },
+      createdAt: {
+        enumerable: false,
+      },
+      updatedAt: {
+        enumerable: false,
+      },
     });
+    
     
   }
   
