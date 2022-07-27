@@ -34,17 +34,23 @@ async function WritePosting(req, res) {
     // console.log(req.body.content);
   const image = req.files;
 
+  const findAcc = await hosts.findOne({
+    where: { title: req.body.houseTitle },
+    attributes: ['hostId']
+  })
+  console.log(findAcc.hostId);
+
   const tagListArr = new Array(tagList)
   console.log(tagListArr);
 
   let isLike = false;
 
-    let beforeImg = [];
-    let afterImg = [];
-    const PreImages = req.body.preImages.replace(/\s'/g, "")
-    let preImagesArr = PreImages.split(',')
+    // let beforeImg = [];
+    // let afterImg = [];
+    // const PreImages = req.body.preImages.replace(/\s'/g, "")
+    // let preImagesArr = PreImages.split(',')
 
-    let resultString = ''
+    // let resultString = ''
 
     // let newArr = preImagesArr.map((element, i) => {
     //   let preImg = preImagesArr[i].substr(0, 63);
@@ -83,6 +89,7 @@ async function WritePosting(req, res) {
     
   const postInfo = await posts.create({
     userId,
+    hostId: findAcc.hostId,
     nickname,
     title,
     content,
@@ -196,6 +203,15 @@ async function GetPost(req, res) {
         required: false,
         attributes: ["userId", "postId"],
       },
+      {
+        model: hosts,
+        required: false,
+        attributes: ["hostId", "title", "hostContent", ],
+        include: [{
+          model: images,
+          attributes: [ 'thumbnailURL', 'postImageURL' ]
+        }]
+      },
     ],
   });
  
@@ -272,21 +288,21 @@ async function GetPost(req, res) {
       }]
     })
 
-    // const star = await reviews.findAll({
-    //   where: { hostId: otherAcc[0].hostId },
-    //   attritutes: ['starpoint']
-    // })
-    // console.log(star[0].starpoint);
+  //   const star = await reviews.findAll({
+  //     where: { hostId: otherAcc[0].hostId },
+  //     attritutes: ['starpoint']
+  //   })
+  //   console.log(star[0].starpoint);
 
-    // let otherHostAcc = [];
-    // for (let i = 0; i < otherAcc.length; i++) {
-    //   if (allPost[0].houseTitle === otherAcc[0].title) {
-      // const newAcc = await hosts.findOne({
-      //   where: { title: allPost[0].houseTitle },
-      //   attributes : ['hostId', 'userId', 'title', 'hostContent'],
-      // })
-      // console.log(newAcc);
-      // console.log(allPost[0].houseTitle);
+  //   let otherHostAcc = [];
+  //   for (let i = 0; i < otherAcc.length; i++) {
+  //     if (allPost[0].houseTitle === otherAcc[0].title) {
+  //     const newAcc = await hosts.findOne({
+  //       where: { title: allPost[0].houseTitle },
+  //       attributes : ['hostId', 'userId', 'title', 'hostContent'],
+  //     })
+  //     console.log(newAcc);
+  //     console.log(allPost[0].houseTitle);
   //   }
   //   return
   // }

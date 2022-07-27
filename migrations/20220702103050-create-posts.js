@@ -8,13 +8,13 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      hostId: {
+        type: Sequelize.INTEGER,
+      },
       userId: {
         type: Sequelize.INTEGER,
       },
       nickname: {
-        type: Sequelize.STRING,
-      },
-      hostId: {
         type: Sequelize.STRING,
       },
       content: {

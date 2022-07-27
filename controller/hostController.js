@@ -35,6 +35,7 @@ async function hostCreateAcc(req, res) {
     const image = req.files;
 
     const createAcc = await hosts.create({
+      postId,
         userId,
         title,
         category,
