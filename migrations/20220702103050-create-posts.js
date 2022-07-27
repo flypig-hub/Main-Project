@@ -9,9 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       nickname: {
+        type: Sequelize.STRING,
+      },
+      hostId: {
         type: Sequelize.STRING,
       },
       content: {

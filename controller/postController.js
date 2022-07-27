@@ -4,6 +4,8 @@ const {
   Like,
   users,
   images,
+  hosts,
+  reviews,
   sequelize,
   Sequelize,
 } = require("../models");
@@ -13,7 +15,7 @@ const Op = Sequelize.Op;
 
 
 
-// 게시글 작성(유저)
+// 유저 게시글 작성
 async function WritePosting(req, res) {
   // try {
   const { userId, nickname, userImageURL } = res.locals;
@@ -126,7 +128,7 @@ res.status(201).send({ postInfo, tagListArr, postImageUrl, thumbnailURL });
 }
 
 
-// 게시글 전체 조회
+// 유저 커뮤니티 게시글 전체 조회
 async function GetPostingList(req, res) {
   const user = res.locals;
   const queryData = req.query;
@@ -172,7 +174,7 @@ async function GetPostingList(req, res) {
 }
 
 
-// 게시글 상세 조회
+// 유저 커뮤니티 게시글 상세 조회
 async function GetPost(req, res) {
   const { postId } = req.params;
   const queryData   = req.query;
@@ -217,12 +219,12 @@ async function GetPost(req, res) {
       islike = false;
     }
 
+    // tagList 배열화
     let newTaglist = [];
     if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(",");
       newTaglist.push(newTag);
     }
-    console.log(newTaglist);
     
     Object.assign(post, {
       likeNum: likeNum,
@@ -239,8 +241,10 @@ async function GetPost(req, res) {
     { where: { postId: post.postId } }
   );
   }
-   const outherPost = await posts.findAll({
-     where: {
+
+  // 유저가 다녀온 다른 숙소 보여주기
+  const outherPost = await posts.findAll({
+    where: {
        userId: allPost[0].userId,
        postId: {
          [Op.ne]: postId
@@ -256,11 +260,43 @@ async function GetPost(req, res) {
        },
      ]
    });
-  
-  res.send({ allPost, outherPost });
+
+
+  // 이 글에 나온 숙소 찾아오기
+    const otherAcc = await hosts.findAll({
+      attritutes : [ 'hostId', 'userId', 'title', 'hostContent' ],
+      include: [{
+        model : reviews,
+        required: false,
+        attributes: [ 'starpoint' ]
+      }]
+    })
+
+    const star = await reviews.findAll({
+      where: { hostId: otherAcc[0].hostId },
+      attritutes: ['starpoint']
+    })
+    console.log(star[0].starpoint);
+
+    // let otherHostAcc = [];
+    // for (let i = 0; i < otherAcc.length; i++) {
+    //   if (allPost[0].houseTitle === otherAcc[0].title) {
+      const newAcc = await hosts.findOne({
+        where: { title: allPost[0].houseTitle },
+        attributes : ['hostId', 'userId', 'title', 'hostContent'],
+      })
+      // console.log(newAcc);
+      // console.log(allPost[0].houseTitle);
+  //   }
+  //   return
+  // }
+
+    res.send({ otherAcc });
+
+  // res.send({ allPost, outherPost });
 }
 
-// 게시글 수정 (S3 기능 추가 예정)
+// 유저 커뮤니티 게시글 수정
 async function ModifyPosting(req, res) {
   const { userId, userImageURL, nickname } = res.locals;
   const { postId } = req.params;
@@ -364,7 +400,7 @@ async function ModifyPosting(req, res) {
 };
 
 
-// 게시글 삭제 (S3 이미지 삭제 기능 추가 예정)
+// 유저 커뮤니티 게시글 삭제
 async function DeletePost(req, res) {
   const { userId, nickname } = res.locals;
   const { postId } = req.params;

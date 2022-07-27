@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       posts.hasMany(models.Comments, { foreignKey: 'postId', sourceKey: 'postId', onDelete: 'CASCADE' });
       //유저
       posts.belongsTo(models.users, { foreignKey: 'userId', sourceKey: 'userId', onDelete: 'CASCADE' });
+      // 호스트
+      posts.hasMany(models.hosts, { foreignKey: 'hostId', sourceKey: 'hostId', onDelete: 'CASCADE' })
     }
   }
   posts.init(
@@ -28,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       userId: DataTypes.INTEGER,
       nickname: DataTypes.STRING,
+      hostId: DataTypes.INTEGER,
       content: DataTypes.STRING,
       title: DataTypes.STRING,
       commentId: DataTypes.INTEGER,
