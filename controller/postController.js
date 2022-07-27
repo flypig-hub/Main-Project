@@ -31,51 +31,34 @@ async function WritePosting(req, res) {
     tagList,
     preImages
     } = req.body;
-    // console.log(req.body.content);
   const image = req.files;
 
   const tagListArr = new Array(tagList)
-  console.log(tagListArr);
 
   let isLike = false;
 
-    // let beforeImg = [];
-    // let afterImg = [];
-    // const PreImages = req.body.preImages.replace(/\s'/g, "")
-    // let preImagesArr = PreImages.split(',')
+    let beforeImg = [];
+    let afterImg = [];
+    const PreImages = req.body.preImages.replace(/\s'/g, "")
+    console.log(PreImages);
+    let preImagesArr = PreImages.split(',')
+    console.log(preImagesArr);
 
-    // let resultString = ''
+  for (let i = 0; i < preImagesArr.length; i++) {
+      let preImg = preImagesArr[i].substr(0, 63)
+      let imgList = image[i].location
+      let newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
 
-    // let newArr = preImagesArr.map((element, i) => {
-    //   let preImg = preImagesArr[i].substr(0, 63);
-    //   let imgList = image[i].location;
-    //   console.log(preImg);
-    //   console.log(imgList);
-
-    //   const newContent = req.body.content.replaceAll(
-    //     `${preImagesArr[i].substr(0, 63)}`,
-    //     `${image[i].location}`
-    //   )
-    //   resultString += newContent
-    //   console.log(resultString);
-    // })
-
-    // for (let i = 0; i < preImagesArr.length; i++) {
-    //     let preImg = preImagesArr[i].substr(0, 63)
-    //     let imgList = image[i].location
-    //     console.log(preImg);
-    //     console.log(imgList);
-    //     beforeImg.push(preImg);
-    //     afterImg.push(imgList);
-    //     const beforeImages = beforeImg.toString().split(',');
-    //     console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
-    //     const afterImages = afterImg.toString().split(',');
-    //     console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
-    //     const newContent = req.body.content.replaceAll(`${ preImagesArr[i].substr(0, 63) }`,`${ image[i].location }`)
-      
-    //   console.log(newContent);
-    // }
-    
+      // console.log(preImg, "지나가는지 확인하기");
+      // console.log(imgList, "이번엔 제발 잘 되야하는데");
+      beforeImg.push(preImg);
+      afterImg.push(imgList);
+    }
+    const beforeImages = beforeImg.toString().split(',');
+      console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
+      const afterImages = afterImg.toString().split(',');
+      console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
+      console.log(newContent);
 
     // const ContentString = Content.toString()
     // console.log(ContentString);
