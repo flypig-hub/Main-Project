@@ -238,21 +238,21 @@ async function GetPost(req, res) {
 
     // tagList 배열화
     let newTagStr = '';
-    let newTagList = [];
+    // let newTagList = [];
     if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(" ");
     console.log(newTag);
     // newTaglist.push(newTag)
     newTagStr += newTag
-    newTagList.push(newTagStr)
+    // newTagList.push(newTagStr)
     }
-    console.log(newTagList, "이거 확인");
+    console.log(newTagStr.split(','), "이거 확인");
     
     Object.assign(allPost[0], {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
-      tagList: newTagList
+      tagList: newTagStr.split(',')
     });
   await posts.update(
     {
