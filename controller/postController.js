@@ -44,19 +44,19 @@ async function WritePosting(req, res) {
 
     let resultString = ''
 
-    let newArr = preImagesArr.map((element, i) => {
-      let preImg = preImagesArr[i].substr(0, 63);
-      let imgList = image[i].location;
-      console.log(preImg);
-      console.log(imgList);
+    // let newArr = preImagesArr.map((element, i) => {
+    //   let preImg = preImagesArr[i].substr(0, 63);
+    //   let imgList = image[i].location;
+    //   console.log(preImg);
+    //   console.log(imgList);
 
-      const newContent = req.body.content.replaceAll(
-        `${preImagesArr[i].substr(0, 63)}`,
-        `${image[i].location}`
-      )
-      resultString += newContent
-      console.log(resultString);
-    })
+    //   const newContent = req.body.content.replaceAll(
+    //     `${preImagesArr[i].substr(0, 63)}`,
+    //     `${image[i].location}`
+    //   )
+    //   resultString += newContent
+    //   console.log(resultString);
+    // })
 
     // for (let i = 0; i < preImagesArr.length; i++) {
     //     let preImg = preImagesArr[i].substr(0, 63)
@@ -214,13 +214,18 @@ async function GetPost(req, res) {
       islike = false;
     }
 
+    // let newTaglist = [];
+    // if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(",");
+    //   newTaglist.push(newTag);
+    // }
+    // console.log(newTaglist);
     
     Object.assign(post, {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
-      tagList: newTag
+      tagList: newTaglist
     });
   await posts.update(
     {
@@ -284,10 +289,9 @@ async function ModifyPosting(req, res) {
     where: { postId },
   });
 
-  if (image) {
+  if (image.length > 0) {
     // images DB에서 키값 찾아오기
     const postImageInfo = await images.findAll({ where:{ postId } });
-    console.log(postImageInfo);
     const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
 
     // S3 사진 삭제. 업로드는 미들웨어
@@ -314,7 +318,6 @@ async function ModifyPosting(req, res) {
     const postImagesUrl = image.map((postImageUrl) => postImageUrl.location);
     const thumbnailKEY = PostImagesKey[0];
     const thumbnailURL = postImagesUrl[0];
-    console.log(PostImagesKey);
 
     // images DB create
     PostImagesKey.forEach((element, i) => {
@@ -333,17 +336,26 @@ async function ModifyPosting(req, res) {
       })
     });
     const tagListArr = req.body.tagList.split(",");
-    console.log(tagListArr);
+    console.log("지나가나??");
+
     const findPost = await posts.findAll({
       where: { postId }
     });
     res.status(200).send({ findPost, tagListArr, postImagesUrl, msg: "게시글이 수정되었습니다!" });
   } else {
     const findImages = await images.findAll({
-      where: { postId }
+      where: { postId },
+      attributes: ['postImageURL', 'thumbnailURL']
     });
     console.log(findImages);
-    res.status(200).send({ updatePost, findImages, msg: "수정된 내용이 없습니다!" });
+    
+    const tagListArr = req.body.tagList.split(",");
+    console.log(tagListArr);
+
+    const findPost = await posts.findAll({
+      where: { postId }
+    });
+    res.status(200).send({ findPost, tagListArr, findImages, msg: "수정된 내용이 없습니다!" });
   };
 };
 
