@@ -209,7 +209,7 @@ async function GetPost(req, res) {
   let queryData   = req.query;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
-  const post = await posts.findAll({
+  const allPost = await posts.findAll({
     where: { postId },
     include: [
       {
@@ -233,12 +233,12 @@ async function GetPost(req, res) {
 
  
     const postComments = await Comments.findAll({
-      where: { postId: post[0].postId },
+      where: { postId: allPost[0].postId },
     });
-    const postLikes = await Like.findAll({ where: { postId: post[0].postId } });
+    const postLikes = await Like.findAll({ where: { postId: allPost[0].postId } });
 
     let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: post[0].postId },
+      where: { userId: queryData.userId, postId: allPost[0].postId },
     });
 
     const likeNum = postLikes.length;
@@ -252,12 +252,12 @@ async function GetPost(req, res) {
 
     // tagList 배열화
     let newTaglist = [];
-    if (post[0].tagList) {
-    const newTag = post[0].tagList.split(",");
+    if (allPost[0].tagList) {
+    const newTag = allPost[0].tagList.split(",");
       newTaglist.push(newTag);
     }
     
-    Object.assign(post, {
+    Object.assign(allPost, {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
@@ -269,7 +269,7 @@ async function GetPost(req, res) {
       commentNum: commentNum,
       islike: islike
     },
-    { where: { postId: post[0].postId } }
+    { where: { postId: allPost[0].postId } }
   );
   
 
@@ -341,10 +341,8 @@ async function GetPost(req, res) {
   // }
   
     // 이 글에 나온 숙소 찾아오기
-    
-    
-      let findHostId = await hosts.findAll({
-      attributes: [ 'title' ],
+    let findHostId = await hosts.findAll({
+    attributes: [ 'title' ],
     })
     // console.log(findHostId[0].title);
     let houseTitle = [];
@@ -352,13 +350,13 @@ async function GetPost(req, res) {
       let housetitle = findHostId[i].title
       houseTitle.push(housetitle);
     }
-    console.log(post[0].houseTitle, "이건??");
-    console.log(houseTitle.indexOf(post[0].houseTitle), "?????");
+    console.log(allPost[0].houseTitle, "이건??");
+    console.log(houseTitle.indexOf(allPost[0].houseTitle), "?????");
 
   let findAllAcc = [];
-  if (houseTitle.indexOf(post[0].houseTitle) != -1) {
+  if (houseTitle.indexOf(allPost[0].houseTitle) != -1) {
     let findAllAcc = await hosts.findAll({
-      where: { title: post[0].houseTitle },
+      where: { title: allPost[0].houseTitle },
       attritutes : [ 'hostId' ],
       include: [{
         model: images,
@@ -392,9 +390,9 @@ async function GetPost(req, res) {
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
-    res.send({ post, findAllAcc });
+    res.send({ allPost, findAllAcc });
   } else {
-    res.send({ post, findAllAcc });
+    res.send({ allPost, findAllAcc });
   }
 }
 
