@@ -272,28 +272,28 @@ async function GetPost(req, res) {
       }]
     })
 
-    const star = await reviews.findAll({
-      where: { hostId: otherAcc[0].hostId },
-      attritutes: ['starpoint']
-    })
-    console.log(star[0].starpoint);
+    // const star = await reviews.findAll({
+    //   where: { hostId: otherAcc[0].hostId },
+    //   attritutes: ['starpoint']
+    // })
+    // console.log(star[0].starpoint);
 
     // let otherHostAcc = [];
     // for (let i = 0; i < otherAcc.length; i++) {
     //   if (allPost[0].houseTitle === otherAcc[0].title) {
-      const newAcc = await hosts.findOne({
-        where: { title: allPost[0].houseTitle },
-        attributes : ['hostId', 'userId', 'title', 'hostContent'],
-      })
+      // const newAcc = await hosts.findOne({
+      //   where: { title: allPost[0].houseTitle },
+      //   attributes : ['hostId', 'userId', 'title', 'hostContent'],
+      // })
       // console.log(newAcc);
       // console.log(allPost[0].houseTitle);
   //   }
   //   return
   // }
 
-    res.send({ otherAcc });
+    // res.send({ otherAcc });
 
-  // res.send({ allPost, outherPost });
+  res.send({ allPost, outherPost });
 }
 
 // 유저 커뮤니티 게시글 수정
