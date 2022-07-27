@@ -149,6 +149,7 @@ async function GetPostingList(req, res) {
     
   });
   const Top5post = Top5.map((tpost)=>({
+    postId : tpost.postId,
     title : tpost.title,
     nickname : tpost.nickname,
     likeNum : tpost.likeNum,
