@@ -3,8 +3,7 @@ const { reviews, images, hosts, sequelize, Sequelize } = require("../models");
 //review 불러오기
 
 async function readReview(req, res) {
-   //try {
-        const {userId} = res.locals;
+   try {
         const {hostId} = req.params;
        
         const review = await reviews.findAll({
@@ -22,11 +21,11 @@ async function readReview(req, res) {
                 
             
         });
-                    res.status(200).send({review,  msg : "후기를 읽어옵니다."});
+     res.status(200).send({review,  msg : "후기를 읽어옵니다."});
 
-    // } catch (error) {
-    //     res.status(400).send({errorMessage: "댓글 조회에 실패하였습니다." });
-    // }
+    } catch (error) {
+        res.status(400).send({errorMessage: "댓글 조회에 실패하였습니다." });
+    }
 }
 
 //review 작성하기

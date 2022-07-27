@@ -109,41 +109,82 @@ async function hostsearch(req, res) {
 
 // 호스트 숙소 게시글 전체 조회
 async function getAllAcc(req, res) {
-    const findAllAcc = await hosts.findAll({
-        include : [{
-            model: images,
-            required: true,
-            attributes: [ 'hostId', 'postImageURL' ]
-        }]
+  const findAllAcc = await hosts.findAll({
+      include : [{
+          model: images,
+          required: true,
+          attributes: [ 'hostId', 'postImageURL', ]
+      }]
+  });
+  //개별 객체 for문
+  for ( j = 0 ; findAllAcc.length > j; j++ ){
+    const hoststar = findAllAcc[j]
+    
+    
+    const findStar = await reviews.findAll({
+      where : {hostId :hoststar.hostId },
+      attributes: ['starpoint']
     });
-    // for (i = 0 ; i < findAllAcc.length; i++) {
-    //   const host = findAllAcc[i];
-    //   const hostaverage = await reviews.findAll({
-    //   where : {hostId : host.hostId},
-    // })};
-    // const average = hostaverage.length 
-    // console.log(average);
-    // console.log(starpoint_avg);
+    
+    // 별점 평균 for 문
+    starsum =[];
+    for (i = 0; findStar.length > i; i++) {
+      const star = findStar[i]
+      
+      starsum.push(star.dataValues.starpoint);
+      
+  
+      }
+      
+      const numStar = findStar.length
+      let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
+      
+      Object.assign(hoststar,{
+        average: averageStarpoint
+      })
+      await hosts.update(
+        {average: averageStarpoint},
+        {where:{hostId:hoststar.hostId}}
+      )
+      
+        //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
+      // averageStarpoint = String(averageStarpoint) 
+  }
     res.send({ findAllAcc })
-}
+  }
 
 
 
 // 호스트 숙소 게시글 상세 조회
 async function getDetailAcc(req, res) {
-    const { hostId } = req.params; 
-    const findAllAcc = await hosts.findOne({
-        where: { hostId },
-        include : [{
-            model: images,
-            required: true,
-            attributes: [ 'hostId', 'postImageURL' ]
-        }]
-    });
-
-    res.send({ findAllAcc })
+  const { hostId } = req.params; 
+  const findAllAcc = await hosts.findOne({
+      where: { hostId },
+      include : [{
+          model: images,
+          required: true,
+          attributes: [ 'hostId', 'postImageURL' ]
+      }]
+  });
+  const findStar = await reviews.findAll({
+    where:{hostId},
+    attributes: ['starpoint']
+  })
+  console.log(findStar, '왜 안옴?');
+  starsum =[];
+  for (i = 0; findStar.length > i; i++) {
+   const star = findStar[i]
+    
+    starsum.push(star.dataValues.starpoint);
+    
+    }
+    
+     const numStar = findStar.length
+     let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
+       //위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
+     // averageStarpoint = String(averageStarpoint)
+    res.send({ findAllAcc, averageStarpoint })
 }
-
 
 
 
