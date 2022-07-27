@@ -313,8 +313,7 @@ async function GetPost(req, res) {
       },
       { where: { postId: post.postId } }
     );
-  }
-  outherPosts = {
+    outherPost = {
     postId,
     userId,
     title,
@@ -326,6 +325,8 @@ async function GetPost(req, res) {
     thumbnailURL,
     userImageURL,
   };
+  }
+  
 
 
   // 이 글에 나온 숙소 찾아오기
