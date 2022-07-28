@@ -104,7 +104,7 @@ async function hostCreateAcc(req, res) {
 
 
 //호스트 숙소 검색하기
-async function hostsearch(req, res) {
+async function hostAddresssearch(req, res) {
   const queryData = req.query;
   let key = {};
     
@@ -235,7 +235,10 @@ async function getAllAcc(req, res) {
       {  include : [{
             model: images,
             attributes: [ 'hostId', 'postImageURL' ]
-        }]}
+        }],
+        order: [["createdAt", "DESC"]],
+      }
+       
     );
     //개별 객체 for문
     
@@ -522,10 +525,29 @@ async function deleteAcc(req, res) {
    
   }
 
+async function hosTypesearch(req, res) {
+const querydata = req.query
+ const housebyType = await hosts.findAll({
+   where: { houseInfo: querydata.search },
+   include: [
+     {
+       model: images,
+       required: false,
+       attributes: ["hostId", "postImageURL", "thumbnailURL", "userImageURL"],
+     },
+   ],
+   order: [["createdAt", "DESC"]],
+ });
+
+
+res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
+}
+  
 
 module.exports.deleteAcc = deleteAcc
 module.exports.hostCreateAcc = hostCreateAcc;
 module.exports.getAllAcc = getAllAcc;
 module.exports.getDetailAcc = getDetailAcc;
 module.exports.updateAcc = updateAcc;
-module.exports.hostsearch = hostsearch;
+module.exports.hostAddresssearch = hostAddresssearch;
+module.exports.hosTypesearch = hosTypesearch;

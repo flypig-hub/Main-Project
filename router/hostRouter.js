@@ -15,7 +15,10 @@ router.get('/', userIdMiddleware, HostController.getAllAcc)
 
 
 // 숙소 검색하기
-router.get("/search", userIdMiddleware, HostController.hostsearch);
+router.get("/address/search", userIdMiddleware, HostController.hostAddresssearch);
+
+// 숙소 타입 검색하기
+router.get("/type/search", userIdMiddleware, HostController.hosTypesearch);
 
 
 // 호스트 숙소 상세 조회
