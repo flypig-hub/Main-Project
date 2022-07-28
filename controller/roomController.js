@@ -78,23 +78,13 @@ async function Roomdetail(req, res) {
         { roomUserId: { [Op.substring]: userId } }
       ]}
   });
-  
-//   chatingRooms.filter((rooms) => rooms !Room);
+ 
+  for (i = 0; i < chatingRooms.length; i++)
+  {
+    let chatRoom = chatingRooms[i];
+    if (chatRoom.roomId == roomId) { chatingRooms[i] = chatingRooms[0] ;chatingRooms[0] = chatRoom ;}
+  }
 
-//   chatingRooms.unshift(Room)
-//   if (Room.hostId != userId) {
-//  Room.roomUserId.push(Number(userId));
-//  Room.roomUserNickname.push(nickname);
-//  Room.roomUserImg.push(userImageURL);
-//  let roomUserNum = Room.roomUserId.length + 1;
-//  Room = await Room.update({
-//    roomUserId: Room.roomUserId,
-//    roomUserNickname: Room.roomUserNickname,
-//    roomUserImg: Room.roomUserImg,
-//    roomUserNum: roomUserNum,
-//  });
-//  chatingRooms.unshift(Room); 
-// }
   res
     .status(200)
     .send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room, loadChat });
