@@ -73,7 +73,6 @@ async function Roomdetail(req, res) {
   let chatingRooms = await Rooms.findAll({
     where: {
       [Op.or]: [
-         { roomId: roomId },
         { hostId: userId },
         { roomUserId: { [Op.substring]: userId } },
       ],
