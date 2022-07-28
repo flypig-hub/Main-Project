@@ -226,9 +226,9 @@ async function checkMe(req, res) {
     
     const hostinfo = hostpost.map((hosts) =>({
       title : hosts.title,
-      commentNum : hosts.commentNum,
-      likeNum : hosts.likeNum,
-      images : hosts.images
+      average : hosts.average,
+      images : hosts.images,
+     
     }));
   
     
