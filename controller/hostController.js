@@ -17,7 +17,7 @@ async function hostCreateAcc(req, res) {
     const { userId, nickname, userImageURL } = res.locals;
     
     const host = res.locals.host
-    try {
+    // try {
       if (host != true) {
         res.send({ errorMessage : "호스트가 아닙니다!" })
     };
@@ -35,8 +35,12 @@ async function hostCreateAcc(req, res) {
     } = req.body;
     const image = req.files;
 
-    const tagListArr = tagList.split(" ")
-
+    let tagListArr = [];
+    if (req.body.tagList) {
+      let tagListArray = tagList.split(" ")
+      tagListArr.push(tagListArray)
+    }
+    
     const createAcc = await hosts.create({
       // postId,
       userId,
@@ -82,14 +86,20 @@ async function hostCreateAcc(req, res) {
         const findAcc = await hosts.findAll({
           where: { hostId: createAcc.hostId }
         })
+
+        if (req.body.tagList) {
+          const tagListArr = tagList.split(" ")
+          
         Object.assign(findAcc[0], {
           tagList: tagListArr
         })
+        }
+        
         res.status(201).send({ findAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
     } 
-    } catch (error) {
-      res.status(400).send({errorMessage : "호스트 숙소 게시글 작성 실패"})
-    }
+    // } catch (error) {
+    //   res.status(400).send({errorMessage : "호스트 숙소 게시글 작성 실패"})
+    // }
 };
 
 
