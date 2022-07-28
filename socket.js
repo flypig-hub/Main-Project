@@ -79,7 +79,7 @@ module.exports = (server, app) => {
         socket
           .to(enterRoom.title)
           .emit("welcome", enterUser.dataValues.nickname);
-    }
+    
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
