@@ -102,6 +102,11 @@ async function WritePosting(req, res) {
   // S3 별도 통신 중에는 썸네일만 저장
   if (image) {
     const saveImage = await ImageController.PostImages(image, postInfo.postId);
+    const userImageSave = await images.update({
+      userId: userId
+    }, {
+      where: { postId : postInfo.postId}
+    })
   }
 res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   // } catch(e) {
