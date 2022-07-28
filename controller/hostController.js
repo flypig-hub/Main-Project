@@ -104,7 +104,7 @@ async function hostCreateAcc(req, res) {
 
 
 //호스트 숙소 검색하기
-async function hostsearch(req, res) {
+async function hostAddresssearch(req, res) {
   const queryData = req.query;
   let key = {};
     
