@@ -73,12 +73,16 @@ async function Roomdetail(req, res) {
   let chatingRooms = await Rooms.findAll({
     where: {
       [Op.or]: [
+        { roomId: roomId },
         { hostId: userId },
         { roomUserId: { [Op.substring]: userId } },
       ],
+       order: [[
+      { roomId: roomId } }
+    ]]
     },
   });
-  chatingRooms.unshift(Room);
+
 //   if (Room.hostId != userId) {
 //  Room.roomUserId.push(Number(userId));
 //  Room.roomUserNickname.push(nickname);
