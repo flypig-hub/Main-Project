@@ -63,12 +63,8 @@ try {
         review:review,
         starpoint:starpoint
     });
-    const rimg = await images.create({
-        reviewId : review_r.reviewId,
-        userImageURL:userImageURL,
-    })
  
-    res.status(201).send({review_r, rimg, msg : "후기 작성 완료!"});
+    res.status(201).send({review_r, msg : "후기 작성 완료!"});
 } catch (error) {
     res.status(400).send({result:false, errorMessage: "후기 작성을 할 수 없습니다."});
 }
