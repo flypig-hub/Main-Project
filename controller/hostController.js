@@ -35,7 +35,7 @@ async function hostCreateAcc(req, res) {
     } = req.body;
     const image = req.files;
 
-    const tagListArr = new Array(tagList)
+    const tagListArr = tagList.split(" ")
 
     const createAcc = await hosts.create({
       // postId,
@@ -49,7 +49,7 @@ async function hostCreateAcc(req, res) {
       stepInfo,
       link,
       hostContent,
-      tagList: tagListArr,
+      tagList: tagListArr.toString(),
       isSave: false,
       average : 0,
     });
@@ -78,15 +78,22 @@ async function hostCreateAcc(req, res) {
                 userImageURL: userImageURL,  
             })
         });
-        res.status(201).send({ createAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
+
+        const findAcc = await hosts.findAll({
+          where: { hostId: createAcc.hostId }
+        })
+        Object.assign(findAcc[0], {
+          tagList: tagListArr
+        })
+        res.status(201).send({ findAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
     } 
     } catch (error) {
       res.status(400).send({errorMessage : "호스트 숙소 게시글 작성 실패"})
     }
-  
 };
-//호스트 숙소 검색하기
 
+
+//호스트 숙소 검색하기
 async function hostsearch(req, res) {
   const queryData = req.query;
   let key = {};
@@ -292,7 +299,6 @@ async function getDetailAcc(req, res) {
       }]
   });
 
-
   let isSave = await saves.findOne({
     where : {hostId : hostId, userId: queryData.userId}
   });
@@ -302,7 +308,6 @@ async function getDetailAcc(req, res) {
   } else {
     isSave = false;
   }
-  
 
   const findStar = await reviews.findAll({
     where:{hostId},
@@ -314,11 +319,15 @@ async function getDetailAcc(req, res) {
   starsum =[];
   for (i = 0; findStar.length > i; i++) {
    const star = findStar[i]
-    
-    starsum.push(star.dataValues.starpoint);
-    
-
+  starsum.push(star.dataValues.starpoint);
   }
+
+  const tagListArr = findAllAcc.tagList.split(',')
+      console.log(tagListArr, "이거 확인하는거임");
+
+      Object.assign(findAllAcc,{
+        tagList: tagListArr
+      })
     
     if (findStar.length){
       const numStar = findStar.length
@@ -326,8 +335,10 @@ async function getDetailAcc(req, res) {
  
       Object.assign(findAllAcc,{
        average: averageStarpoint,
-       isSave:isSave
+       isSave:isSave,
+       tagList: tagListArr
      })
+     console.log(tagListArr, "상태 확인");
      await hosts.update(
        {average: averageStarpoint,
         isSave:isSave
@@ -348,7 +359,7 @@ async function getDetailAcc(req, res) {
 async function updateAcc(req, res) {
     const { userId, nickname, userImageURL } = res.locals;
     const { hostId } = req.params;
-    try {
+    // try {
       const findAcc = await hosts.findOne({ where: { hostId } })
       if (userId !== findAcc.userId) {
           res.send({ errorMessage: "작성자가 아닙니다!" })
@@ -367,6 +378,8 @@ async function updateAcc(req, res) {
           tagList 
       } = req.body;
       const image = req.files;
+
+      const tagListArr = tagList.split(" ")
   
       const updateAcc = await hosts.update({
           title,
@@ -385,6 +398,10 @@ async function updateAcc(req, res) {
   
       const updatedAcc = await hosts.findOne({
           where: { hostId:hostId }
+      })
+
+      Object.assign(updatedAcc, {
+        tagList: tagListArr
       })
   
       if (image) {
@@ -436,9 +453,9 @@ async function updateAcc(req, res) {
           });
           res.status(200).send({ updatedAcc, postImagesUrl, msg: "게시글이 수정되었습니다!" });
         }
-    } catch (error) {
-      res.status(400).send({errorMessage : "게시물 수정 실패"})
-    }
+    // } catch (error) {
+    //   res.status(400).send({errorMessage : "게시물 수정 실패"})
+    // }
    
 }
 

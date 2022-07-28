@@ -17,7 +17,8 @@ router.get('/', userIdMiddleware, HostController.getAllAcc)
 router.get("/search", userIdMiddleware, HostController.hostsearch);
 
 // 호스트 숙소 상세 조회
-router.get("/:hostId", userIdMiddleware, HostController.getDetailAcc);
+// router.get("/:hostId", userIdMiddleware, HostController.getDetailAcc);
+router.get("/:hostId",  HostController.getDetailAcc);
 
 
 // 호스트 숙소 수정
