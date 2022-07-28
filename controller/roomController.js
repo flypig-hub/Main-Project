@@ -78,7 +78,7 @@ async function Roomdetail(req, res) {
         { roomUserId: { [Op.substring]: userId } },
       ],
        order: [[
-      { roomId: roomId } }
+      { roomId: roomId }
     ]]
     },
   });
