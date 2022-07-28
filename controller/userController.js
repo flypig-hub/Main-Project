@@ -16,7 +16,7 @@ const kakaoCallback = (req, res, next) => {
       
       { failureRedirect: '/' },
       (err, users, images, info) => {
-        
+          console.log('여기가 문제가 발생하나요?(여긴 콜백함수입니다!)' );
           if (err) return next(err)
           //----------------------------------------------------------------
           
@@ -138,12 +138,12 @@ async function checkMe(req, res) {
   const {userId} = res.locals;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
-  try {
+  //try {
     const mysavelist = await saves.findAll({
       where : {userId},
   
     })
-    
+    // 저장한 게시물
     const mysavehost = []
     const mysaveinfo = mysavelist.map((saveinfo) =>(
     saveinfo.hostId));
@@ -156,12 +156,12 @@ async function checkMe(req, res) {
             attributes: ['hostId', 'thumbnailURL']
           }],
         })
-        
+        console.log(mysaveinfo);
         const mysavehostlist = {
           title : savehost.title,
-          commentNum : savehost.commentNum,
-          likeNum : savehost.likeNum,
-          images : savehost.images
+          average : savehost.average,
+          images : savehost.images,
+          
   
         }
         
@@ -241,9 +241,9 @@ async function checkMe(req, res) {
   
       // mypostthumbnail
     })
-  } catch (error) {
-    res.status(400).send({errorMessage : "마이페이지 오류"})
-  }
+  // } catch (error) {
+  //   res.status(400).send({errorMessage : "마이페이지 오류"})
+  // }
   // 저장한 게시물
   
  }

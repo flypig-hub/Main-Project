@@ -1,4 +1,4 @@
-const { Comments, images, sequelize, Sequelize } = require("../models");
+const { Comments, users, images, sequelize, Sequelize } = require("../models");
 
 
 //댓글 불러오기 API
@@ -11,15 +11,25 @@ async function readComment(req, res) {
         postId
       },
       include: [{
-        model: images,
-        attributes: ['commentid', 'userImageURL']
+        model: users,
+        attributes: ['nickname', 'userImageURL']
       }],
       order: [
         ["commentid", "DESC"],
         
       ],
     });
-        res.status(200).send({ comments, msg : "댓글을 읽었습니다."});
+     const commentInfo = await comments.map((commentinfo) =>({
+      userId : commentinfo.userId,
+      commentId : commentinfo.commentId,
+      comment : commentinfo.comment,
+      userImageURL : commentinfo.user.userImageURL,
+      nickname : commentinfo.user.nickname
+     }));
+
+
+
+   res.status(200).send({ commentInfo, msg : "댓글을 읽었습니다."});
       
   } catch (error) {
     res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
@@ -53,12 +63,9 @@ async function writeComment(req, res) {
     comment: comment,
     nickname: nickname,
   });
-  const commentImg = await images.create({
-    commentId : comment_c.commentId,
-    userImageURL : userImageURL
-  })
 
-  res.status(201).send({comment_c, commentImg, msg: "댓글이 등록 되었습니다." });
+
+  res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
 // } catch (err) {
 //   // console.log(err);
 //   res

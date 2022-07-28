@@ -542,7 +542,7 @@ const querydata = req.query
 res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
 }
 
-
+// 숙소 타입별 검색 api
 async function hostsearch(req, res) {
 const queryData = req.query;
 const hostPost = await hosts.findAll({where: {

@@ -49,10 +49,15 @@ module.exports = (server, app) => {
           userImg: null,
         });
       }
-      if (
-        enterRoom.dataValues.hostId != Number(userId) &&
-        !enterRoom.dataValues.roomUserId.includes(Number(userId))
-      ) {
+      console.log(enterRoom,"룸유저아이디",enterRoom.dataValues.roomUserId)
+      console.log("유저가 방에 들어와있나요?", enterRoom.dataValues.roomUserId.includes(Number(userId), enterRoom.dataValues.roomUserId, Number(userId)))
+      console.log("호스트가 방에 들어와있나요?",enterRoom.dataValues.hostId == Number(userId), enterRoom.dataValues.hostId,Number(userId) )         
+      console.log("호스트와 유저 둘다 아닌가요?",enterRoom.dataValues.hostId != Number(userId) &&
+        !enterRoom.dataValues.roomUserId.includes(Number(userId)))
+      if (enterRoom.dataValues.hostId != Number(userId) &&
+        !enterRoom.dataValues.roomUserId.includes(Number(userId)))
+      
+       {
         let userImageURL = await images.findOne({
           attributes: ["userImageURL"],
           where: { userId: userId },
@@ -61,7 +66,7 @@ module.exports = (server, app) => {
         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
         let roomUserNum = enterRoom.roomUserNickname.length + 1;
         enterRoom.roomUserImg.push(userImageURL.userImageURL);
-
+        
         await Rooms.update(
           {
             roomUserId: enterRoom.dataValues.roomUserId,
@@ -70,11 +75,11 @@ module.exports = (server, app) => {
             roomUserNum: roomUserNum,
           },
           { where: { roomId: roomId } }
-        );
+        );}
         socket
           .to(enterRoom.title)
           .emit("welcome", enterUser.dataValues.nickname);
-      }
+    
     });
 
     socket.on("chat_message", async (messageChat, userId, roomId) => {
