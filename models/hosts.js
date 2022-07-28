@@ -40,7 +40,9 @@ module.exports = (sequelize, DataTypes) => {
     stepInfo: DataTypes.STRING,
     link: DataTypes.STRING,
     hostContent: DataTypes.STRING,
-    preImages: DataTypes.STRING
+    preImages: DataTypes.STRING,
+    tagList : DataTypes.STRING
+
   }, {
     sequelize,
     modelName: 'hosts',
