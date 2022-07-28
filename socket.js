@@ -49,8 +49,11 @@ module.exports = (server, app) => {
           userImg: null,
         });
       }
+      console.log(enterRoom,"룸유저아이디",enterRoom.dataValues.roomUserId)
       console.log("유저가 방에 들어와있나요?", enterRoom.dataValues.roomUserId.includes(Number(userId), enterRoom.dataValues.roomUserId, Number(userId)))
-console.log("호스트가 방에 들어와있나요?",enterRoom.dataValues.hostId === Number(userId), enterRoom.dataValues.hostId,Number(userId) )            
+console.log("호스트가 방에 들어와있나요?",enterRoom.dataValues.hostId == Number(userId), enterRoom.dataValues.hostId,Number(userId) )         
+      console.log("호스트와 유저 둘다 아닌가요?",enterRoom.dataValues.hostId !== Number(userId) &&
+        !enterRoom.dataValues.roomUserId.includes(Number(userId)))
 //       if (enterRoom.dataValues.roomUserId.includes(Number(userId)))
 //       {}
 //         else if (enterRoom.dataValues.hostId === Number(userId))
