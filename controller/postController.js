@@ -88,20 +88,21 @@ async function WritePosting(req, res) {
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
 
+  // S3 별도 통신 중에는 썸네일만 저장
 if (image) {
   postImageKey.forEach((element, i) => {
     const postImageKEY = postImageKey[i];
     const postImageURL = postImageUrl[i];
     // console.log(postImageKEY, postImageURL)
     const imagesInfo = images.create({
-      userId: userId,
-      nickname: nickname,
-      postId: postInfo.postId,
+      // userId: userId,
+      // nickname: nickname,
+      // postId: postInfo.postId,
       thumbnailURL: thumbnailURL.toString(),
       thumbnailKEY: thumbnailKEY.toString(),
-      postImageURL: postImageURL,
-      postImageKEY: postImageKEY,
-      userImageURL: userImageURL
+      // postImageURL: postImageURL,
+      // postImageKEY: postImageKEY,
+      // userImageURL: userImageURL
     })
   })
 }

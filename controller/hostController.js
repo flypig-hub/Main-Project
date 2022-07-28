@@ -578,58 +578,124 @@ async function updateAcc(req, res) {
     } = req.body;
     const image = req.files;
 
+    // 기존 사진 KEY, URL 찾기
+    if (existImages) {
+    const findImageURL = await images.findAll({
+      where: { hostId },
+      attributes: ['postImageURL']
+    })
+    const findImageKEY = await images.findAll({
+      where: { hostId },
+      attributes: ['postImageKEY']
+    })
+
+    let imageKEY = [];
+    let imageURL = [];
+    let newImageKEY = [];
+    let newImageURL = [];
+    for (let i = 0; i < findImageURL.length; i++) {
+      let KEY = findImageKEY[i].postImageKEY;
+      let URL = findImageURL[i].postImageURL;
+      imageKEY.push(KEY);
+      imageURL.push(URL);
+
+      let newImageKey = image[i].key;
+      let newImageUrl = image[i].location;
+      newImageKEY.push(newImageKey)
+      newImageURL.push(newImageUrl)
+    }
+    console.log(imageKEY, imageURL);
+    console.log(newImageKEY, newImageURL, "이거 화ㅓㄱ인");
+
+    // 추가되는 새로운 사진
+    // const postImageKey = image.map((postImageKey) => postImageKey.key);
+    // const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
+    // const thumbnailKEY = postImageKey[0];
+    // const thumbnailURL = postImageUrl[0]; 
+
+    Object.assign(postImageKey, {
+      findImageURL:findImageURL
+    })
+
+    const KEY = findImageKEY.toString()
+    const URL = findImageURL.toString()
+
+    res.send({ findImageURL, findImageKEY, postImageUrl })
+  }
+}
+
+    
+
     // 기존 사진 전달값
     // existImages = [{
-    // {hostId: 14, 
-    // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png', 
-    // postImageKEY: 'images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png'}
-    // {hostId: 14, 
-    // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp', 
-    // postImageKEY: 'images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp'}
-    // {hostId: 14, 
-    // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/452895a5-f23d-453a-8571-ba7438469c04.png', 
-    // postImageKEY: 'images/452895a5-f23d-453a-8571-ba7438469c04.png'}
-    // {hostId: 14, 
-    // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/a02e4056-7938-4a8a-a6dd-dfe431752eba.png', 
-    // postImageKEY: 'images/a02e4056-7938-4a8a-a6dd-dfe4317}
+    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png', 
+    //  postImageKEY: 'images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png'}
+    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp', 
+    //  postImageKEY: 'images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp'}
+    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/452895a5-f23d-453a-8571-ba7438469c04.png', 
+    //  postImageKEY: 'images/452895a5-f23d-453a-8571-ba7438469c04.png'}
+    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/a02e4056-7938-4a8a-a6dd-dfe431752eba.png', 
+    //  postImageKEY: 'images/a02e4056-7938-4a8a-a6dd-dfe4317}
     // }]
 
-    let regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
-    // console.log(existImages.slice(3, -4).replace(regExp, ""), "키값, URL 데이터 확인+++++++++++++++++++++++++++++++++++++++++++++");
-    let stringCut = existImages.slice(3, -4).replace(regExp, "")
-    console.log(stringCut);
-    // let stringCut2 = stringCut.replaceAll('hostId', "")
-    // console.log('이걸로 확인합니다', stringCut2);
-    // let stringCut3 = stringCut2.split(" ")
+
+    // ====== 기존 사진 중 일부 유지, 사진 추가  ======
+  //   if (existImages) {
+  //     let stringCut = existImages.slice(3, -4)
+  //     let stringCut2 = stringCut.replaceAll("{", "")
+  //     let stringCut3 = stringCut2.replaceAll("}", "")
+  //     let stringCut4 = stringCut3.replaceAll("'", "")
+  //     let stringCut5 = stringCut4.replaceAll(",", "")
+  //     let stringCut6 = stringCut5.replaceAll("postImageURL:", "")
+  //     let stringCut7 = stringCut6.replaceAll("postImageKEY:", "")
+  //     let stringCut8 = stringCut7.trim().split("  ");
+  //     let imageKEY = [];
+  //     let imageURL = [];
+  //     for (let i = 0; i < stringCut8.length/2; i++) {
+  //       let stringCut9 = stringCut8[i * 2]
+  //       let stringCut10 = stringCut8[i * 2 + 1]
+  //       imageURL.push(stringCut9)
+  //       imageKEY.push(stringCut10)
+  //       }
+  //       console.log(imageKEY);
+  //       console.log(imageURL);
+
+  //   const findImages = await images.findAll({
+  //     where: { hostId },
+  //     attributes: ['postImageKEY', 'postImageURL']
+  //   })
+
+  // }
+    
 
 
-    const tagListArr = tagList.split(" ")
+    // const tagListArr = tagList.split(" ")
 
-    const updateAcc = await hosts.update({
-        title,
-        category,
-        houseInfo,
-        mainAddress,
-        subAddress,
-        stepSelect,
-        stepInfo,
-        link,
-        hostContent,
-        tagList
-    },{
-        where: { hostId:hostId }
-    });
+    // const updateAcc = await hosts.update({
+    //     title,
+    //     category,
+    //     houseInfo,
+    //     mainAddress,
+    //     subAddress,
+    //     stepSelect,
+    //     stepInfo,
+    //     link,
+    //     hostContent,
+    //     tagList
+    // },{
+    //     where: { hostId:hostId }
+    // });
 
-    const updatedAcc = await hosts.findOne({
-        where: { hostId:hostId }
-    })
+    // const updatedAcc = await hosts.findOne({
+    //     where: { hostId:hostId }
+    // })
 
-    Object.assign(updatedAcc, {
-      tagList: tagListArr
-    })
+    // Object.assign(updatedAcc, {
+    //   tagList: tagListArr
+    // })
 
-      res.status(200).send({ updatedAcc, stringCut3, msg: "게시글이 수정되었습니다!" });
-    }
+    //   res.status(200).send({ msg: "게시글이 수정되었습니다!" });
+    // }
   // } catch (error) {
   //   res.status(400).send({errorMessage : "게시물 수정 실패"})
   // }
