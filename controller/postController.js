@@ -239,15 +239,11 @@ async function GetPost(req, res) {
 
     // tagList 배열화
     let newTagStr = '';
-    // let newTagList = [];
     if (allPost[0].tagList) {
     const newTag = allPost[0].tagList.split(" ");
     console.log(newTag);
-    // newTaglist.push(newTag)
     newTagStr += newTag
-    // newTagList.push(newTagStr)
     }
-    console.log(newTagStr.split(','), "이거 확인");
     
     Object.assign(allPost[0], {
       likeNum: likeNum,
@@ -619,7 +615,10 @@ async function ModifyPosting(req, res) {
     // existImagesURL : s3://yushin-s3/images/0022707f-1490-4072-9f61-c3faefed3d28.PNG
   // }]
   
-  console.log(existImages);
+  console.log(existImages.toString(), "키값, URL 데이터 확인+++++++++++++++++++++++++++++++++++++++++++++");
+  existImages.forEach(function(value) {
+    console.log(value);
+  })
 
   // 새로운 사진과 기존 사진을 더함
   if (image) {
@@ -636,7 +635,7 @@ async function ModifyPosting(req, res) {
       postImageUrl.push(existImagesURL);
       // console.log(postImageUrl, "이건???");
     }
-    // console.log(PostImageKey, postImageUrl, "이건가???");
+    console.log(PostImageKey, postImageUrl, "이건가???");
 
     const postImageKey = findImageInfo.map((postImageKey) => postImageKey.postImageKEY);
     postImageKey.forEach((element, i) => {
@@ -657,6 +656,7 @@ async function ModifyPosting(req, res) {
     const deleteImages = await images.destroy({
       where: { postId }
     })
+    console.log(deleteImages, "DB 삭제 완료!");
 
     PostImageKey.forEach((element, i) => {
     const ImageKey = postImageKey[i];
@@ -666,14 +666,14 @@ async function ModifyPosting(req, res) {
       userId: userId,
       nickname: nickname,
       postId: postId,
-      postImageKEY : ImageKey.toString(),
-      postImageURL : ImageURL.toString(),
+      postImageKEY : ImageKey,
+      postImageURL : ImageURL,
       thumbnailKEY : thumbnailKEY,
       thumbnailURL : thumbnailURL,
       userImageURL
     })
   })
-  } else {
+  } else if (!image) {
     // 추가되는 사진이 없고 기존 사진이 있음
     let imageKEY = [];
     let imageURL = [];
@@ -712,8 +712,6 @@ async function ModifyPosting(req, res) {
 }
 
   // 이전 사진 + 새로운 사진 풀어서 DB 저장
-
-
   const tagListArr = req.body.tagList.split(",");
 
   const updatePost = await posts.update({

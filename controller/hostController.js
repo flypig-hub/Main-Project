@@ -293,7 +293,7 @@ async function getDetailAcc(req, res) {
   if (queryData.userId === undefined)
   {queryData.userId = 0}
 
-  try {
+  // try {
     const findAllAcc = await hosts.findOne({
       where: { hostId },
       include : [{
@@ -326,12 +326,15 @@ async function getDetailAcc(req, res) {
   starsum.push(star.dataValues.starpoint);
   }
 
-  const tagListArr = findAllAcc.tagList.split(" ")
+  if (findAllAcc.tagList) {
+    const tagListArr = findAllAcc.tagList.split(" ")
       console.log(tagListArr, "이거 확인하는거임");
-
+      
       Object.assign(findAllAcc,{
         tagList: tagListArr
       })
+  }
+      
     
     if (findStar.length){
       const numStar = findStar.length
@@ -351,9 +354,9 @@ async function getDetailAcc(req, res) {
      )
     }
     res.status(200).send({ findAllAcc})
-  } catch (error) {
-    res.status(400).send({errorMessage : "호스트 숙소 상세 조회 실패"})
-  }
+  // } catch (error) {
+  //   res.status(400).send({errorMessage : "호스트 숙소 상세 조회 실패"})
+  // }
   
 }
 
