@@ -13,6 +13,8 @@ router.post('/', authMiddleware, upload.array('images', 8), HostController.hostC
 // 호스트 숙소 전체 조회
 router.get('/', userIdMiddleware, HostController.getAllAcc)
 
+// 호스트 숙소 전체 조회
+router.get('/search', userIdMiddleware, HostController.hostsearch)
 
 // 숙소 검색하기
 router.get("/address/search", userIdMiddleware, HostController.hostAddresssearch);
