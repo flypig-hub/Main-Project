@@ -61,3 +61,27 @@ async function DeleteImages(req, res) {
 
 module.exports.PostImage = PostImage;
 module.exports.DeleteImages = DeleteImages;
+
+
+async function PostImage(image, postId) {
+  // const { userId } = res.locals.userId;
+  const postImageKey = image.map(postImageKEY => postImageKEY.key);
+  const postImageUrl = image.map(postImageURL => postImageURL.location);
+  const thumbnailKEY = postImageKey[0];
+  const thumbnailURL = postImageUrl[0];
+
+  postImageKey.forEach((element, i) => {
+    const postImageKEY = postImageKey[i];
+    const postImageURL = postImageUrl[i]
+
+  const postImages = images.create({ 
+      // userId: userId,
+      postId: postId,
+      thumbnailURL: thumbnailURL.toString(),
+      thumbnailKEY: thumbnailKEY.toString(),
+      postImageURL: postImageURL.toString(),
+      postImageKEY: postImageKEY.toString(),
+      // userImageURL: userImageURL
+  });
+})
+};

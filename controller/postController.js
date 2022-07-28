@@ -13,6 +13,7 @@ const {
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
 const Op = Sequelize.Op;
+const ImageController = require("./ImageController")
 
 
 
@@ -33,8 +34,6 @@ async function WritePosting(req, res) {
     preImages
     } = req.body;
   const image = req.files;
-
-  const tagListArr = new Array(tagList)
 
   let isLike = false;
 
@@ -83,30 +82,28 @@ async function WritePosting(req, res) {
     preImages
   });
 
+  let newTagStr = '';
+    if (req.body.tagList) {
+    const newTag = req.body.tagList.split(" ");
+    console.log(newTag);
+    newTagStr += newTag
+    console.log(newTagStr.split(','));
+
+    Object.assign(postInfo, {
+      tagList: newTagStr.split(',')
+    });
+  }
+
   const postImageKey = image.map((postImageKey) => postImageKey.key);
   const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
 
   // S3 별도 통신 중에는 썸네일만 저장
-if (image) {
-  postImageKey.forEach((element, i) => {
-    const postImageKEY = postImageKey[i];
-    const postImageURL = postImageUrl[i];
-    // console.log(postImageKEY, postImageURL)
-    const imagesInfo = images.create({
-      // userId: userId,
-      // nickname: nickname,
-      // postId: postInfo.postId,
-      thumbnailURL: thumbnailURL.toString(),
-      thumbnailKEY: thumbnailKEY.toString(),
-      // postImageURL: postImageURL,
-      // postImageKEY: postImageKEY,
-      // userImageURL: userImageURL
-    })
-  })
-}
-res.status(201).send({ postInfo, tagListArr, postImageUrl, thumbnailURL });
+  if (image) {
+    const saveImage = await ImageController.PostImage(image, postInfo.postId);
+  }
+res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   // } catch(e) {
   //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   // }
