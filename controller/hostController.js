@@ -329,7 +329,7 @@ async function getDetailAcc(req, res) {
   if (findAllAcc.tagList) {
     const tagListArr = findAllAcc.tagList.split(" ")
       console.log(tagListArr, "이거 확인하는거임");
-      
+
       Object.assign(findAllAcc,{
         tagList: tagListArr
       })
@@ -343,7 +343,6 @@ async function getDetailAcc(req, res) {
       Object.assign(findAllAcc,{
        average: averageStarpoint,
        isSave:isSave,
-       tagList: tagListArr
      })
      console.log(tagListArr, "상태 확인");
      await hosts.update(
