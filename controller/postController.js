@@ -103,7 +103,9 @@ async function WritePosting(req, res) {
   if (image) {
     const saveImage = await ImageController.PostImages(image, postInfo.postId);
     const userImageSave = await images.update({
-      userId: userId
+      userId: userId,
+      userImageURL:userImageURL,
+      nickname: nickname
     }, {
       where: { postId : postInfo.postId}
     })
