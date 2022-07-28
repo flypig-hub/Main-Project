@@ -79,7 +79,7 @@ async function Roomdetail(req, res) {
       ]}
   });
   for (i=0;i<chatingRooms.length;i++){
-if (!chatingRooms[i].roomId.includes(Number(postId))){
+if (!chatingRooms[i].roomId.includes(Number(roomId))){
   chatingRooms.unshift(Room)
   
 }}
