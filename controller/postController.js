@@ -202,7 +202,7 @@ async function GetPost(req, res) {
       {
         model: images,
         required: false,
-        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+        attributes: ["postId", "postImageKEY", "postImageURL", "thumbnailURL", "userImageURL"],
       },
       {
         model: Comments,
@@ -243,13 +243,16 @@ async function GetPost(req, res) {
     const newTag = allPost[0].tagList.split(" ");
     console.log(newTag);
     newTagStr += newTag
+
+    Object.assign(allPost[0], {
+      tagList: newTagStr.split(',')
+    });
     }
     
     Object.assign(allPost[0], {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
-      tagList: newTagStr.split(',')
     });
   await posts.update(
     {

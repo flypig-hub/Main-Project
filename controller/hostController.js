@@ -339,8 +339,9 @@ async function getDetailAcc(req, res) {
   starsum.push(star.dataValues.starpoint);
   }
 
+  console.log(findAllAcc.tagList);
   if (findAllAcc.tagList) {
-    const tagListArr = findAllAcc.tagList.split(", ")
+    const tagListArr = findAllAcc.tagList.split(",")
       console.log(tagListArr, "이거 확인하는거임");
 
       Object.assign(findAllAcc,{
