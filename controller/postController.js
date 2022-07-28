@@ -606,7 +606,7 @@ async function ModifyPosting(req, res) {
     where: { postId }
   })
 
-  // 새로운 사진 형태
+  // 기존 사진 전달값
   // existImages = [{
     // existImagesKEY : images/001744b2-bca4-4097-a6a0-fcdbf0f0c44e.PNG, 
     // existImagesURL : s3://yushin-s3/images/001744b2-bca4-4097-a6a0-fcdbf0f0c44e.PNG
@@ -616,9 +616,8 @@ async function ModifyPosting(req, res) {
   // }]
   
   console.log(existImages.toString(), "키값, URL 데이터 확인+++++++++++++++++++++++++++++++++++++++++++++");
-  existImages.forEach(function(value) {
-    console.log(value);
-  })
+  console.log(existImages[0].existImagesKEY);
+
 
   // 새로운 사진과 기존 사진을 더함
   if (image) {
@@ -630,7 +629,8 @@ async function ModifyPosting(req, res) {
     if (existImages) {
       const existImagesKEY = Object.values(existImages)
       const existImagesURL = Object.keys(existImages)
-      // console.log(existImagesURL, "이거 테스트");
+      console.log(existImagesKEY, "키 값도 확인하기");
+      console.log(existImagesURL, "이거 테스트");
       PostImageKey.push(existImagesKEY);
       postImageUrl.push(existImagesURL);
       // console.log(postImageUrl, "이건???");
