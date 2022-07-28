@@ -75,12 +75,11 @@ async function Roomdetail(req, res) {
       [Op.or]: [
         { roomId: Number(roomId) },
         { hostId: userId },
-        { roomUserId: { [Op.substring]: userId } },
-      ],
+        { roomUserId: { [Op.substring]: userId } }
+      ]},
        order: [[
       { roomId: Number(roomId) }
-    ]]
-    },
+    ]],
   });
 
 //   if (Room.hostId != userId) {
