@@ -67,7 +67,7 @@ async function Roomdetail(req, res) {
   let Room = await Rooms.findOne({ where: { roomId: Number(roomId) } });
   let loadChat = []
 
-  if (Room.dataValues.roomUserId.includes(userId)||Room.dataValues.hostId==userId) {
+  if (Room.roomUserId.includes(userId)||Room.hostId==userId) {
      loadChat = await Chats.findAll({ where: { roomId: Number(roomId) } });
   }
   let chatingRooms = await Rooms.findAll({
@@ -76,12 +76,13 @@ async function Roomdetail(req, res) {
         { roomId: Number(roomId) },
         { hostId: userId },
         { roomUserId: { [Op.substring]: userId } }
-      ]},
-//        order: [[
-//       {roomId:roomId}
-//     ]]
+      ]}
   });
-
+  for (i=0;i<chatingRooms.length;i++){
+if (!chatingRooms[i].roomId.includes(Number(postId))){
+  chatingRooms.unshift(Room)
+  
+}}
 //   if (Room.hostId != userId) {
 //  Room.roomUserId.push(Number(userId));
 //  Room.roomUserNickname.push(nickname);
