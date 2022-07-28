@@ -79,19 +79,19 @@ async function Roomdetail(req, res) {
     },
   });
   
-  if (Room.hostId != userId) {
- Room.roomUserId.push(Number(userId));
- Room.roomUserNickname.push(nickname);
- Room.roomUserImg.push(userImageURL);
- let roomUserNum = Room.roomUserId.length + 1;
- Room = await Room.update({
-   roomUserId: Room.roomUserId,
-   roomUserNickname: Room.roomUserNickname,
-   roomUserImg: Room.roomUserImg,
-   roomUserNum: roomUserNum,
- });
- chatingRooms.unshift(Room); 
-}
+//   if (Room.hostId != userId) {
+//  Room.roomUserId.push(Number(userId));
+//  Room.roomUserNickname.push(nickname);
+//  Room.roomUserImg.push(userImageURL);
+//  let roomUserNum = Room.roomUserId.length + 1;
+//  Room = await Room.update({
+//    roomUserId: Room.roomUserId,
+//    roomUserNickname: Room.roomUserNickname,
+//    roomUserImg: Room.roomUserImg,
+//    roomUserNum: roomUserNum,
+//  });
+//  chatingRooms.unshift(Room); 
+// }
   res
     .status(200)
     .send({ msg: "룸 상세조회에 성공했습니다.", chatingRooms, Room, loadChat });
