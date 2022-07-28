@@ -1,4 +1,4 @@
-const app = require("./app");up
+const app = require("./app");
 const fs = require("fs");
 const {
   images,
