@@ -78,7 +78,7 @@ async function Roomdetail(req, res) {
       ],
     },
   });
-  
+  chatingRooms.unshift(Room);
 //   if (Room.hostId != userId) {
 //  Room.roomUserId.push(Number(userId));
 //  Room.roomUserNickname.push(nickname);
