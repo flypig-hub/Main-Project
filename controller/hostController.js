@@ -312,7 +312,7 @@ async function getDetailAcc(req, res) {
       include : [{
           model: images,
           required: true,
-          attributes: [ 'hostId', 'postImageURL' ]
+          attributes: [ 'hostId', 'postImageURL', 'postImageKEY' ]
       }]
   });
 
