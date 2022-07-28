@@ -64,20 +64,21 @@ async function Roomdetail(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImageURL } = res.locals;
  
-  let Room = await Rooms.findOne({ where: { roomId: roomId } });
+  let Room = await Rooms.findOne({ where: { roomId: Number(roomId) } });
   let loadChat = []
 
   if (Room.dataValues.roomUserId.includes(userId)||Room.dataValues.hostId==userId) {
-     loadChat = await Chats.findAll({ where: { roomId: roomId } });
+     loadChat = await Chats.findAll({ where: { roomId: Number(roomId) } });
   }
   let chatingRooms = await Rooms.findAll({
     where: {
       [Op.or]: [
+        { where: { roomId: Number(roomId) }
         { hostId: userId },
         { roomUserId: { [Op.substring]: userId } },
       ],
        order: [[
-      { roomId: roomId }
+      { roomId: Number(roomId) }
     ]]
     },
   });
@@ -138,7 +139,7 @@ async function enterRoom(req, res) {
   const { roomId } = req.params;
   const { userId, nickname, userImageURL } = res.locals;
   
-  let room = await Rooms.findOne({ where: { roomId: roomId } });
+  let room = await Rooms.findOne({ where: { roomId: Number(roomId) } });
  
   try {
     if (room.hostId == userId) {
@@ -171,7 +172,7 @@ async function exitRoom(req, res) {
   const { roomId } = req.params;
   const { userId,nickname,userImgURL } = res.locals.user;
 
-  const room = await Rooms.findOne({ where: { roomId: roomId } });
+  const room = await Rooms.findOne({ where: { roomId: Number(roomId) } });
   console.log(room.roomUserNickname, room.roomUserNickname.userId, userId);
 
   if (userId === room.hostId) {
