@@ -1,5 +1,4 @@
 const {
-    hosts,
     saves,
     sequelize,
     Sequelize
