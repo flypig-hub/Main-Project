@@ -31,7 +31,7 @@ async function WritePosting(req, res) {
     link,
     houseTitle,
     tagList,
-    preImages
+    // preImages
     } = req.body;
   const image = req.files;
 
@@ -79,7 +79,7 @@ async function WritePosting(req, res) {
     likeNum: 0,
     isLike: isLike,
     tagList,
-    preImages
+    // preImages
   });
 
   let newTagStr = '';
@@ -343,9 +343,9 @@ async function GetPost(req, res) {
       tagList: {
         enumerable: false,
       },
-      preImages: {
-        enumerable: false,
-      },
+      // preImages: {
+      //   enumerable: false,
+      // },
       createdAt: {
         enumerable: false,
       },
