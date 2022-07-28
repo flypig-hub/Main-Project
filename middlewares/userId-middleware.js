@@ -21,6 +21,11 @@ module.exports = async (req, res, next) => {
 
     next();
   } catch {
+    res.locals.userId = 0;
+    res.locals.nickname = "손님";
+    res.locals.host = "";
+    res.locals.email = "";
+    res.locals.userImageURL = "";
     next();
   }
 };
