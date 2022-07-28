@@ -3,7 +3,7 @@ const { reviews, images, users, hosts, sequelize, Sequelize } = require("../mode
 //review 불러오기
 
 async function readReview(req, res) {
-  // try {
+   try {
         const {hostId} = req.params;
        
         const review = await reviews.findAll({
@@ -31,9 +31,9 @@ async function readReview(req, res) {
       
      res.status(200).send({reviewInfo,  msg : "후기를 읽어옵니다."});
 
-    // } catch (error) {
-    //     res.status(400).send({errorMessage: "댓글 조회에 실패하였습니다." });
-    // }
+    } catch (error) {
+        res.status(400).send({errorMessage: "댓글 조회에 실패하였습니다." });
+    }
 }
 
 //review 작성하기
