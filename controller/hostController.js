@@ -35,6 +35,8 @@ async function hostCreateAcc(req, res) {
     } = req.body;
     const image = req.files;
 
+    const tagListArr = new Array(tagList)
+
     const createAcc = await hosts.create({
       // postId,
       userId,
@@ -47,7 +49,7 @@ async function hostCreateAcc(req, res) {
       stepInfo,
       link,
       hostContent,
-      tagList,
+      tagList: tagListArr,
       isSave: false,
       average : 0,
     });
