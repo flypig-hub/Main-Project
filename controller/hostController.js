@@ -235,7 +235,10 @@ async function getAllAcc(req, res) {
       {  include : [{
             model: images,
             attributes: [ 'hostId', 'postImageURL' ]
-        }]}
+        }],
+        order: [["createdAt", "DESC"]],
+      }
+       
     );
     //개별 객체 for문
     
