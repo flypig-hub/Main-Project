@@ -541,7 +541,22 @@ const querydata = req.query
 
 res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
 }
-  
+
+
+async function hostsearch(req, res) {
+const queryData = req.query;
+const hostPost = await hosts.findAll({where: {
+    [Op.or]: [
+      { title: { [Op.substring]: queryData.search } },
+      { hostContent: { [Op.substring]: queryData.search } },
+    ],
+},
+  order: [[
+    { title: { [Op.substring]: queryData.search } },"createdAt", "DESC"
+  ]]
+});
+res.status(200).send({msg:"숙소검색 완료", hostPost})
+};
 
 module.exports.deleteAcc = deleteAcc
 module.exports.hostCreateAcc = hostCreateAcc;
@@ -550,8 +565,7 @@ module.exports.getDetailAcc = getDetailAcc;
 module.exports.updateAcc = updateAcc;
 module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
-
-
+module.exports.hostsearch = hostsearch;
 
 // 게시글 수정( 수정 중 )
 async function updateAcc(req, res) {
