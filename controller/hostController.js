@@ -198,7 +198,6 @@ async function hostsearch(req, res) {
       }],
     order: [["createdAt", "DESC"]],
   });
-  console.log(hostPost,'숙소검색');
   res.status(200).send({ msg: "숙소검색 완료", hostPost });
 }
    
