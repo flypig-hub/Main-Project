@@ -79,7 +79,7 @@ async function Roomdetail(req, res) {
       ]}
   });
   
-  chatingRooms.filter((rooms) => rooms != Room);
+  chatingRooms.filter((rooms) => rooms !Room);
 
   chatingRooms.unshift(Room)
 //   if (Room.hostId != userId) {
