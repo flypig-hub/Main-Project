@@ -16,7 +16,7 @@ const kakaoCallback = (req, res, next) => {
       
       { failureRedirect: '/' },
       (err, users, images, info) => {
-        
+          console.log('여기가 문제가 발생하나요?(여긴 콜백함수입니다!)' );
           if (err) return next(err)
           //----------------------------------------------------------------
           
