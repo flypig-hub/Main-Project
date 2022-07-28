@@ -21,6 +21,8 @@ async function readReview(req, res) {
         });
         console.log(review, "로그");
         const reviewInfo = await review.map((reinfo)=>({
+            userId : reinfo.userId,
+            reviewId : reinfo.reviewId
             review : reinfo.review,
             starpoint : reinfo.starpoint,
             userImageURL : reinfo.user.userImageURL,

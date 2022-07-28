@@ -20,6 +20,8 @@ async function readComment(req, res) {
       ],
     });
      const commentInfo = await comments.map((commentinfo) =>({
+      userId : commentinfo.userId,
+      commentId : commentinfo.commentId,
       comment : commentinfo.comment,
       userImageURL : commentinfo.user.userImageURL,
       nickname : commentinfo.user.nickname
