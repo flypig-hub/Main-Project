@@ -50,7 +50,7 @@ module.exports = (server, app) => {
         });
       }
       if (
-        enterRoom.dataValues.hostId != Number(userId) &&
+        enterRoom.dataValues.hostId !== Number(userId) &&
         !enterRoom.dataValues.roomUserId.includes(Number(userId))
       ) {
         let userImageURL = await images.findOne({
