@@ -3,11 +3,12 @@ const { users, images, sequelize, Sequelize } = require("../models");
 require("dotenv").config();
 
 module.exports = async (req, res, next) => {
-  const { authorization } = req.headers;
-
-  const [tokenType, tokenValue] = authorization.split(" ");
 
   try {
+  const { authorization } = req.headers;
+
+    const [tokenType, tokenValue] = authorization.split(" ");
+    
     const { userId } = jwt.verify(tokenValue, process.env.MY_KEY);
     console.log("userId", userId);
     const loginuser = await users.findOne({ where: { userId } });
