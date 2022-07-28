@@ -62,7 +62,7 @@ module.exports = (server, app) => {
         enterRoom.roomUserNickname.push(enterUser.dataValues.nickname);
         let roomUserNum = enterRoom.roomUserNickname.length + 1;
         enterRoom.roomUserImg.push(userImageURL.userImageURL);
-
+        if (enterRoom.dataValues.hostId !== Number(userId)){
         await Rooms.update(
           {
             roomUserId: enterRoom.dataValues.roomUserId,
@@ -71,7 +71,7 @@ module.exports = (server, app) => {
             roomUserNum: roomUserNum,
           },
           { where: { roomId: roomId } }
-        );
+        );}
         socket
           .to(enterRoom.title)
           .emit("welcome", enterUser.dataValues.nickname);
