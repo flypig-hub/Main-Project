@@ -49,10 +49,11 @@ module.exports = (server, app) => {
           userImg: null,
         });
       }
-      if (
-        enterRoom.dataValues.hostId !== Number(userId) &&
-        !enterRoom.dataValues.roomUserId.includes(Number(userId))
-      ) {
+      if (enterRoom.dataValues.roomUserId.includes(Number(userId)))
+      {}
+        else if (enterRoom.dataValues.hostId === Number(userId))
+        {} else 
+       {
         let userImageURL = await images.findOne({
           attributes: ["userImageURL"],
           where: { userId: userId },
