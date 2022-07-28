@@ -344,7 +344,7 @@ async function getDetailAcc(req, res) {
        average: averageStarpoint,
        isSave:isSave,
      })
-     console.log(tagListArr, "상태 확인");
+
      await hosts.update(
        {average: averageStarpoint,
         isSave:isSave
