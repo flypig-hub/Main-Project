@@ -588,38 +588,44 @@ async function updateAcc(req, res) {
         link,
         hostContent,
         tagList,
-        existImages
+        existImages,
+        deleteImages
     } = req.body;
     const image = req.files;
+    console.log(image.length);
 
-    // 기존 사진 KEY, URL 찾기
+    // 기존 사진 KEY, URL 찾기(프론트에서 새로 들어온거랑 합침)
     if (existImages) {
-    const findImageURL = await images.findAll({
+    const findImageURL = await images.findAll({ // 원래 URL DB에서 탐색
       where: { hostId },
       attributes: ['postImageURL']
     })
-    const findImageKEY = await images.findAll({
+    const findImageKEY = await images.findAll({ // 원래 KEY DB에서 탐색
       where: { hostId },
       attributes: ['postImageKEY']
     })
 
     let imageKEY = [];
     let imageURL = [];
-    let newImageKEY = [];
-    let newImageURL = [];
     for (let i = 0; i < findImageURL.length; i++) {
       let KEY = findImageKEY[i].postImageKEY;
       let URL = findImageURL[i].postImageURL;
       imageKEY.push(KEY);
       imageURL.push(URL);
+    }
 
-      let newImageKey = image[i].key;
-      let newImageUrl = image[i].location;
+    let newImageKEY = [];
+    let newImageURL = [];
+    for (let i = 0; i < image.length; i++) {
+      let newImageKey = image[i].key;           // 수정되는 이미지 KEY
+      let newImageUrl = image[i].location;      // 수정되는 이미지 URL
       newImageKEY.push(newImageKey)
       newImageURL.push(newImageUrl)
     }
-    console.log(imageKEY, imageURL);
-    console.log(newImageKEY, newImageURL, "이거 화ㅓㄱ인");
+    console.log('DB에서 찾아옴', imageKEY, '여기까지');
+    console.log('어떻게 확인하나', newImageKEY.concat(imageKEY), "이거 확인");
+
+
 
     // 추가되는 새로운 사진
     // const postImageKey = image.map((postImageKey) => postImageKey.key);
@@ -627,9 +633,9 @@ async function updateAcc(req, res) {
     // const thumbnailKEY = postImageKey[0];
     // const thumbnailURL = postImageUrl[0]; 
 
-    Object.assign(postImageKey, {
-      findImageURL:findImageURL
-    })
+    // Object.assign(postImageKey, {
+    //   findImageURL:findImageURL
+    // })
 
     const KEY = findImageKEY.toString()
     const URL = findImageURL.toString()
