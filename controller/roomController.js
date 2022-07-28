@@ -78,11 +78,11 @@ async function Roomdetail(req, res) {
         { roomUserId: { [Op.substring]: userId } }
       ]}
   });
-  for (i=0;i<chatingRooms.length;i++){
-if (!chatingRooms[i].roomId.includes(Number(roomId))){
-  chatingRooms.unshift(Room)
   
-}}
+if (chatingRooms.includes(Room)){
+  chatingRooms.filter((rooms) => rooms !== Room)
+}
+  chatingRooms.unshift(Room)
 //   if (Room.hostId != userId) {
 //  Room.roomUserId.push(Number(userId));
 //  Room.roomUserNickname.push(nickname);
