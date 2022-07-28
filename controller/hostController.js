@@ -192,8 +192,13 @@ async function hostsearch(req, res) {
     
   const hostPost = await hosts.findAll({
     where: key,
+    include : [{
+      model: images,
+      attributes: [ 'hostId', 'postImageURL' ]
+      }],
     order: [["createdAt", "DESC"]],
   });
+  console.log(hostPost,'숙소검색');
   res.status(200).send({ msg: "숙소검색 완료", hostPost });
 }
    
