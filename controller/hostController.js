@@ -549,5 +549,5 @@ module.exports.hostCreateAcc = hostCreateAcc;
 module.exports.getAllAcc = getAllAcc;
 module.exports.getDetailAcc = getDetailAcc;
 module.exports.updateAcc = updateAcc;
-module.exports.hostsearch = hostAddresssearch;
-module.exports.hostsearch = hosTypesearch;
+module.exports.hostAddresssearch = hostAddresssearch;
+module.exports.hosTypesearch = hosTypesearch;
