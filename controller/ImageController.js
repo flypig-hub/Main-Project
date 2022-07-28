@@ -61,9 +61,10 @@ async function DeleteImages(req, res) {
 
 module.exports.PostImage = PostImage;
 module.exports.DeleteImages = DeleteImages;
+module.exports.PostImages = PostImages;
 
 
-async function PostImage(image, postId) {
+async function PostImages(image, postId) {
   // const { userId } = res.locals.userId;
   const postImageKey = image.map(postImageKEY => postImageKEY.key);
   const postImageUrl = image.map(postImageURL => postImageURL.location);
