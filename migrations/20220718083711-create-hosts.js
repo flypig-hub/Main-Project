@@ -53,6 +53,9 @@ module.exports = {
       preImages: {
         type: Sequelize.STRING
       },
+      tagList: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
