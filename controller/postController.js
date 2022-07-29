@@ -114,46 +114,33 @@ async function GetPostingList(req, res) {
   
   // Top 5 게시물
   let Top5 = await posts.findAll({
-    include : [
-      {
+    include : [{
       model : images,
       required : true,
       attributes : ['postId' , 'thumbnailURL' , 'userImageURL']
-      },
-      {
-        model : users,
-        attributes : ['nickname']
-      }
-      
-    ],
+    }],
     order : [[
       "likeNum", "DESC"
     ]],
     limit : 5,
     
   });
-  // const Top5post = Top5.map((tpost)=>({
-  //   postId : tpost.postId,
-  //   title : tpost.title,
-  //   nickname : tpost.nickname,
-  //   likeNum : tpost.likeNum,
-  //   commentNum : tpost.commentNum,
-  //   images : tpost.images
-  // }));
+  const Top5post = Top5.map((tpost)=>({
+    postId : tpost.postId,
+    title : tpost.title,
+    nickname : tpost.nickname,
+    likeNum : tpost.likeNum,
+    commentNum : tpost.commentNum,
+    images : tpost.images
+  }));
  
  
   let allPost = await posts.findAll({
-    include: [
-      {
+    include: [{
       model: images,
       required: true,
       attributes: ['postId', 'postImageURL', 'thumbnailURL', 'userImageURL']
-     },
-     {
-      model:users,
-      attributes : ['nickname']
-     }
-  ],
+    }],
     order : [[
       "createdAt", "DESC"
     ]]
@@ -191,7 +178,7 @@ async function GetPostingList(req, res) {
       },
       {where:{postId:post.postId}})
   }
-  res.send({Top5, allPost });
+  res.send({Top5post, allPost });
 }
 
 
@@ -202,7 +189,7 @@ async function GetPost(req, res) {
   
   if (queryData.userId === undefined)
   {queryData.userId = 0}
-  const allPostInfo = await posts.findAll({
+  const allPost = await posts.findAll({
     where: { postId },
     include: [
       {
@@ -223,56 +210,20 @@ async function GetPost(req, res) {
       {
         model: users,
         required: false,
-        attributes: ["userImageURL", 'nickname'],
+        attributes: ["userImageURL"],
       },
     ],
   });
   // console.log(allPost[0].houseTitle);
 
-  // tagList 배열화
-  let newTagStr = '';
-  if (allPostInfo[0].tagList) {
-  const newTag = allPostInfo[0].tagList.split(" ");
-  console.log(newTag);
-  newTagStr += newTag
-    // Object.assign(allPostInfo[0], {
-    //   tagList: newTagStr.split(',')
-    // });
-  }
-  const newTAG = newTagStr.split(',')
-
-  const allPost = allPostInfo.map((postInfo) =>({
-    postId : postInfo.pustId,
-    userId : postInfo.userId,
-    nickname : postInfo.user.nickname,
-    userImageURL : postInfo.user.userImageURL,
-    content : postInfo.content,
-    title : postInfo.title,
-    commentId : postInfo.commentId,
-    commentNum : postInfo.commentNum,
-    likeNum : postInfo.likeNum,
-    islike : postInfo.isLike,
-    mainAddress : postInfo.mainAddress,
-    subAddress : postInfo.subAddress,
-    category : postInfo.category,
-    type : postInfo.type,
-    link : postInfo.link,
-    houseTitle : postInfo.houseTitle,
-    tagList : newTAG,
-    createdAt : postInfo.createdAt,
-    updatedAt : postInfo.updatedAt,
-    images : postInfo.images
-  })); 
-  console.log(allPost,'로그');
-
  
     const postComments = await Comments.findAll({
-      where: { postId: allPostInfo[0].postId },
+      where: { postId: allPost[0].postId },
     });
-    const postLikes = await Like.findAll({ where: { postId: allPostInfo[0].postId } });
+    const postLikes = await Like.findAll({ where: { postId: allPost[0].postId } });
 
     let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: allPostInfo[0].postId },
+      where: { userId: queryData.userId, postId: allPost[0].postId },
     });
 
     const likeNum = postLikes.length;
@@ -283,8 +234,20 @@ async function GetPost(req, res) {
     } else {
       islike = false;
     }
+
+    // tagList 배열화
+    let newTagStr = '';
+    if (allPost[0].tagList) {
+    const newTag = allPost[0].tagList.split(" ");
+    console.log(newTag);
+    newTagStr += newTag
+
+      Object.assign(allPost[0], {
+        tagList: newTagStr.split(',')
+      });
+    }
     
-    Object.assign(allPostInfo[0], {
+    Object.assign(allPost[0], {
       likeNum: likeNum,
       commentNum: commentNum,
       islike: islike,
@@ -295,12 +258,12 @@ async function GetPost(req, res) {
       commentNum: commentNum,
       islike: islike,
     },
-    { where: { postId: allPostInfo[0].postId } }
+    { where: { postId: allPost[0].postId } }
   );
   
    const outherPosts = await posts.findAll({
     where: {
-      userId: allPostInfo[0].userId,
+      userId: allPost[0].userId,
       postId: {
         [Op.ne]: postId,
       },
@@ -312,24 +275,8 @@ async function GetPost(req, res) {
         model: images,
         attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
       },
-      {
-        model : users,
-        attributes : ['nickname']
-      }
     ],
   });
-   const outherPostInfo = outherPosts.map((outherpostinfo) =>({
-      postId : outherpostinfo.postId,
-      userId : outherpostinfo.userId,
-      nickname : outherpostinfo.user.nickname,
-      title : outherpostinfo.title,
-      commentNum : outherpostinfo.commentNum,
-      likeNum : outherpostinfo.likeNum,
-      islike : outherpostinfo.isLike,
-      preImages : outherpostinfo.preImages,
-      images : outherpostinfo.images
-     }));
-
   for (i = 0; outherPosts.length > i; i++){
     const outherPost = outherPosts[i];
      const outherPostComments = await Comments.findAll({
@@ -357,7 +304,7 @@ async function GetPost(req, res) {
         likeNum: likeNum,
         commentNum: commentNum
       },
-      { where: { postId: allPostInfo[0].postId } }
+      { where: { postId: allPost[0].postId } }
     );
    Object.defineProperties(outherPost.dataValues, {
       title: {
@@ -435,9 +382,9 @@ async function GetPost(req, res) {
     }
 
   let findAllAcc = [];
-  if (houseTitle.indexOf(allPostInfo[0].houseTitle) != -1) {
+  if (houseTitle.indexOf(allPost[0].houseTitle) != -1) {
     let findAllAcc = await hosts.findAll({
-      where: { title: allPostInfo[0].houseTitle },
+      where: { title: allPost[0].houseTitle },
       attritutes : [ 'hostId' ],
       include: [{
         model: images,
@@ -473,14 +420,9 @@ async function GetPost(req, res) {
          {where:{hostId:findAllAcc[0].hostId}}
       )
     }
-
-    
-    // // console.log(allPostInfo);
- 
-    // //  console.log(outherPostInfo);
-    res.send({ allPost, findAllAcc, outherPostInfo  });
+    res.send({ allPost, findAllAcc, outherPosts  });
   } else {
-    res.send({ allPost, findAllAcc , outherPostInfo });
+    res.send({ allPost, findAllAcc , outherPosts });
   }
 }
 
