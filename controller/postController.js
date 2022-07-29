@@ -31,41 +31,29 @@ async function WritePosting(req, res) {
     link,
     houseTitle,
     tagList,
-    // preImages
+    preImages
     } = req.body;
   const image = req.files;
 
   let isLike = false;
 
-    
+  const PreImages = req.body.preImages.replace(/\s'/g, "")
+  let preImagesArr = PreImages.replaceAll("'", "").split(',')
+  console.log(preImagesArr);
+  let newContent = req.body.content;
+  for (let i = 0; i < image.length; i++) {
+    let preIMG = preImagesArr[i].slice(0, 63)
+    console.log(preIMG);
+    let ImGList = image[i].location
+    newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
+  }
+  // console.log(newContent);
 
-  for (let i = 0; i < preImagesArr.length; i++) {
-      let newContents = '';
-      const PreImages = req.body.preImages.replace(/\s'/g, "")
-      let preImagesArr = PreImages.replaceAll("'", "").split(',')
-      let preImg = preImagesArr[i].slice(0, 63)
-      let imgList = image[i].location
-      console.log(image[i].location, "이거 확인함");
-
-      let newContent = req.body.content.replaceAll(`${ preImg }`,`${ imgList }`)
-      console.log('이거 확인할거임!!!', newContent, "바뀜??");
-      console.log(preImg, '이거임');
-    }
-    
-    // const beforeImages = beforeImg.toString().split(',');
-    //   console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
-    //   const afterImages = afterImg.toString().split(',');
-    //   console.log('이미지 바꾼 후', afterImages[afterImages.length - 1]);
-
-    // const ContentString = Content.toString()
-    // console.log(ContentString);
-
-    
   const postInfo = await posts.create({
     userId,
     nickname,
     title,
-    content,
+    content : newContent,
     mainAddress,
     subAddress,
     category,
@@ -76,7 +64,6 @@ async function WritePosting(req, res) {
     likeNum: 0,
     isLike: isLike,
     tagList,
-    // preImages
   });
 
   let newTagStr = '';
@@ -96,16 +83,33 @@ async function WritePosting(req, res) {
 
   // S3 별도 통신 중에는 썸네일만 저장
   if (image) {
-    const saveImage = await ImageController.PostImages(image, postInfo.postId);
-    const userImageSave = await images.update({
+    // const saveImage = await ImageController.PostImages(image, postInfo.postId);
+    // const userImageSave = await images.update({
+    //   userId: userId,
+    //   userImageURL:userImageURL,
+    //   nickname: nickname
+    // }, {
+    //   where: { postId : postInfo.postId}
+    // })
+    postImageKey.forEach((element, i) => {
+      const postImageKEY = postImageKey[i];
+      const postImageURL = postImageUrl[i];
+
+      const saveImage = images.create({
       userId: userId,
       userImageURL:userImageURL,
-      nickname: nickname
-    }, {
-      where: { postId : postInfo.postId}
+      nickname: nickname,
+      postId: postInfo.postId,
+      thumbnailURL: thumbnailURL.toString(),
+      thumbnailKEY: thumbnailKEY.toString(),
+      postImageURL: postImageURL.toString(),
+      postImageKEY: postImageKEY.toString(),
     })
-  }
-res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
+  })
+}
+
+    
+  res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   // } catch(e) {
   //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   // }
