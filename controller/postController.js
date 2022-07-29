@@ -19,7 +19,7 @@ const ImageController = require("./ImageController")
 
 // 유저 게시글 작성
 async function WritePosting(req, res) {
-  try {
+  // try {
   const { userId, nickname, userImageURL } = res.locals;
   const {
     title,
@@ -34,7 +34,7 @@ async function WritePosting(req, res) {
     preImages             // 이미지보다 1개 적다, +1 해서 반복문 돌리기
     } = req.body;
   const image = req.files;
-  console.log(image);
+  // console.log(image);
 
   let isLike = false;
 
@@ -80,12 +80,10 @@ async function WritePosting(req, res) {
   const thumbnailKEY = postImageKey[0];
   const thumbnailURL = postImageUrl[0];
 
-  // S3 별도 통신 중에는 썸네일만 저장
   if (image) {
     postImageKey.forEach((element, i) => {
       const postImageKEY = postImageKey[i];
       const postImageURL = postImageUrl[i];
-
       const saveImage = images.create({
       userId: userId,
       userImageURL:userImageURL,
@@ -101,9 +99,9 @@ async function WritePosting(req, res) {
 
     
   res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  } catch(e) {
-    res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
-  }
+  // } catch(e) {
+  //   res.status(400).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+  // }
 }
 
 
@@ -597,7 +595,7 @@ async function ModifyPosting(req, res) {
   const image = req.files;
   
   // 프론트에서 받는 새로운 이미지 받기(blob)
-  // 1. 사진이 추가된다면
+  // 1. 사진이 추가된다면(썸네일 있음)
   if (preImages) {
     const PreImages = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImages.replaceAll("'", "").split(',')
@@ -608,11 +606,22 @@ async function ModifyPosting(req, res) {
       newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
     }
     console.log(newContent);
+    const ThumbnailURL = newContent[0]
   }
 
-  // 2. 사진이 추가되고 삭제된다면
-
-const deleteImage = await images.destroy({
+  // 2. 사진이 일부 추가되고 일부 삭제된다면(썸네일 없음)
+  // if (preImages) {
+  //   const PreImages = req.body.preImages.replace(/\s'/g, "")
+  //   let preImagesArr = PreImages.replaceAll("'", "").split(',')
+  //   let newContent = req.body.content;
+  //   for (let i = 1; i < image.length; i++) {
+  //     let preIMG = preImagesArr[i - 1]
+  //     let ImGList = image[i].location
+  //     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
+  //   }
+  //   console.log(newContent);
+  // }
+  const deleteImage = await images.destroy({
     where: { postId }
   })
 
