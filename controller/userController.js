@@ -22,7 +22,7 @@ const kakaoCallback = (req, res, next) => {
           
           const { userImageURL } = images;
           const { userId, nickname, host, email } = users;
-          const token = jwt.sign({ userId }, process.env.MY_KEY, {expiresIn: '1m',})
+          const token = jwt.sign({ userId }, process.env.MY_KEY, {expiresIn: '24h',})
 
           result = {
               userId,
