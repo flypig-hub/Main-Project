@@ -31,7 +31,7 @@ async function WritePosting(req, res) {
     link,
     houseTitle,
     tagList,
-    preImages
+    preImages             // 이미지보다 1개 적다, +1 해서 반복문 돌리기
     } = req.body;
   const image = req.files;
 
@@ -39,15 +39,12 @@ async function WritePosting(req, res) {
 
   const PreImages = req.body.preImages.replace(/\s'/g, "")
   let preImagesArr = PreImages.replaceAll("'", "").split(',')
-  // console.log(preImagesArr);
   let newContent = req.body.content;
-  for (let i = 0; i < image.length; i++) {
-    let preIMG = preImagesArr[i]
-    // console.log(preIMG);
+  for (let i = 1; i < image.length; i++) {
+    let preIMG = preImagesArr[i - 1]
     let ImGList = image[i].location
     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
   }
-  console.log(newContent);
 
   const postInfo = await posts.create({
     userId,
@@ -83,14 +80,6 @@ async function WritePosting(req, res) {
 
   // S3 별도 통신 중에는 썸네일만 저장
   if (image) {
-    // const saveImage = await ImageController.PostImages(image, postInfo.postId);
-    // const userImageSave = await images.update({
-    //   userId: userId,
-    //   userImageURL:userImageURL,
-    //   nickname: nickname
-    // }, {
-    //   where: { postId : postInfo.postId}
-    // })
     postImageKey.forEach((element, i) => {
       const postImageKEY = postImageKey[i];
       const postImageURL = postImageUrl[i];
@@ -111,9 +100,9 @@ async function WritePosting(req, res) {
     
   res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   // } catch(e) {
-  //   res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
-  // }
-}
+    // res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+  }
+// }
 
 
 // 유저 커뮤니티 게시글 전체 조회
@@ -613,21 +602,6 @@ async function ModifyPosting(req, res) {
     where: { postId }
   })
 
-  // 기존 사진 전달값
-  // existImages = [{
-  // {hostId: 14, 
-  // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png', 
-  // postImageKEY: 'images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png'}
-  // {hostId: 14, 
-  // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp', 
-  // postImageKEY: 'images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp'}
-  // {hostId: 14, 
-  // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/452895a5-f23d-453a-8571-ba7438469c04.png', 
-  // postImageKEY: 'images/452895a5-f23d-453a-8571-ba7438469c04.png'}
-  // {hostId: 14, 
-  // postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/a02e4056-7938-4a8a-a6dd-dfe431752eba.png', 
-  // postImageKEY: 'images/a02e4056-7938-4a8a-a6dd-dfe4317}
-  // }]
   
   console.log(typeof(existImages), "키값, URL 데이터 확인+++++++++++++++++++++++++++++++++++++++++++++");
   console.log(existImages[0].existImagesKEY);
