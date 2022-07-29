@@ -158,6 +158,7 @@ async function checkMe(req, res) {
         })
         console.log(mysaveinfo);
         const mysavehostlist = {
+          hostId : savehost.hostId,
           title : savehost.title,
           average : savehost.average,
           images : savehost.images,
@@ -188,6 +189,7 @@ async function checkMe(req, res) {
         })
         
         const mylikepostlist = {
+          postId : likepost.postId,
           title : likepost.title,
           commentNum : likepost.commentNum,
           likeNum : likepost.likeNum,
@@ -210,6 +212,7 @@ async function checkMe(req, res) {
     });
     
     const mypostinfo = mypostlist.map((postinfo) => ({
+      postId : postinfo.postId,
       title : postinfo.title,
       commentNum : postinfo.commentNum,
       likeNum : postinfo.likeNum,
@@ -225,6 +228,7 @@ async function checkMe(req, res) {
     });
     
     const hostinfo = hostpost.map((hosts) =>({
+      hostId : hosts.hostId,
       title : hosts.title,
       average : hosts.average,
       images : hosts.images,
