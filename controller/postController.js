@@ -37,18 +37,21 @@ async function WritePosting(req, res) {
 
   let isLike = false;
 
-    let newContents = '';
-    const PreImages = req.body.preImages.replace(/\s'/g, "")
-    let preImagesArr = PreImages.replaceAll("'", "").split(',')
+    
 
   for (let i = 0; i < preImagesArr.length; i++) {
-      let preImg = preImagesArr[i].substr(0, 63)
+      let newContents = '';
+      const PreImages = req.body.preImages.replace(/\s'/g, "")
+      let preImagesArr = PreImages.replaceAll("'", "").split(',')
+      let preImg = preImagesArr[i].slice(0, 63)
       let imgList = image[i].location
       console.log(image[i].location, "이거 확인함");
+
       let newContent = req.body.content.replaceAll(`${ preImg }`,`${ imgList }`)
-      // console.log(newContent, '이거임');
+      console.log('이거 확인할거임!!!', newContent, "바뀜??");
+      console.log(preImg, '이거임');
     }
-    // console.log('이거 확인할거임!!!', newContent);
+    
     // const beforeImages = beforeImg.toString().split(',');
     //   console.log('이미지 바꾸기 전',beforeImages[beforeImages.length - 1]);
     //   const afterImages = afterImg.toString().split(',');
