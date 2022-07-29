@@ -42,7 +42,7 @@ async function WritePosting(req, res) {
   console.log(preImagesArr);
   let newContent = req.body.content;
   for (let i = 0; i < image.length; i++) {
-    let preIMG = preImagesArr[i].slice(0, 63)
+    let preIMG = preImagesArr[i]
     console.log(preIMG);
     let ImGList = image[i].location
     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
