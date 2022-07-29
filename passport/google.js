@@ -44,6 +44,7 @@ module.exports = () => {
                             userImageURL : profile.photos[0].value
                         });
                         const newUserImage = await images.create({
+                            snsId: profile.id,
                             userId: newUser.userId,
                             userImageURL : profile.photos[0].value,
                         });
