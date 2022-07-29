@@ -106,7 +106,7 @@ async function hostAddresssearch(req, res) {
   const queryData = req.query;
   let key = {};
     
-      queryData.search === "Eastarea"
+      queryData.search === "Northarea"
     ? (key = {
         [Op.or]: [
           {
@@ -171,7 +171,7 @@ async function hostAddresssearch(req, res) {
           },
         ],
       })
-    : queryData.search === "Northarea"
+    : queryData.search === "Eastarea"
     ? (key = {
         [Op.or]: [
           {
