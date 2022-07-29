@@ -216,6 +216,18 @@ async function GetPost(req, res) {
   });
   // console.log(allPost[0].houseTitle);
 
+  // tagList 배열화
+  let newTagStr = '';
+  if (allPostInfo[0].tagList) {
+  const newTag = allPostInfo[0].tagList.split(" ");
+  console.log(newTag);
+  newTagStr += newTag
+    // Object.assign(allPostInfo[0], {
+    //   tagList: newTagStr.split(',')
+    // });
+  }
+  const newTAG = newTagStr.split(',')
+
   const allPost = allPostInfo.map((postInfo) =>({
     postId : postInfo.pustId,
     userId : postInfo.userId,
@@ -232,7 +244,7 @@ async function GetPost(req, res) {
     type : postInfo.type,
     link : postInfo.link,
     houseTitle : postInfo.houseTitle,
-    tagList : postInfo.tagList,
+    tagList : newTAG,
     createdAt : postInfo.createdAt,
     updatedAt : postInfo.updatedAt,
     images : postInfo.images
@@ -256,18 +268,6 @@ async function GetPost(req, res) {
       islike = true;
     } else {
       islike = false;
-    }
-
-    // tagList 배열화
-    let newTagStr = '';
-    if (allPostInfo[0].tagList) {
-    const newTag = allPostInfo[0].tagList.split(" ");
-    console.log(newTag);
-    newTagStr += newTag
-
-      Object.assign(allPostInfo[0], {
-        tagList: newTagStr.split(',')
-      });
     }
     
     Object.assign(allPostInfo[0], {
