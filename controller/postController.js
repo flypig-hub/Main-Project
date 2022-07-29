@@ -195,7 +195,7 @@ async function GetPost(req, res) {
       {
         model: images,
         required: false,
-        attributes: ["postId", "postImageKEY", "postImageURL", "thumbnailURL", "userImageURL"],
+        attributes: ["postImageKEY", "postImageURL"],
       },
       {
         model: Comments,
@@ -206,6 +206,11 @@ async function GetPost(req, res) {
         model: Like,
         required: false,
         attributes: ["userId", "postId"],
+      },
+      {
+        model: users,
+        required: false,
+        attributes: ["userImageURL"],
       },
     ],
   });
