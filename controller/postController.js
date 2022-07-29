@@ -19,7 +19,7 @@ const ImageController = require("./ImageController")
 
 // 유저 게시글 작성
 async function WritePosting(req, res) {
-  // try {
+  try {
   const { userId, nickname, userImageURL } = res.locals;
   const {
     title,
@@ -99,9 +99,9 @@ async function WritePosting(req, res) {
 
     
   res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  // } catch(e) {
-  //   res.status(400).json({ errorMessage : "게시글이 등록되지 않았습니다."});
-  // }
+  } catch(e) {
+    res.status(400).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+  }
 }
 
 
