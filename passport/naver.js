@@ -20,7 +20,7 @@ module.exports = () => {
                   where : {snsId: profile.id}, // where { userId: profile.id, provider: 'naver',}
                });
                const exUserImg = await images.findOne({
-                  where : {userImageURL: profile.profileImage}
+                  where : {snsId: profile.id}
               })
               console.log(exUserImg, '이미지 중복일때를 확인해야해')
                // 이미 가입된 네이버 프로필이면 성공
@@ -38,6 +38,7 @@ module.exports = () => {
 
                   });
                   const newUserImage = await images.create({
+                     snsId: profile.id,
                      userId: newUser.userId,
                      userImageURL : profile.profileImage,
                  });
