@@ -232,6 +232,7 @@ async function GetPost(req, res) {
     postId : postInfo.pustId,
     userId : postInfo.userId,
     nickname : postInfo.user.nickname,
+    userImageURL : postInfo.user.userImageURL,
     content : postInfo.content,
     title : postInfo.title,
     commentId : postInfo.commentId,
