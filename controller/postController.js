@@ -19,7 +19,7 @@ const ImageController = require("./ImageController")
 
 // 유저 게시글 작성
 async function WritePosting(req, res) {
-  // try {
+  try {
   const { userId, nickname, userImageURL } = res.locals;
   const {
     title,
@@ -34,6 +34,7 @@ async function WritePosting(req, res) {
     preImages             // 이미지보다 1개 적다, +1 해서 반복문 돌리기
     } = req.body;
   const image = req.files;
+  console.log(image);
 
   let isLike = false;
 
@@ -45,6 +46,7 @@ async function WritePosting(req, res) {
     let ImGList = image[i].location
     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
   }
+  console.log(newContent);
 
   const postInfo = await posts.create({
     userId,
@@ -99,10 +101,10 @@ async function WritePosting(req, res) {
 
     
   res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
-  // } catch(e) {
-    // res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
+  } catch(e) {
+    res.status(402).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   }
-// }
+}
 
 
 // 유저 커뮤니티 게시글 전체 조회
@@ -589,140 +591,45 @@ async function ModifyPosting(req, res) {
     link,
     houseTitle,
     tagList,
-    existImages
-    } = req.body;
+    preImages,
+    deleteImages
+  } = req.body;
   const image = req.files;
+  
+  // 프론트에서 받는 새로운 이미지 받기(blob)
+  // 1. 사진이 추가된다면
+  if (preImages) {
+    const PreImages = req.body.preImages.replace(/\s'/g, "")
+    let preImagesArr = PreImages.replaceAll("'", "").split(',')
+    let newContent = req.body.content;
+    for (let i = 1; i < image.length; i++) {
+      let preIMG = preImagesArr[i - 1]
+      let ImGList = image[i].location
+      newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
+    }
+    console.log(newContent);
+  }
 
-  const findImageInfo = await images.findAll({
-    where: { postId },
-    attributes: ['postImageKEY']
-  })
+  // 2. 사진이 추가되고 삭제된다면
 
-  const deleteImages = await images.destroy({
+const deleteImage = await images.destroy({
     where: { postId }
   })
 
+
+  let newTagStr = '';
+    if (req.body.tagList) {
+    const newTag = req.body.tagList.split(" ");
+    newTagStr += newTag
+
+    Object.assign(postInfo, {
+      tagList: newTagStr.split(',')
+    });
+  }
   
-  console.log(typeof(existImages), "키값, URL 데이터 확인+++++++++++++++++++++++++++++++++++++++++++++");
-  console.log(existImages[0].existImagesKEY);
 
 
-  // 새로운 사진과 기존 사진을 더함
-//   if (image) {
-//     const PostImageKey = image.map((postImageKey) => postImageKey.key);
-//     const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
-//     const thumbnailKEY = PostImageKey[0];
-//     const thumbnailURL = postImageUrl[0];
 
-//     if (existImages) {
-//       const existImagesKEY = Object.values(existImages)
-//       const existImagesURL = Object.keys(existImages)
-//       console.log(existImagesKEY, "키 값도 확인하기");
-//       console.log(existImagesURL, "이거 테스트");
-//       PostImageKey.push(existImagesKEY);
-//       postImageUrl.push(existImagesURL);
-//       // console.log(postImageUrl, "이건???");
-//     }
-//     console.log(PostImageKey, postImageUrl, "이건가???");
-
-//     const postImageKey = findImageInfo.map((postImageKey) => postImageKey.postImageKEY);
-//     postImageKey.forEach((element, i) => {
-//     const postImageKEY = postImageKey[i];
-//     const s3 = new AWS.S3();
-//     const params = {
-//       Bucket: process.env.AWS_BUCKET_NAME,
-//       Delete: {
-//         Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
-//       }
-//       };
-//       s3.deleteObjects(params, function(err, data) {
-//         if (err) console.log(err, err.stack); // error
-//         else { console.log("S3에서 삭제되었습니다"), data }; // deleted
-//       });
-//     });
-
-//     const deleteImages = await images.destroy({
-//       where: { postId }
-//     })
-//     console.log(deleteImages, "DB 삭제 완료!");
-
-//     PostImageKey.forEach((element, i) => {
-//     const ImageKey = postImageKey[i];
-//     const ImageURL = postImageUrl[i];
-
-//     const imageSave = images.create({
-//       userId: userId,
-//       nickname: nickname,
-//       postId: postId,
-//       postImageKEY : ImageKey,
-//       postImageURL : ImageURL,
-//       thumbnailKEY : thumbnailKEY,
-//       thumbnailURL : thumbnailURL,
-//       userImageURL
-//     })
-//   })
-//   } else if (!image) {
-//     // 추가되는 사진이 없고 기존 사진이 있음
-//     let imageKEY = [];
-//     let imageURL = [];
-//     if (existImages) {
-//       const existImagesKEY = Object.values(existImages)
-//       const existImagesURL = Object.keys(existImages)
-
-//       let PostImageKey = existImagesKEY.map((postImageKey) => postImageKey.key);
-//       let postImageUrl = existImagesURL.map((postImageUrl) => postImageUrl.location);
-//       let thumbnailKEY = PostImageKey[0];
-//       let thumbnailURL = postImageUrl[0];
-//       imageKEY.push(PostImageKey)
-//       imageURL.push(postImageUrl)
-//     }
-//     // console.log(imageKEY, imageURL);
-
-//     const deleteImages = await images.destroy({
-//       where: { postId }
-//     })
-
-//     imageKey.forEach((element, i) => {
-//       const ImageKey = imageKEY[i];
-//       const ImageURL = imageURL[i];
-  
-//       const imageSave = images.create({
-//         userId: userId,
-//         nickname: nickname,
-//         postId: postId,
-//         postImageKEY : ImageKey.toString(),
-//         postImageURL : ImageURL.toString(),
-//         thumbnailKEY : thumbnailKEY,
-//         thumbnailURL : thumbnailURL,
-//         userImageURL
-//       })
-//   })
-// }
-
-//   // 이전 사진 + 새로운 사진 풀어서 DB 저장
-//   const tagListArr = req.body.tagList.split(",");
-
-//   const updatePost = await posts.update({
-//         title:title,
-//         content:content,
-//         mainAddress:mainAddress,
-//         subAddress:subAddress,
-//         category:category,
-//         type:type,
-//         link:link,
-//         houseTitle:houseTitle,
-//         tagList:tagListArr
-//       },{
-//         where: { postId },
-//       });
-
-//   const checkPost = await posts.findAll({
-//     where: { postId },
-//     include: [{
-//       model: images,
-//       attributes: [ 'postImageKEY', 'postImageURL', 'thumbnailKEY', 'thumbnailURL' ]
-//     }]
-//   })
 
   res.send({ existImages })
 }
