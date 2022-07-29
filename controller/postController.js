@@ -39,15 +39,15 @@ async function WritePosting(req, res) {
 
   const PreImages = req.body.preImages.replace(/\s'/g, "")
   let preImagesArr = PreImages.replaceAll("'", "").split(',')
-  console.log(preImagesArr);
+  // console.log(preImagesArr);
   let newContent = req.body.content;
   for (let i = 0; i < image.length; i++) {
     let preIMG = preImagesArr[i]
-    console.log(preIMG);
+    // console.log(preIMG);
     let ImGList = image[i].location
     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
   }
-  // console.log(newContent);
+  console.log(newContent);
 
   const postInfo = await posts.create({
     userId,
