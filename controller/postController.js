@@ -227,13 +227,10 @@ async function GetPost(req, res) {
 
   // tagList 배열화
   let newTagStr = '';
-  if (allPostInfo[0].tagList) {
-  const newTag = allPostInfo[0].tagList.split(" ");
-  console.log(newTag);
-  newTagStr += newTag
-    // Object.assign(allPostInfo[0], {
-    //   tagList: newTagStr.split(',')
-    // });
+  if (allPostInfo[0].tagList.length) {
+    const newTag = allPostInfo[0].tagList.split(" ");
+    console.log(newTag);
+    newTagStr += newTag
   } 
   const newTAG = newTagStr.split(',')
 
