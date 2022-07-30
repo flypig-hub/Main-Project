@@ -3,7 +3,7 @@ const Op = Sequelize.Op;
 
 async function searchRoom(req, res) {
 const queryData = req.query;
-  const rooms = await Rooms.findAll({where: {
+  const searchResult = await Rooms.findAll({where: {
       [Op.or]: [
         { title: { [Op.substring]: queryData.search } },
         { hashTag: { [Op.substring]: queryData.search } },
@@ -13,7 +13,7 @@ const queryData = req.query;
       { title: { [Op.substring]: queryData.search } },"createdAt", "DESC"
     ]]
   });
-  res.status(200).send({msg:"룸 검색완료", rooms})
+  res.status(200).send({msg:"룸 검색완료", searchResult})
 };
  
 async function searchRoombyhashtag(req, res) {
