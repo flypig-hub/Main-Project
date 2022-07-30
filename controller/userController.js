@@ -22,7 +22,7 @@ const kakaoCallback = (req, res, next) => {
           
           const { userImageURL } = images;
           const { userId, nickname, host, email } = users;
-          const token = jwt.sign({ userId }, process.env.MY_KEY, {expiresIn: '24h',})
+          const token = jwt.sign({ userId }, process.env.MY_KEY, {expiresIn: '2h',})
 
           result = {
               userId,
@@ -57,7 +57,7 @@ const googleCallback = (req, res, next) => {
           
           const { userImageURL } = images;
           const { userId, nickname, host, email } = users
-          const token = jwt.sign({ userId }, process.env.MY_KEY , {expiresIn: '24h',})
+          const token = jwt.sign({ userId }, process.env.MY_KEY , {expiresIn: '2h',})
 
           result = {
               userId,
@@ -93,7 +93,7 @@ const naverCallback = (req, res, next) => {
           
           const { userImageURL } = images;
           const { userId, nickname, host, email } = users
-          const token = jwt.sign({ userId }, process.env.MY_KEY, {expiresIn: '24h',})
+          const token = jwt.sign({ userId }, process.env.MY_KEY, {expiresIn: '2h',})
 
           result = {
               userId,
