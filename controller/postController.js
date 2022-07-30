@@ -237,28 +237,7 @@ async function GetPost(req, res) {
   }
   const newTAG = newTagStr.split(',')
 
-  const allPost = allPostInfo.map((postInfo) =>({
-    postId : postInfo.postId,
-    userId : postInfo.userId,
-    nickname : postInfo.user.nickname,
-    userImageURL : postInfo.user.userImageURL,
-    content : postInfo.content,
-    title : postInfo.title,
-    commentId : postInfo.commentId,
-    commentNum : postInfo.commentNum,
-    likeNum : postInfo.likeNum,
-    islike : postInfo.islike,
-    mainAddress : postInfo.mainAddress,
-    subAddress : postInfo.subAddress,
-    category : postInfo.category,
-    type : postInfo.type,
-    link : postInfo.link,
-    houseTitle : postInfo.houseTitle,
-    tagList : newTAG,
-    createdAt : postInfo.createdAt,
-    updatedAt : postInfo.updatedAt,
-    images : postInfo.images
-  })); 
+  
   
 
  
@@ -293,7 +272,30 @@ async function GetPost(req, res) {
     },
     { where: { postId: allPostInfo[0].postId } }
   );
-  
+  const allPost = allPostInfo.map((postInfo) =>({
+    postId : postInfo.postId,
+    userId : postInfo.userId,
+    nickname : postInfo.user.nickname,
+    userImageURL : postInfo.user.userImageURL,
+    content : postInfo.content,
+    title : postInfo.title,
+    commentId : postInfo.commentId,
+    commentNum : postInfo.commentNum,
+    likeNum : postInfo.likeNum,
+    islike : postInfo.islike,
+    mainAddress : postInfo.mainAddress,
+    subAddress : postInfo.subAddress,
+    category : postInfo.category,
+    type : postInfo.type,
+    link : postInfo.link,
+    houseTitle : postInfo.houseTitle,
+    tagList : newTAG,
+    createdAt : postInfo.createdAt,
+    updatedAt : postInfo.updatedAt,
+    images : postInfo.images
+  })); 
+
+  //글쓴이의 다른 게시물
    const outherPosts = await posts.findAll({
     where: {
       userId: allPostInfo[0].userId,
