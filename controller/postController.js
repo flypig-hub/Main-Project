@@ -223,17 +223,16 @@ async function GetPost(req, res) {
       },
     ],
   });
-  console.log(allPostInfo);
+  console.log(allPostInfo[0].tagList);
 
   // tagList 배열화
   let newTagStr = '';
-  if (allPostInfo[0].tagList) {
-  const newTag = allPostInfo[0].tagList.split(" ");
-  console.log(newTag);
-  newTagStr += newTag
-    // Object.assign(allPostInfo[0], {
-    //   tagList: newTagStr.split(',')
-    // });
+  if (allPostInfo[0].tagList === true) {
+    const newTag = allPostInfo[0].tagList.split(" ");
+    console.log(newTag);
+    newTagStr += newTag
+  } else {
+    return null
   }
   const newTAG = newTagStr.split(',')
 
@@ -654,11 +653,34 @@ async function ModifyPosting(req, res) {
   } = req.body;
   const image = req.files;
 
-  // 키값 형태
+  // 키값 형태(KEY : 47 / URL : 62)
   // {
   //  postImageURL : s3://yushin-s3/images/00156e1e-a88e-4e07-9642-4ccc6c8effd4.PNG, 
   //  postImageKEY : images/00156e1e-a88e-4e07-9642-4ccc6c8effd4.PNG
   // }
+
+  const deleteInfo1 = req.body.deleteImages.replaceAll("' ", "")
+  const deleteInfo2 = deleteInfo1.replaceAll("{", "");
+  const deleteInfo3 = deleteInfo2.replaceAll("}", "");
+  const deleteInfo4 = deleteInfo3.replaceAll("postImageKEY : ", "");
+  const deleteInfo5 = deleteInfo4.replaceAll("postImageURL : ", "");
+  const deleteInfo = deleteInfo5.split(", ")
+  console.log('원래 이 모습', deleteInfo);
+
+  let deleteKEY = [];
+  let deleteURL = [];
+  for (let i = 0; i < deleteInfo.length / 2; i++) {
+    if ( i < 0 ) {
+      deleteInfo[0] = deleteInfo[1]
+    } else {
+      let deleteKey = deleteInfo[i * 2 + 1];
+      let deleteUrl = deleteInfo[i * 2];
+      deleteKEY.push(deleteKey);
+      deleteURL.push(deleteUrl);
+    }
+  }
+  console.log(deleteKEY, "이거 확인함");
+  console.log(deleteURL, "이거 확인함!!!!");
 
   if (deleteImages) {
     // 키 값은 S3 삭제, URL은 DB 삭제
@@ -667,7 +689,7 @@ async function ModifyPosting(req, res) {
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Delete: {
-        Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+        Objects: deleteURL.map(postImageKEY => ({ Key: postImageKEY })), 
       }
     };
     s3.deleteObjects(params, function(err, data) {
@@ -719,19 +741,19 @@ async function ModifyPosting(req, res) {
   
 
 
-  let newTagStr = '';
-    if (req.body.tagList) {
-    const newTag = req.body.tagList.split(" ");
-    newTagStr += newTag
+  // let newTagStr = '';
+  //   if (req.body.tagList) {
+  //   const newTag = req.body.tagList.split(" ");
+  //   newTagStr += newTag
 
-    Object.assign(postInfo, {
-      tagList: newTagStr.split(',')
-    });
-  }
+  //   Object.assign(postInfo, {
+  //     tagList: newTagStr.split(',')
+  //   });
+  // }
   
 
 
 
 
-  res.send({ existImages })
+  res.send({ deleteImages })
 }
