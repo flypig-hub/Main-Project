@@ -46,7 +46,6 @@ async function WritePosting(req, res) {
     let ImGList = image[i].location
     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
   }
-  console.log(newContent);
 
   const postInfo = await posts.create({
     userId,
@@ -85,20 +84,18 @@ async function WritePosting(req, res) {
       const postImageKEY = postImageKey[i];
       const postImageURL = postImageUrl[i];
       const saveImage = images.create({
-      userId: userId,
-      userImageURL:userImageURL,
-      nickname: nickname,
-      postId: postInfo.postId,
-      thumbnailURL: thumbnailURL.toString(),
-      thumbnailKEY: thumbnailKEY.toString(),
-      postImageURL: postImageURL.toString(),
-      postImageKEY: postImageKEY.toString(),
+        userId: userId,
+        userImageURL:userImageURL,
+        nickname: nickname,
+        postId: postInfo.postId,
+        thumbnailURL: thumbnailURL.toString(),
+        thumbnailKEY: thumbnailKEY.toString(),
+        postImageURL: postImageURL.toString(),
+        postImageKEY: postImageKEY.toString(),
+      })
     })
-  })
-}
-
-    
-  res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
+  }
+    res.status(201).send({ postInfo, postImageUrl, thumbnailURL });
   } catch(e) {
     res.status(400).json({ errorMessage : "게시글이 등록되지 않았습니다."});
   }
@@ -124,7 +121,6 @@ async function GetPostingList(req, res) {
         model : users,
         attributes : ['nickname']
       }
-      
     ],
     order : [[
       "likeNum", "DESC"
@@ -227,7 +223,7 @@ async function GetPost(req, res) {
       },
     ],
   });
-  // console.log(allPost[0].houseTitle);
+  console.log(allPostInfo);
 
   // tagList 배열화
   let newTagStr = '';
@@ -653,13 +649,54 @@ async function ModifyPosting(req, res) {
     houseTitle,
     tagList,
     preImages,
-    deleteImages
+    deleteImages,
+    changeProfile 
   } = req.body;
   const image = req.files;
+
+  // 키값 형태
+  // {
+  //  postImageURL : s3://yushin-s3/images/00156e1e-a88e-4e07-9642-4ccc6c8effd4.PNG, 
+  //  postImageKEY : images/00156e1e-a88e-4e07-9642-4ccc6c8effd4.PNG
+  // }
+
+  if (deleteImages) {
+    // 키 값은 S3 삭제, URL은 DB 삭제
+    // 키 값 자르기(얼렁 하자)
+    const s3 = new AWS.S3();
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Delete: {
+        Objects: postImageKey.map(postImageKEY => ({ Key: postImageKEY })), 
+      }
+    };
+    s3.deleteObjects(params, function(err, data) {
+      if (err) console.log(err, err.stack); // error
+      else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+    });
+
+    // URL 받아서 DB와 비교, 삭제
+    const deleteDB = await images.findOne({
+      where: { postId },
+      attributes: [ 'postImageURL' ],
+    })
+    let DeleteURL = deleteImages
+    for (let i = 0; i < deleteImages.length; i++) {
+      if (deleteImages[i] === deleteDB[i].postImageURL) {
+        const destroyImage = await images.destroy({
+          where: { postImageURL }
+        })
+      }
+    }
+  }
   
   // 프론트에서 받는 새로운 이미지 받기(blob)
   // 1. 사진이 추가된다면(썸네일 있음)
-  if (preImages) {
+  let thumnailInfo = '';
+  if (changeProfile === true && preImages) {
+    const thumnailinfo = image[0]; // 이미지의 0번째는 썸네일
+    thumnailInfo += thumnailinfo
+
     const PreImages = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImages.replaceAll("'", "").split(',')
     let newContent = req.body.content;
@@ -669,24 +706,17 @@ async function ModifyPosting(req, res) {
       newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
     }
     console.log(newContent);
-    const ThumbnailURL = newContent[0]
+    console.log(thumnailInfo, "확인하기");
   }
+  
 
-  // 2. 사진이 일부 추가되고 일부 삭제된다면(썸네일 없음)
-  // if (preImages) {
-  //   const PreImages = req.body.preImages.replace(/\s'/g, "")
-  //   let preImagesArr = PreImages.replaceAll("'", "").split(',')
-  //   let newContent = req.body.content;
-  //   for (let i = 1; i < image.length; i++) {
-  //     let preIMG = preImagesArr[i - 1]
-  //     let ImGList = image[i].location
-  //     newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
-  //   }
-  //   console.log(newContent);
-  // }
-  const deleteImage = await images.destroy({
-    where: { postId }
-  })
+  // 2. 사진이 
+  if (changeProfile === false && preImages) {
+
+  }
+  
+
+  
 
 
   let newTagStr = '';
