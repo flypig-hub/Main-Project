@@ -236,29 +236,8 @@ async function GetPost(req, res) {
   }
   const newTAG = newTagStr.split(',')
 
-  const allPost = allPostInfo.map((postInfo) =>({
-    postId : postInfo.postId,
-    userId : postInfo.userId,
-    nickname : postInfo.user.nickname,
-    userImageURL : postInfo.user.userImageURL,
-    content : postInfo.content,
-    title : postInfo.title,
-    commentId : postInfo.commentId,
-    commentNum : postInfo.commentNum,
-    likeNum : postInfo.likeNum,
-    islike : postInfo.isLike,
-    mainAddress : postInfo.mainAddress,
-    subAddress : postInfo.subAddress,
-    category : postInfo.category,
-    type : postInfo.type,
-    link : postInfo.link,
-    houseTitle : postInfo.houseTitle,
-    tagList : newTAG,
-    createdAt : postInfo.createdAt,
-    updatedAt : postInfo.updatedAt,
-    images : postInfo.images
-  })); 
-  console.log(allPost,'로그');
+  
+  
 
  
     const postComments = await Comments.findAll({
@@ -292,7 +271,30 @@ async function GetPost(req, res) {
     },
     { where: { postId: allPostInfo[0].postId } }
   );
-  
+  const allPost = allPostInfo.map((postInfo) =>({
+    postId : postInfo.postId,
+    userId : postInfo.userId,
+    nickname : postInfo.user.nickname,
+    userImageURL : postInfo.user.userImageURL,
+    content : postInfo.content,
+    title : postInfo.title,
+    commentId : postInfo.commentId,
+    commentNum : postInfo.commentNum,
+    likeNum : postInfo.likeNum,
+    islike : postInfo.islike,
+    mainAddress : postInfo.mainAddress,
+    subAddress : postInfo.subAddress,
+    category : postInfo.category,
+    type : postInfo.type,
+    link : postInfo.link,
+    houseTitle : postInfo.houseTitle,
+    tagList : newTAG,
+    createdAt : postInfo.createdAt,
+    updatedAt : postInfo.updatedAt,
+    images : postInfo.images
+  })); 
+
+  //글쓴이의 다른 게시물
    const outherPosts = await posts.findAll({
     where: {
       userId: allPostInfo[0].userId,
@@ -313,17 +315,7 @@ async function GetPost(req, res) {
       }
     ],
   });
-   const outherPostInfo = outherPosts.map((outherpostinfo) =>({
-      postId : outherpostinfo.postId,
-      userId : outherpostinfo.userId,
-      nickname : outherpostinfo.user.nickname,
-      title : outherpostinfo.title,
-      commentNum : outherpostinfo.commentNum,
-      likeNum : outherpostinfo.likeNum,
-      islike : outherpostinfo.isLike,
-      preImages : outherpostinfo.preImages,
-      images : outherpostinfo.images
-     }));
+
 
   for (i = 0; outherPosts.length > i; i++){
     const outherPost = outherPosts[i];
@@ -404,6 +396,17 @@ async function GetPost(req, res) {
     
     
   }
+  const outherPostInfo = outherPosts.map((outherpostinfo) =>({
+    postId : outherpostinfo.postId,
+    userId : outherpostinfo.userId,
+    nickname : outherpostinfo.user.nickname,
+    title : outherpostinfo.title,
+    commentNum : outherpostinfo.commentNum,
+    likeNum : outherpostinfo.likeNum,
+    islike : outherpostinfo.islike,
+    preImages : outherpostinfo.preImages,
+    images : outherpostinfo.images
+   }));
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
@@ -427,6 +430,10 @@ async function GetPost(req, res) {
           isSave:isSave,
           
        });
+       await hosts.update(
+        { isSave:isSave},
+        {where:{hostId:house.hostId}}
+       )
     }
 
   let findAllAcc = [];

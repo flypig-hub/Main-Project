@@ -347,11 +347,12 @@ async function getDetailAcc(req, res) {
       })
   }
       
-    
+  
     if (findStar.length){
       const numStar = findStar.length
       let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
- 
+      
+     
       Object.assign(findAllAcc,{
        average: averageStarpoint,
        isSave:isSave,
@@ -359,10 +360,15 @@ async function getDetailAcc(req, res) {
 
      await hosts.update(
        {average: averageStarpoint,
-        isSave:isSave
       },
        {where:{hostId:findAllAcc.hostId}}
      )
+    }
+    else {
+      Object.assign(findAllAcc,{
+        isSave:isSave,
+      })
+      
     }
     res.status(200).send({ findAllAcc})
   // } catch (error) {
