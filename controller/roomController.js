@@ -46,14 +46,39 @@ async function allRoomList(req, res) {
   try {
     const allRoom = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
     let tags = [];
-    
-      for (i = 0; i < allRoom.length; i++) {
-        const room = allRoom[i]
-        for (l = 0; l < room.hashTag.length; l++) {
-          const hashtag = room.hashTag[l];
-          tags.push(hashtag);
-        }
+
+    for (i = 0; i < allRoom.length; i++) {
+      const room = allRoom[i];
+      for (l = 0; l < room.hashTag.length; l++) {
+        const hashtag = room.hashTag[l];
+        tags.push(hashtag);
+      }
     }
+
+    tags = tags.reduce((accu, curr) => {
+      accu[curr] = (accu[curr] || 0) + 1;
+      return accu;
+    }, {});
+    let max = 0;
+    let max2 = 0;
+    let max3 = 0;
+    for (j = 0; j < Object.values(tags).length; j++) {
+      if (max < Object.values(tags)[j]) {
+        max = Object.values(tags)[j];
+      }
+      if (max2 < Object.values(tags)[j] < max) {
+        max2 = Object.values(tags)[j];
+      }
+      if (max3 < Object.values(tags)[j] < max2) {
+        max3 = Object.values(tags)[j];
+      }
+    }
+    max = Object.keys(tags).find((key) => tags[key] === max)
+    delete tags[max]
+    max2 = Object.keys(tags).find((key) => tags[key] === max2)
+    delete tags[max2];
+    max3 = Object.keys(tags).find((key) => tags[key] === max3)
+    tags = [max, max2, max3];
     return res.status(200).send({ allRoom, tags, msg: "룸을 조회했습니다" });
   } catch (err) {
     return res.status(400).send({ msg: "룸 조회가 되지 않았습니다." });
