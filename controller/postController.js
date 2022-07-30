@@ -251,7 +251,7 @@ async function GetPost(req, res) {
     commentId : postInfo.commentId,
     commentNum : postInfo.commentNum,
     likeNum : postInfo.likeNum,
-    islike : postInfo.isLike,
+    islike : postInfo.islike,
     mainAddress : postInfo.mainAddress,
     subAddress : postInfo.subAddress,
     category : postInfo.category,
@@ -263,7 +263,7 @@ async function GetPost(req, res) {
     updatedAt : postInfo.updatedAt,
     images : postInfo.images
   })); 
-  console.log(allPost,'로그');
+  
 
  
     const postComments = await Comments.findAll({
