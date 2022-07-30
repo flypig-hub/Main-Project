@@ -431,6 +431,10 @@ async function GetPost(req, res) {
           isSave:isSave,
           
        });
+       await hosts.update(
+        { isSave:isSave},
+        {where:{hostId:house.hostId}}
+       )
     }
 
   let findAllAcc = [];
