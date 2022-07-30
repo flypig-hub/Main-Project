@@ -32,8 +32,8 @@ const kakaoCallback = (req, res, next) => {
               host,
               email
           }
+          res.redirect(`https://mendorong-jeju.co.kr=${token}`);
           
-          res.send({ users: result })
       }
   )(req, res, next)
     
