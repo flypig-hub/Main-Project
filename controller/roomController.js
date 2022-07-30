@@ -134,6 +134,9 @@ async function enterRoom(req, res) {
     if (room.hostId == userId) {
       res.status(200).send({ msg: "호스트가 입장하였습니다" });
       return
+  }if (room.roomUserId.includes(userId)) { 
+    res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
+    return
   }
     if (Number(room.max) < room.roomUserId.length) {
       res.status(400).send({
@@ -141,11 +144,6 @@ async function enterRoom(req, res) {
       });
       return;
     }
-    if (room.roomUserId.includes(userId)) { 
-    res.status(200).send({ msg: "채팅방에 등록된 유저입니다" });
-    return
-  }
-      
     
    res.status(201).send({ msg: "입장 완료" });
     
