@@ -316,17 +316,7 @@ async function GetPost(req, res) {
       }
     ],
   });
-   const outherPostInfo = outherPosts.map((outherpostinfo) =>({
-      postId : outherpostinfo.postId,
-      userId : outherpostinfo.userId,
-      nickname : outherpostinfo.user.nickname,
-      title : outherpostinfo.title,
-      commentNum : outherpostinfo.commentNum,
-      likeNum : outherpostinfo.likeNum,
-      islike : outherpostinfo.isLike,
-      preImages : outherpostinfo.preImages,
-      images : outherpostinfo.images
-     }));
+
 
   for (i = 0; outherPosts.length > i; i++){
     const outherPost = outherPosts[i];
@@ -407,6 +397,17 @@ async function GetPost(req, res) {
     
     
   }
+  const outherPostInfo = outherPosts.map((outherpostinfo) =>({
+    postId : outherpostinfo.postId,
+    userId : outherpostinfo.userId,
+    nickname : outherpostinfo.user.nickname,
+    title : outherpostinfo.title,
+    commentNum : outherpostinfo.commentNum,
+    likeNum : outherpostinfo.likeNum,
+    islike : outherpostinfo.islike,
+    preImages : outherpostinfo.preImages,
+    images : outherpostinfo.images
+   }));
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
