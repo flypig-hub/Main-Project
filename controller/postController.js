@@ -242,7 +242,7 @@ async function GetPost(req, res) {
   const newTAG = newTagStr.split(',')
 
   const allPost = allPostInfo.map((postInfo) =>({
-    postId : postInfo.pustId,
+    postId : postInfo.postId,
     userId : postInfo.userId,
     nickname : postInfo.user.nickname,
     userImageURL : postInfo.user.userImageURL,
