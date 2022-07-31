@@ -116,7 +116,7 @@ const naverCallback = (req, res, next) => {
 
 //로그인 인증
 async function checkMe(req, res) {
-    const {userId, nickname, userImageURL, email, host}  = res.locals
+    const {userId, nickname, userImageURL, email, host}  = res.session
     try {
       res.send({
         success:true,
