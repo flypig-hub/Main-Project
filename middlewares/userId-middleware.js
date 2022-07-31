@@ -21,11 +21,11 @@ module.exports = async (req, res, next) => {
 
     next();
   } catch {
-    res.session.userId = 0;
-    res.session.nickname = "손님";
-    res.session.host = "";
-    res.session.email = "";
-    res.session.userImageURL = "";
+    res.locals.userId = 0;
+    res.locals.nickname = "손님";
+    res.locals.host = "";
+    res.locals.email = "";
+    res.locals.userImageURL = "";
     next();
   }
 };
