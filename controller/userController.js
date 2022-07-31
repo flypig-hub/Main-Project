@@ -116,7 +116,7 @@ const naverCallback = (req, res, next) => {
 
 //로그인 인증
 async function checkMe(req, res) {
-    const {userId, nickname, userImageURL, email, host}  = res.session
+    const {userId, nickname, userImageURL, email, host}  = res.locals
     try {
       res.send({
         success:true,
@@ -135,7 +135,7 @@ async function checkMe(req, res) {
 
 //마이페이지 정보 - 1
  async function Mypage (req, res) {
-  const {userId} = res.session.users;
+  const {userId} = res.locals;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
   //try {
@@ -259,7 +259,7 @@ async function checkMe(req, res) {
 //닉네임
  async function MypagePutname (req, res) {
  try {
-    const userId = res.session.userId
+    const userId = res.locals.userId
     const {nickname} = req.body;
 
     
