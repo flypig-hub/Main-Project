@@ -104,8 +104,8 @@ async function WritePosting(req, res) {
 
 // 유저 커뮤니티 게시글 전체 조회
 async function GetPostingList(req, res) {
-  const user = res.locals;
-  let queryData = res.locals;
+  const user = res.session;
+  let queryData = res.session;
   if (queryData.userId === undefined)
   {queryData.userId = 0}
   
@@ -194,7 +194,7 @@ async function GetPostingList(req, res) {
 // 유저 커뮤니티 게시글 상세 조회
 async function GetPost(req, res) {
   const { postId } = req.params;
-  let queryData = res.locals;
+  let queryData = res.session;
   
   if (queryData.userId === undefined)
   {queryData.userId = 0}

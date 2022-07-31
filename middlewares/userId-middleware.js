@@ -13,19 +13,19 @@ module.exports = async (req, res, next) => {
     console.log("userId", userId);
     const loginuser = await users.findOne({ where: { userId } });
     const loginuserImage = await images.findOne({ where: { userId } });
-    res.locals.userId = loginuser.userId;
-    res.locals.nickname = loginuser.nickname;
-    res.locals.host = loginuser.host;
-    res.locals.email = loginuser.email;
-    res.locals.userImageURL = loginuserImage.userImageURL;
+    res.session.userId = loginuser.userId;
+    res.session.nickname = loginuser.nickname;
+    res.session.host = loginuser.host;
+    res.session.email = loginuser.email;
+    res.session.userImageURL = loginuserImage.userImageURL;
 
     next();
   } catch {
-    res.locals.userId = 0;
-    res.locals.nickname = "손님";
-    res.locals.host = "";
-    res.locals.email = "";
-    res.locals.userImageURL = "";
+    res.session.userId = 0;
+    res.session.nickname = "손님";
+    res.session.host = "";
+    res.session.email = "";
+    res.session.userImageURL = "";
     next();
   }
 };
