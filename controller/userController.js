@@ -135,7 +135,7 @@ async function checkMe(req, res) {
 
 //마이페이지 정보 - 1
  async function Mypage (req, res) {
-  const {userId} = res.session;
+  const {userId} = res.session.users;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
   //try {
