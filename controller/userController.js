@@ -135,7 +135,7 @@ async function checkMe(req, res) {
 
 //마이페이지 정보 - 1
  async function Mypage (req, res) {
-  const {userId} = res.locals;
+  const {userId} = res.session;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
   //try {
@@ -259,7 +259,7 @@ async function checkMe(req, res) {
 //닉네임
  async function MypagePutname (req, res) {
  try {
-    const userId = res.locals.userId
+    const userId = res.session.userId
     const {nickname} = req.body;
 
     
@@ -321,9 +321,11 @@ async function CNU_CK (req, res, next) {
       const postUrl = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=hsmMPV8Yvh7MAswqXiCCcM%2BlWTuetywv5slb0C2xYqLlwk1Qrqp%2BbChwrRIEvBHmVzPxy%2BR9%2FYcZ08ZUa65rHQ%3D%3D"
 
       const result  = await axios.post(postUrl,JSON.stringify(data),{ headers: { 'Content-Type': 'application/json' } }
+      
       ).then((res) => { 
+        console.log(postUrl, '데이터값이 어떻게 오나요');
         return res.data.data[0].tax_type
-
+        
       }).catch((err)=> {
         
       });
