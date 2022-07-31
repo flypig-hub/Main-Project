@@ -184,7 +184,8 @@ async function GetPostingList(req, res) {
     });
     await posts.update(
       {likeNum: likeNum,
-       commentNum: commentNum
+       commentNum: commentNum,
+       islike: islike,
       },
       {where:{postId:post.postId}})
   }
@@ -235,6 +236,39 @@ async function GetPost(req, res) {
   } 
   const newTAG = newTagStr.split(',')
 
+  const postComments = await Comments.findAll({
+    where: { postId: allPostInfo[0].postId },
+  });
+  const postLikes = await Like.findAll({ where: { postId: allPostInfo[0].postId } });
+
+  let islike = await Like.findOne({
+    where: { userId: queryData.userId, postId: allPostInfo[0].postId },
+  });
+
+  const likeNum = postLikes.length;
+  const commentNum = postComments.length;
+
+  if (islike) {
+    islike = true;
+  } else {
+    islike = false;
+  }
+  
+  Object.assign(allPostInfo[0], {
+    likeNum: likeNum,
+    commentNum: commentNum,
+    islike: islike,
+  });
+await posts.update(
+  {
+    likeNum: likeNum,
+    commentNum: commentNum,
+    islike: islike,
+  },
+  { where: { postId: allPostInfo[0].postId } }  
+);
+
+
   const allPost = allPostInfo.map((postInfo) =>({
     postId : postInfo.postId,
     userId : postInfo.userId,
@@ -245,7 +279,7 @@ async function GetPost(req, res) {
     commentId : postInfo.commentId,
     commentNum : postInfo.commentNum,
     likeNum : postInfo.likeNum,
-    islike : postInfo.isLike,
+    islike : postInfo.islike,
     mainAddress : postInfo.mainAddress,
     subAddress : postInfo.subAddress,
     category : postInfo.category,
@@ -257,40 +291,13 @@ async function GetPost(req, res) {
     updatedAt : postInfo.updatedAt,
     images : postInfo.images
   })); 
+ 
   console.log(allPost,'로그');
 
  
-    const postComments = await Comments.findAll({
-      where: { postId: allPostInfo[0].postId },
-    });
-    const postLikes = await Like.findAll({ where: { postId: allPostInfo[0].postId } });
 
-    let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: allPostInfo[0].postId },
-    });
 
-    const likeNum = postLikes.length;
-    const commentNum = postComments.length;
-
-    if (islike) {
-      islike = true;
-    } else {
-      islike = false;
-    }
-    
-    Object.assign(allPostInfo[0], {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    });
-  await posts.update(
-    {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    },
-    { where: { postId: allPostInfo[0].postId } }
-  );
+//글쓴이의 다른 게시물
   
    const outherPosts = await posts.findAll({
     where: {
@@ -312,17 +319,18 @@ async function GetPost(req, res) {
       }
     ],
   });
-   const outherPostInfo = outherPosts.map((outherpostinfo) =>({
-      postId : outherpostinfo.postId,
-      userId : outherpostinfo.userId,
-      nickname : outherpostinfo.user.nickname,
-      title : outherpostinfo.title,
-      commentNum : outherpostinfo.commentNum,
-      likeNum : outherpostinfo.likeNum,
-      islike : outherpostinfo.isLike,
-      preImages : outherpostinfo.preImages,
-      images : outherpostinfo.images
-     }));
+  const outherPostInfo = outherPosts.map((outherpostinfo) =>({
+    postId : outherpostinfo.postId,
+    userId : outherpostinfo.userId,
+    nickname : outherpostinfo.user.nickname,
+    title : outherpostinfo.title,
+    commentNum : outherpostinfo.commentNum,
+    likeNum : outherpostinfo.likeNum,
+    islike : outherpostinfo.islike,
+    preImages : outherpostinfo.preImages,
+    images : outherpostinfo.images
+   }));
+
 
   for (i = 0; outherPosts.length > i; i++){
     const outherPost = outherPosts[i];
@@ -403,6 +411,7 @@ async function GetPost(req, res) {
     
     
   }
+
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
