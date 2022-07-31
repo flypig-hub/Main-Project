@@ -183,7 +183,8 @@ async function GetPostingList(req, res) {
     });
     await posts.update(
       {likeNum: likeNum,
-       commentNum: commentNum
+       commentNum: commentNum,
+       islike: islike,
       },
       {where:{postId:post.postId}})
   }
