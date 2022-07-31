@@ -244,7 +244,7 @@ async function GetPost(req, res) {
     commentId : postInfo.commentId,
     commentNum : postInfo.commentNum,
     likeNum : postInfo.likeNum,
-    islike : postInfo.isLike,
+    islike : postInfo.islike,
     mainAddress : postInfo.mainAddress,
     subAddress : postInfo.subAddress,
     category : postInfo.category,
@@ -318,7 +318,7 @@ async function GetPost(req, res) {
       title : outherpostinfo.title,
       commentNum : outherpostinfo.commentNum,
       likeNum : outherpostinfo.likeNum,
-      islike : outherpostinfo.isLike,
+      islike : outherpostinfo.islike,
       preImages : outherpostinfo.preImages,
       images : outherpostinfo.images
      }));
