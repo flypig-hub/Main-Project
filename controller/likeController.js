@@ -3,7 +3,7 @@ const { posts, Like, sequelize, Sequelize } = require("../models");
 
 
 async function onlike(req, res) {
-  const { userId } = res.session;
+  const { userId } = res.locals;
   const { postId } = req.params;
  try {
   const islike = await Like.findAll({
@@ -32,7 +32,7 @@ async function onlike(req, res) {
 
 //좋아요 취소
 async function unlike(req, res) {
-  const { userId } = res.session;
+  const { userId } = res.locals;
   const { postId } = req.params;
 try {
   const dellike = await Like.destroy({
