@@ -234,6 +234,39 @@ async function GetPost(req, res) {
   } 
   const newTAG = newTagStr.split(',')
 
+  const postComments = await Comments.findAll({
+    where: { postId: allPostInfo[0].postId },
+  });
+  const postLikes = await Like.findAll({ where: { postId: allPostInfo[0].postId } });
+
+  let islike = await Like.findOne({
+    where: { userId: queryData.userId, postId: allPostInfo[0].postId },
+  });
+
+  const likeNum = postLikes.length;
+  const commentNum = postComments.length;
+
+  if (islike) {
+    islike = true;
+  } else {
+    islike = false;
+  }
+  
+  Object.assign(allPostInfo[0], {
+    likeNum: likeNum,
+    commentNum: commentNum,
+    islike: islike,
+  });
+await posts.update(
+  {
+    likeNum: likeNum,
+    commentNum: commentNum,
+    islike: islike,
+  },
+  { where: { postId: allPostInfo[0].postId } }  
+);
+
+
   const allPost = allPostInfo.map((postInfo) =>({
     postId : postInfo.postId,
     userId : postInfo.userId,
@@ -260,38 +293,7 @@ async function GetPost(req, res) {
   console.log(allPost,'로그');
 
  
-    const postComments = await Comments.findAll({
-      where: { postId: allPostInfo[0].postId },
-    });
-    const postLikes = await Like.findAll({ where: { postId: allPostInfo[0].postId } });
 
-    let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: allPostInfo[0].postId },
-    });
-
-    const likeNum = postLikes.length;
-    const commentNum = postComments.length;
-
-    if (islike) {
-      islike = true;
-    } else {
-      islike = false;
-    }
-    
-    Object.assign(allPostInfo[0], {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    });
-  await posts.update(
-    {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    },
-    { where: { postId: allPostInfo[0].postId } }
-  );
-  
 
 //글쓴이의 다른 게시물
   
