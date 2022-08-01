@@ -13,7 +13,8 @@ const {
 const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
 const Op = Sequelize.Op;
-const ImageController = require("./ImageController")
+const ImageController = require("./ImageController");
+const { isTypedArray } = require("util/types");
 
 
 // 유저 게시글 작성
@@ -84,6 +85,7 @@ async function WritePosting(req, res) {
       const postImageURL = postImageUrl[i];
       console.log(postImageKEY);
       console.log(postImageURL);
+    
       const saveImage = images.create({
         userId: userId,
         userImageURL:userImageURL,
@@ -647,7 +649,7 @@ async function ModifyPosting(req, res) {
   const { postId } = req.params;
   const {
     title,
-    content,
+    content, 
     mainAddress,
     subAddress,
     category,
@@ -655,61 +657,18 @@ async function ModifyPosting(req, res) {
     link,
     houseTitle,
     tagList,
-    preImages,
-    deleteImages,
+    preImages,       // blob값
+    deleteImages,    // 키값 형태: 배열(길이 - KEY : 47 / URL : 62)
     changeProfile 
   } = req.body;
-  const image = req.files;
-
-  // 키값 형태(KEY : 47 / URL : 62)
-  // {
-  //  postImageURL : "https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/5a09389d-2843-40b3-83af-298bc00bc1eb.PNG", 
-  //  postImageKEY : images/5a09389d-2843-40b3-83af-298bc00bc1eb.PNG
-  // }, {
-  //  postImageURL : "https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/4a29926a-0fba-45ba-835d-fec22df019f9.jpg", 
-  //  postImageKEY : images/4a29926a-0fba-45ba-835d-fec22df019f9.jpg
-  // }, {
-  //  postImageURL : "https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/2287d111-0cae-4517-81c7-6ed222ae3567.PNG", 
-  //  postImageKEY : images/2287d111-0cae-4517-81c7-6ed222ae3567.PNG
-  // }
-
+  const image = req.files; // 4장
 
   // 키 값은 S3 삭제, URL은 DB 삭제
-  const deleteInfo1 = req.body.deleteImages.replaceAll('"', "")
-  const deleteInfo2 = deleteInfo1.replaceAll("{", "");
-  const deleteInfo3 = deleteInfo2.replaceAll("}", "");
-  const deleteInfo4 = deleteInfo3.replaceAll("postImageKEY", "");
-  const deleteInfo5 = deleteInfo4.replaceAll("postImageURL", "");
-  const deleteInfo6 = deleteInfo5.replaceAll(' ', "")
-  const deleteInfo7 = deleteInfo6.replaceAll(':', "")
-  const deleteInfo = deleteInfo7.split(",")
-
-  // 기존 이미지들의 키, URL을 배열화 + Key, Url 분리
-  const preImages1 = req.body.preImages.replaceAll('[', "");
-  const preImages2 = preImages1.replaceAll(']', "");
-  const preImages3 = preImages2.replaceAll('{', "");
-  const preImages4 = preImages3.replaceAll('}', "");
-  const preImages5 = preImages4.replaceAll('postImageKEY', "");
-  const preImages6 = preImages5.replaceAll('postImageURL', "");
-  const preImages7 = preImages6.replaceAll(' ', "")
-  const preImages8 = preImages7.replaceAll('"', "")
-  const preImages9 = preImages8.replaceAll(':', "")
-  const PreImages = preImages9.split(',')
-
-  let PreImagesKEY = [];
-  let PreImagesURL = [];
-  for (let i = 0; i < PreImages.length / 2; i++) {
-    if ( i < 0 ) {
-      PreImagesKEY[0] = PreImagesKEY[1];
-      PreImagesURL[0] = PreImagesURL[1];
-    } else {
-      let PreImagesKey = PreImages[i * 2 + 1];
-      let PreImagesUrl = PreImages[i * 2];
-      PreImagesKEY.push(PreImagesKey);
-      PreImagesURL.push(PreImagesUrl);
-    }
-  }
-
+  const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")
+  const deleteinfo2 = deleteinfo.replaceAll(" ", "");
+  const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
+  const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
+  const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
   // deleteImages 배열화
   let deleteKEY = [];
   let deleteURL = [];
@@ -723,13 +682,50 @@ async function ModifyPosting(req, res) {
       deleteURL.push(deleteUrl);
     }
   }
-  console.log("삭제할 키값", deleteKEY);
-  console.log("삭제할 URL", deleteURL);
-    
-  const getThumnailInfo = await images.findOne({
-    where: { postId },
-    attributes: [ "thumbnailURL", "thumbnailKEY" ]
+
+  // 썸네일을 위해 삭제되기 전에 DB에서 미리 찾아둠
+  const getThumnailInfo = await images.findAll({
+    where: { postId: postId },
+    attributes: [ "thumbnailURL", "thumbnailKEY", 'postImageKEY', 'postImageURL' ]
   })
+  let imagesInfoURL = [];
+  let imagesInfoKEY = [];
+  for (let i = 0; i < getThumnailInfo.length; i++) {
+    let getThumnailInfoKEY = getThumnailInfo[i].postImageKEY;
+    let getThumnailInfoURL = getThumnailInfo[i].postImageURL;
+    imagesInfoKEY.push(getThumnailInfoKEY)
+    imagesInfoURL.push(getThumnailInfoURL)
+  }
+  console.log(imagesInfoURL, "원래 DB에 있던 URL");
+  console.log(imagesInfoKEY, "원래 DB에 있던 KEY");
+
+  // 이미지 파일객체 map
+  const postImagesKEY = image.map((postImageKey) => postImageKey.key);
+  const postImagesURL = image.map((postImageUrl) => postImageUrl.location);
+
+  // content 중 blob 값을 대체
+  const PreImage = req.body.preImages.replace(/\s'/g, "")
+  let preImagesArr = PreImage.replaceAll("'", "").split(',')
+  let newContent = req.body.content;
+  for (let i = 1; i < image.length; i++) {
+    let preIMG = preImagesArr[i - 1]
+    let ImGList = image[i].location
+    newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
+  }
+
+  // DB 삭제
+  const destroyKEY = await images.findAll({
+    where: { postId },
+    attributes: [ 'postImageKEY', 'postImageURL' ]
+  })
+  let imagesDestroyKEY = [];
+  let imagesDestroyURL = [];
+  for (let i = 0; i < destroyKEY.length; i++) {
+    let imagesDestroyKey = destroyKEY[i].postImageKEY;
+    let imagesDestroyUrl = destroyKEY[i].postImageURL;
+    imagesDestroyKEY.push(imagesDestroyKey)
+    imagesDestroyURL.push(imagesDestroyUrl)
+  }
 
   if (deleteImages) {
     // AWS S3 삭제 코드
@@ -737,7 +733,7 @@ async function ModifyPosting(req, res) {
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Delete: {
-        Objects: deleteKEY.map(deleteKEY => ({ Key: deleteKEY })), 
+        Objects: imagesDestroyKEY.map(imagesDestroyKEY => ({ Key: imagesDestroyKEY })), 
       }
     };
     s3.deleteObjects(params, function(err, data) {
@@ -753,45 +749,40 @@ async function ModifyPosting(req, res) {
     for (let i = 0; i < deleteImages.length; i++) {
       if (deleteImages[i] === deleteURL[i]) {
         const destroyImage = await images.destroy({
-          where: { postImageURL }
+          where: { postImageURL:imagesDestroyURL }
         })
       }
     }
   }
 
-  const destroyPost = await posts.destroy({
-    where: { postId: postId }
-  });
-  const destroyImages = await images.destroy({
-    where: { postId: postId }
-  });
+  const destroyPost = await posts.destroy({ where: { postId: postId } });
+  const destroyImages = await images.destroy({ where: { postId: postId } });
+
+  // URL 배열 전체 합치기
+  const allPostImageKey = imagesInfoKEY.concat(postImagesKEY);
+  const allPostImageUrl = imagesInfoURL.concat(postImagesURL);
+  // 전체 배열 합에서 삭제 이미지 제거
+  const resImageKeyInfo = allPostImageKey.filter(x => !deleteKEY.includes(x))
+  const resImageUrlInfo = allPostImageUrl.filter(x => !deleteURL.includes(x))
+  console.log(resImageKeyInfo, "최종 키값");
+  console.log(resImageUrlInfo, "최종 URL");
+
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
   if (changeProfile && preImages) {  
     const thumnailUrl = image[0].location;
     const thumnailKey = image[0].key;
-    const postImageKey = image.map((postImageKey) => postImageKey.key);
-    const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
-    const allPostImageKey = postImageKey.concat(PreImagesKEY);
-    const allPostImageUrl = postImageUrl.concat(PreImagesURL);
-
-    // 모두 합친 배열에서 중복값 제거하기
-    const resImageKeyInfo = allPostImageKey.filter(x => !deleteKEY.includes(x))
-    const resImageUrlInfo = allPostImageUrl.filter(x => !deleteURL.includes(x))
-    console.log(resImageKeyInfo, "최종 키값");
-    console.log(resImageUrlInfo, "최종 URL값");
-
-    resImageKeyInfo.forEach((element, i) => {
-      const postImageKEY = resImageKeyInfo[i];
-      const postImageURL = resImageUrlInfo[i];
-
+    console.log("썸네일 바꿔서 사진을 수정합니다");
+    postImagesKEY.forEach((element, i) => {
+      const postImageKEY = postImagesKEY[i];
+      const postImageURL = postImagesURL[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
         postId: postId,
-        thumbnailURL: thumnailUrl,
-        thumbnailKEY: thumnailKey,
+        thumbnailURL: resImageUrlInfo[0],
+        thumbnailKEY: resImageKeyInfo[0],
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
       })
@@ -800,68 +791,63 @@ async function ModifyPosting(req, res) {
 
   // 상황 2. 사진이 추가되고 썸네일 수정 없음
   if (!changeProfile && preImages) {
-    const postImageKey = image.map((postImageKey) => postImageKey.key);
-    const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
-    const allPostImageKey = postImageKey.concat(PreImagesKEY);
-    const allPostImageUrl = postImageUrl.concat(PreImagesURL);
-
-    // 모두 합친 배열에서 중복값 제거하기
-    const resImageKeyInfo = allPostImageKey.filter(x => !deleteKEY.includes(x))
-    const resImageUrlInfo = allPostImageUrl.filter(x => !deleteURL.includes(x))
-    console.log(resImageKeyInfo, "최종 키값");
-    console.log(resImageUrlInfo, "최종 URL값");
-
-    resImageKeyInfo.forEach((element, i) => {
-      const postImageKEY = resImageKeyInfo[i];
-      const postImageURL = resImageUrlInfo[i];
-
+    console.log("썸네일 없이 사진을 수정합니다");
+    postImagesKEY.forEach((element, i) => {
+      const postImageKEY = postImagesKEY[i];
+      const postImageURL = postImagesURL[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
         postId: postId,
-        thumbnailURL: getThumnailInfo[0].thumbnailURL,
-        thumbnailKEY: getThumnailInfo[0].thumnailKEY,
+        thumbnailURL: imagesInfoURL[0],
+        thumbnailKEY: imagesInfoKEY[0],
         postImageURL: postImageURL,
         postImageKEY: postImageKEY,
       })
     })
   }
 
-  
-  const updatePost = await posts.update({
-    title,
-    content,
-    mainAddress,
-    subAddress,
-    category,
-    type,
-    link,
-    houseTitle,
+  const postUpdate = await posts.update({
+    userId: userId,
+    nickname: nickname,
+    title: title,
+    content : newContent,
+    mainAddress: mainAddress,
+    subAddress: subAddress,
+    category: category,
+    type: type,
+    link: link,
+    houseTitle: houseTitle,
     tagList,
-    preImages,
-    deleteImages,
-    changeProfile 
-  }, { where : {
-    postId: postId
-  }});
+  }, {
+    where: { postId: postId }
+  },
+  console.log("지나가나요?"));
 
+  // 태그 리스트 추가
   let newTagStr = '';
   if (req.body.tagList) {
     const newTag = req.body.tagList.split(" ");
     newTagStr += newTag
 
-    Object.assign(updatePost, {
+    Object.assign(postUpdate, {
       tagList: newTagStr.split(',')
     });
   }
 
-  let newContent = req.body.content;
-  for (let i = 1; i < image.length; i++) {
-    let preIMG = preImages[i - 1]
-    let ImGList = image[i].location
-    newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
-  }
+  const postInfo = await posts.findAll({
+    where: { postId: postId },
+    include : [{
+      model: images,
+      attributes: [ "postImageURL", "thumbnailURL" ]
+    }]
+  });
+  console.log(postInfo);
 
-  res.send({ newContent, deleteImages })
+  const postImageUrl = postInfo.postImageURL
+
+  // postInfo, postImageUrl, thumbnailURL 만들어줘야 함
+
+  res.send({ postInfo })
 }
