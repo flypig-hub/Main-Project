@@ -523,7 +523,6 @@ module.exports.getDetailAcc = getDetailAcc;
 module.exports.updateAcc = updateAcc;
 module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
-module.exports.searchbar = searchbar;
 module.exports.getAllACC_Star = getAllACC_Star;
 
 // 게시글 수정( 수정 중 )
