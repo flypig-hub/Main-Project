@@ -14,9 +14,11 @@ router.post('/', authMiddleware, upload.array('images', 8), HostController.hostC
 router.get('/', userIdMiddleware, HostController.getAllAcc)
 
 // 호스트 숙소 전체 조회
-router.get('/search', userIdMiddleware, HostController.hostsearch)
+router.get('/starpoint', userIdMiddleware, HostController.getAllACC_Star)
 
-// 숙소 검색하기
+
+
+// 숙소 검색하기 지역
 router.get("/address/search", userIdMiddleware, HostController.hostAddresssearch);
 
 // 숙소 타입 검색하기
