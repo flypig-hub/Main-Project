@@ -165,7 +165,7 @@ async function enterRoom(req, res) {
   }
     if (Number(room.max) < room.roomUserId.length) {
       res.status(400).send({
-        msg: "입장 가능 인원을 초과하였습니다.",
+        errorMEssage: "입장 가능 인원을 초과하였습니다.",
       });
       return;
     }
@@ -175,7 +175,7 @@ async function enterRoom(req, res) {
   
   } catch (err) {
     res.status(400).send({
-      msg: "공개방 입장에 실패하였습니다.",
+      errorMEssage: "공개방 입장에 실패하였습니다.",
     });
   }
 }
