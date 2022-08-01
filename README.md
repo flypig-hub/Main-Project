@@ -19,6 +19,11 @@
 6월 24일 ~ 8월 5일(6주)<br><br>
 7월 30일 멘도롱제주 배포 & 마케팅 & UT 시작
 
+<br>
+
+----
+<br>
+
 ### 💻 Front-end
 [GitHub](https://github.com/Choiji92/final_project#readme)
 <br>
