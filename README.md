@@ -133,7 +133,17 @@ account_email로 설정이 되어있어 발생했던 문제였다.<br><br>
 <details>
 <summary> 💥 텍스트에디터(Toast UI)에서 이미지 업로드 💥 </summary>
 <br>
-문제 : 
+문제점 : 텍스트에디터에서 입력하는 데이터는 html 형식으로 DB에 저장을 하게 되는데 이미지를 업로드하게 되면 자동으로<br> base64 URL로 변경되어 <img src=”base64:~~~~~~”/> 이런식으로 저장하게 되어 DB에 부담이 된다.<br> 
+다른문제점 : 1. API가 2번 호출되는 상황이라 자원 낭비가 있다.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. 게시글 작성 중 페이지를 이탈했을 경우 이미 DB와 AWS S3에 저장된 이미지를 통제할 수 있는 방법이 없다.<br><br>
+
+과정 : 1. API를 2개를 생성한다.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. 프론트엔드에서 이미지를 이미지에디터에 업로드 할 때마다 AWS S3에 업로드하는 API를 호출하여 S3 URL로 바꾼다. <br><br>
+ 
+해결방안 : 1. 백엔드에서 파일객체들이 담긴 리스트를 S3에 저장 후 S3 URL을 blob URL이 담긴 리스트와 비교
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. 이미지 치환 후 데이터를 DB에 저장 
+ 
 
 </details>
 
