@@ -516,7 +516,6 @@ res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다.
 
 async function hostsearch(req, res) {
   try {
-    houseInfo;
     const querydata = req.query;
     let searchResult = [];
     const findbyaddress = await hosts.findAll({
