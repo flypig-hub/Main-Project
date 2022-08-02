@@ -675,35 +675,15 @@ async function updateAcc(req, res) {
     }
     console.log(deleteKEY, "삭제할 이미지KEY 배열화");
     console.log(deleteURL, "삭제할 이미지URL 배열화");
-
-    // 이미지 파일객체 map
-    const postImagesKEY = image.map((postImageKey) => postImageKey.key);
-    const postImagesURL = image.map((postImageUrl) => postImageUrl.location);
   
     // S3 삭제
     if (deleteImages) {
-      const destroyKEY = await images.findAll({
-        where: { hostId },
-        attributes: [ 'postImageKEY', 'postImageURL' ]
-      })
-      let imagesDestroyKEY = [];
-      let imagesDestroyURL = [];
-      for (let i = 0; i < deleteInfo.length / 2; i++) {
-        if ( i < 0 ) {
-          deleteInfo[0] = deleteInfo[1]
-        } else {
-          let deleteKey = deleteInfo[i * 2 + 1];
-          let deleteUrl = deleteInfo[i * 2];
-          imagesDestroyKEY.push(deleteKey);
-          imagesDestroyURL.push(deleteUrl);
-        }
-      }
       // AWS S3 삭제 코드
       const s3 = new AWS.S3();
       const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
         Delete: {
-          Objects: imagesDestroyKEY.map(imagesDestroyKEY => ({ Key: imagesDestroyKEY })), 
+          Objects: deleteKEY.map(deleteKEY => ({ Key: deleteKEY })), 
         }
       };
       s3.deleteObjects(params, function(err, data) {
@@ -711,53 +691,47 @@ async function updateAcc(req, res) {
         else { console.log("S3에서 삭제되었습니다"), data }; // deleted
       });
     }
-    // 이미지 삭제 후 DB에서 삭제함
-    const destroyImages = await images.destroy({ where: { hostId: hostId } });
 
-    // 기존 이미지 배열화해서 deleteImages의 KEY, URL 빼주기
-    const existImage = req.body.existImages.replaceAll(" ", "");
-    const existImage1 = existImage.replaceAll("postImageURL:", "");
-    const existImage2 = existImage1.replaceAll("postImageKEY:", "");
-    const existImageInfo = existImage2.replaceAll("'", "").split(',')
-    console.log(existImageInfo);
-    let existImageInfoKEY = [];
-    let existImageInfoURL = [];
-    for (let i = 0; i < existImageInfo.length / 2; i++) {
-      if (i < 0) {
-        existImageInfo[0] = existImageInfo[1]
-      } else {
-        let existImageInfoKey = existImageInfo[i * 2 + 1]
-        let existImageInfoUrl = existImageInfo[i * 2]
-        existImageInfoKEY.push(existImageInfoKey)
-        existImageInfoURL.push(existImageInfoUrl)
-      }
-    }
-    console.log(existImageInfoKEY, "클라이언트에서 받은 기존 이미지 KEY");
-    console.log(existImageInfoURL, "클라이언트에서 받은 기존 이미지 URL");
+    const destroyImages = await images.destroy({ 
+      where: { postImageURL : deleteURL } 
+    });
+    console.log(destroyImages, "이것만 삭제한다");
 
-    // deleteImages의 KEY, URL 빼주기
-    const fromDBDeleteImagesKEY = existImageInfoKEY.filter((x) => !deleteKEY.includes(x))
-    const fromDBDeleteImagesURL = existImageInfoURL.filter((x) => !deleteURL.includes(x))
+    // 이미지 파일객체 map
+    const postImagesKEY = image.map((postImageKey) => postImageKey.key);
+    const postImagesURL = image.map((postImageUrl) => postImageUrl.location);
 
-    // // URL 배열 전체 합치기
-    const preAllPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
-    const preAllPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
-    console.log(preAllPostImageKey, "최종 KEY값");
-    console.log(preAllPostImageUrl, "최종 URL값");
+    // 기존 DB의 KEY, URL 획득
+    const DBDeleteImagesInfo = await images.findAll({
+      where: { hostId },
+      attributes: [ 'postImageKEY', 'postImageURL' ]
+    })
+    console.log(DBDeleteImagesInfo[0].postImageURL, "상태좀 봅시다");
+
+    // // deleteImages의 KEY, URL 빼주기
+    // const fromDBDeleteImagesKEY = existImageInfoKEY.filter((x) => !deleteKEY.includes(x))
+    // const fromDBDeleteImagesURL = existImageInfoURL.filter((x) => !deleteURL.includes(x))
+    // console.log(fromDBDeleteImagesURL, "너도 같이 보자");
+
+    // // // URL 배열 전체 합치기
+    // const preAllPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
+    // const preAllPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
+    // console.log(preAllPostImageKey, "최종 KEY값");
+    // console.log(preAllPostImageUrl, "최종 URL값");
 
 
-    preAllPostImageKey.forEach((element, i) => {
-      const postImageKEY = preAllPostImageKey[i];
-      const postImageURL = preAllPostImageUrl[i];
+    postImagesKEY.forEach((element, i) => {
+      const postImageKEY = postImagesKEY[i];
+      const postImageURL = postImagesURL[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
         hostId: hostId,
-        thumbnailURL: preAllPostImageKey[0].toString(),
-        thumbnailKEY: preAllPostImageUrl[0].toString(),
-        postImageURL: postImageKEY.toString(),
-        postImageKEY: postImageURL.toString(),
+        thumbnailURL: DBDeleteImagesInfo[0].postImageURL,
+        thumbnailKEY: DBDeleteImagesInfo[0].postImageKEY,
+        postImageURL: postImageURL.toString(),
+        postImageKEY: postImageKEY.toString(),
       })
     })
 
