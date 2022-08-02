@@ -636,7 +636,7 @@ async function ModifyPosting(req, res) {
     where: { postImageURL : deleteURL } 
   });
   console.log(destroyImages, "이것만 삭제한다");
-  
+
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
   if (changeThumbnail) {  
@@ -672,8 +672,8 @@ async function ModifyPosting(req, res) {
   if (!changeThumbnail) {
     console.log("썸네일 없이 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
-      const postImageKEY = allPostImageKey[i];
-      const postImageURL = allPostImageUrl[i];
+      const postImageKEY = postImagesKEY[i];
+      const postImageURL = postImagesURL[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
