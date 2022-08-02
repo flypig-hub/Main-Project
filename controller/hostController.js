@@ -656,7 +656,6 @@ async function updateAcc(req, res) {
     } = req.body;
     const image = req.files;
 
-    if (deleteImages) {
       // 삭제할 이미지 KEY, URL 나눠서 배열화
       const deleteinfo2 = req.body.deleteImages.replaceAll(" ", "");
       const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
@@ -677,7 +676,6 @@ async function updateAcc(req, res) {
       }
       console.log(deleteKEY, "삭제할 이미지KEY 배열화");
       console.log(deleteURL, "삭제할 이미지URL 배열화");
-    }
 
     // DB 삭제
     const destroyKEY = await images.findAll({
