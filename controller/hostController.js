@@ -553,9 +553,8 @@ async function hostsearch(req, res) {
           [Op.substring]: querydata.search,
         },
         mainAddress: {
-          [Op.ne]: {
-            [Op.substring]: querydata.search,
-          },
+          [Op.substring]: {[Op.ne]: querydata.search }
+
         },
         houseInfo: {
           [Op.ne]: querydata.search,
@@ -575,8 +574,8 @@ async function hostsearch(req, res) {
         },
       ],
     });
-    for (i = 0; i < findbytitle.length; i++) {
-      searchResult.push(findbytitle[i]);
+    for (j = 0; j < findbytitle.length; j++) {
+      searchResult.push(findbytitle[j]);
     }
     const findbyhostContent = await hosts.findAll({
       where: {
@@ -584,14 +583,10 @@ async function hostsearch(req, res) {
           [Op.substring]: querydata.search,
         },
         title: {
-          [Op.ne]: {
-            [Op.substring]: querydata.search,
-          },
+          [Op.substring]: { [Op.ne]: querydata.search },
         },
         mainAddress: {
-          [Op.ne]: {
-            [Op.substring]: querydata.search,
-          },
+          [Op.substring]: { [Op.ne]: querydata.search },
         },
         houseInfo: {
           [Op.ne]: querydata.search,
@@ -611,14 +606,15 @@ async function hostsearch(req, res) {
         },
       ],
     });
-    for (i = 0; i < findbyhostContent.length; i++) {
-      searchResult.push(findbyhostContent[i]);
+    for (l = 0; l < findbyhostContent.length; l++) {
+      searchResult.push(findbyhostContent[l]);
     }
-    res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
+    // console.log("1",findbyaddress,"2",findbytitle,"3",findbyhostContent,"4",searchResult,"5","6","7");
+    res.status(200).send({searchResult, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res
       .status(400)
-      .send({ searchResult, msg: "호스트 검색에 실패하였습니다.." });
+      .send({searchResult, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
 
