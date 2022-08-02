@@ -434,12 +434,12 @@ await posts.update(
       } else {
         isSave = false;
       }
-      Object.assign(allPostInfo,{
+      Object.assign(house,{
           isSave:isSave,
        });
       await hosts.update(
         {isSave:isSave,},
-        {where :{hostId : allPostInfo.hostId} }
+        {where :{hostId : house.hostId} }
       )
     }
 
