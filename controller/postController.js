@@ -509,7 +509,7 @@ async function ModifyPosting(req, res) {
     tagList,
     preImages,       // blob값
     deleteImages,    // 키값 형태: 배열(길이 - KEY : 47 / URL : 62)
-    changeProfile 
+    changeThumbnail 
   } = req.body;
   const image = req.files; // 4장
 
@@ -618,7 +618,7 @@ async function ModifyPosting(req, res) {
 
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
-  if (changeProfile && preImages) {  
+  if (changeThumbnail && preImages) {  
     const thumnailUrl = image[0].location;
     const thumnailKey = image[0].key;
     console.log("썸네일 바꿔서 사진을 수정합니다");
@@ -639,7 +639,7 @@ async function ModifyPosting(req, res) {
   }
 
   // 상황 2. 사진이 추가되고 썸네일 수정 없음
-  if (!changeProfile && preImages) {
+  if (!changeThumbnail && preImages) {
     console.log("썸네일 없이 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
