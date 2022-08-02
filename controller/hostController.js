@@ -514,6 +514,85 @@ const querydata = req.query
 res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
 }
 
+async function hostsearch(req, res) {
+  try {
+    const querydata = req.query;
+    const findbyaddress = await hosts.findAll({
+      where: {
+        mainAddress: querydata.search,
+      },
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    const findbytitle = await hosts.findAll({
+      where: {
+        title: {
+          [Op.substring]: querydata.search,
+        },
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    const findbyhostContent = await hosts.findAll({
+      where: {
+        hostContent: {
+          [Op.substring]: querydata.search,
+        },
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    if (address) {
+      res
+        .status(200)
+        .send({ findbyaddress, msg: "타입 검색이 완료되었습니다." });
+      return;
+    } else if (findbytitle) {
+      res.status(200).send({ findbytitle, msg: "타입 검색이 완료되었습니다." });
+      return;
+    } else {
+      res
+        .status(200)
+        .send({ findbyhostContent, msg: "타입 검색이 완료되었습니다." });
+    }
+  } catch (error) {
+    res
+      .status(400)
+      .send({ findbyhostContent, msg: "호스트 검색에 실패하였습니다.." });
+  }
+}
 
 
 module.exports.deleteAcc = deleteAcc
@@ -524,6 +603,7 @@ module.exports.updateAcc = updateAcc;
 module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
 module.exports.getAllACC_Star = getAllACC_Star;
+module.exports.hostsearch = hostsearch;
 
 // 게시글 수정( 수정 중 )
 async function updateAcc(req, res) {
