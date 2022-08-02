@@ -605,10 +605,10 @@ async function hostsearch(req, res) {
       }
        else {
         searchResult.push(hostContent[i]);
-        searchResultId.push(hostContent[i].hostId);
+//         searchResultId.push(hostContent[i].hostId);
       }
     }
-    res.status(200).send({ searchResult,searchResultId, msg: "타입 검색이 완료되었습니다." });
+    res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res
       .status(400)
