@@ -132,13 +132,13 @@ async function GetPostingList(req, res) {
     
   });
   for(j = 0; j < Top5.length; j++){
-    let post = allPost[i];
+    let tpost = allPost[i];
     const tpostComments = await Comments.findAll({
-      where: { postId: post.postId },
+      where: { postId: tpost.postId },
     });
 
     const tpostLikes = await Like.findAll({ 
-      where: { postId: post.postId } 
+      where: { postId: tpost.postId } 
     });
 
     let islike = await Like.findOne({
