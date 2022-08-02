@@ -520,11 +520,14 @@ async function hostsearch(req, res) {
     let searchResult = [];
     const findbyaddress = await hosts.findAll({
       where: {
-        [Op.or]: [{
+        [Op.or]: [
+          {
             mainAddress: {
               [Op.substring]: querydata.search,
             },
-          }, { houseInfo: querydata.search }]
+          },
+          { houseInfo: querydata.search },
+        ],
       },
       include: [
         {
@@ -546,6 +549,14 @@ async function hostsearch(req, res) {
       where: {
         title: {
           [Op.substring]: querydata.search,
+        },
+        mainAddress: {
+          [Op.ne]: {
+            [Op.substring]: querydata.search,
+          },
+        },
+        houseInfo: {
+          [Op.ne]: querydata.search,
         },
       },
       order: [["createdAt", "DESC"]],
@@ -569,6 +580,19 @@ async function hostsearch(req, res) {
       where: {
         hostContent: {
           [Op.substring]: querydata.search,
+        },
+        title: {
+          [Op.ne]: {
+            [Op.substring]: querydata.search,
+          },
+        },
+        mainAddress: {
+          [Op.ne]: {
+            [Op.substring]: querydata.search,
+          },
+        },
+        houseInfo: {
+          [Op.ne]: querydata.search,
         },
       },
       order: [["createdAt", "DESC"]],
@@ -595,6 +619,7 @@ async function hostsearch(req, res) {
       .send({ searchResult, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
+
 
 
 module.exports.deleteAcc = deleteAcc
