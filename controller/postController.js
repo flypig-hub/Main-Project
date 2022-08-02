@@ -516,6 +516,8 @@ async function ModifyPosting(req, res) {
   console.log(req.body.preImages, "프리이미지스어쩌구");
   console.log(image.length, "이미지 몇개 왔는지?");
 
+  let deleteKEY = [];
+  let deleteURL = [];
   if (deleteImages) {
     // 키 값은 S3 삭제, URL은 DB 삭제
     const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")
@@ -524,8 +526,6 @@ async function ModifyPosting(req, res) {
     const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
     const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
     // deleteImages 배열화
-    let deleteKEY = [];
-    let deleteURL = [];
     for (let i = 0; i < deleteInfo.length / 2; i++) {
       if ( i < 0 ) {
         deleteInfo[0] = deleteInfo[1]
@@ -537,6 +537,7 @@ async function ModifyPosting(req, res) {
       }
     }
   }
+  console.log(deleteKEY, "지나가는지 확인");
 
   // 썸네일을 위해 삭제되기 전에 DB에서 미리 찾아둠
   const getThumnailInfo = await images.findAll({
