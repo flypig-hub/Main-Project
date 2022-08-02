@@ -359,7 +359,8 @@ await posts.update(
     await posts.update(
       {
         likeNum: likeNum,
-        commentNum: commentNum
+        commentNum: commentNum,
+        islike:islike
       },
       { where: { postId: allPostInfo[0].postId } }
     );

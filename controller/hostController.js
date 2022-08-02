@@ -434,6 +434,7 @@ async function getDetailAcc(req, res) {
 
      await hosts.update(
        {average: averageStarpoint,
+        isSave:isSave
       },
        {where:{hostId:findAllAcc.hostId}}
      )
