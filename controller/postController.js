@@ -436,8 +436,11 @@ await posts.update(
       }
       Object.assign(house,{
           isSave:isSave,
-          
        });
+      await hosts.update(
+        {isSave:isSave,},
+        {where :{hostId : findHostId[0].hostId} }
+      )
     }
 
   let findAllAcc = [];
