@@ -513,23 +513,25 @@ async function ModifyPosting(req, res) {
   } = req.body;
   const image = req.files; // 4장
 
-  // 키 값은 S3 삭제, URL은 DB 삭제
-  const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")
-  const deleteinfo2 = deleteinfo.replaceAll(" ", "");
-  const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
-  const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
-  const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
-  // deleteImages 배열화
-  let deleteKEY = [];
-  let deleteURL = [];
-  for (let i = 0; i < deleteInfo.length / 2; i++) {
-    if ( i < 0 ) {
-      deleteInfo[0] = deleteInfo[1]
-    } else {
-      let deleteKey = deleteInfo[i * 2 + 1];
-      let deleteUrl = deleteInfo[i * 2];
-      deleteKEY.push(deleteKey);
-      deleteURL.push(deleteUrl);
+  if (deleteImages) {
+    // 키 값은 S3 삭제, URL은 DB 삭제
+    const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")
+    const deleteinfo2 = deleteinfo.replaceAll(" ", "");
+    const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
+    const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
+    const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
+    // deleteImages 배열화
+    let deleteKEY = [];
+    let deleteURL = [];
+    for (let i = 0; i < deleteInfo.length / 2; i++) {
+      if ( i < 0 ) {
+        deleteInfo[0] = deleteInfo[1]
+      } else {
+        let deleteKey = deleteInfo[i * 2 + 1];
+        let deleteUrl = deleteInfo[i * 2];
+        deleteKEY.push(deleteKey);
+        deleteURL.push(deleteUrl);
+      }
     }
   }
 

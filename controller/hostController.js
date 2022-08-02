@@ -68,6 +68,8 @@ async function hostCreateAcc(req, res) {
         postImageKey.forEach((element, i) => {
             const postImageKEY = postImageKey[i];
             const postImageURL = postImageUrl[i];
+            console.log(postImageKEY);
+            console.log(postImageURL);
             
             const imagesInfo = images.create({
                 userId: userId,
@@ -525,7 +527,7 @@ module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
 module.exports.getAllACC_Star = getAllACC_Star;
 
-// 게시글 수정( 수정 중 )
+// 호스트 숙소 등록 수정
 async function updateAcc(req, res) {
   const { userId, nickname, userImageURL } = res.locals;
   const { hostId } = req.params;
@@ -546,134 +548,186 @@ async function updateAcc(req, res) {
         link,
         hostContent,
         tagList,
-        existImages,
+        existImages,        // { KEY : URL }
         deleteImages
     } = req.body;
     const image = req.files;
-    console.log(image.length);
 
-    // 기존 사진 KEY, URL 찾기(프론트에서 새로 들어온거랑 합침)
-    if (existImages) {
-    const findImageURL = await images.findAll({ // 원래 URL DB에서 탐색
-      where: { hostId },
-      attributes: ['postImageURL']
-    })
-    const findImageKEY = await images.findAll({ // 원래 KEY DB에서 탐색
-      where: { hostId },
-      attributes: ['postImageKEY']
-    })
-
-    let imageKEY = [];
-    let imageURL = [];
-    for (let i = 0; i < findImageURL.length; i++) {
-      let KEY = findImageKEY[i].postImageKEY;
-      let URL = findImageURL[i].postImageURL;
-      imageKEY.push(KEY);
-      imageURL.push(URL);
+    if (deleteImages) {
+      // 삭제할 이미지 KEY, URL 나눠서 배열화
+      const deleteinfo2 = req.body.deleteImages.replaceAll(" ", "");
+      const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
+      const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
+      const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
+      // deleteImages 배열화
+      let deleteKEY = [];
+      let deleteURL = [];
+      for (let i = 0; i < deleteInfo.length / 2; i++) {
+        if ( i < 0 ) {
+          deleteInfo[0] = deleteInfo[1]
+        } else {
+          let deleteKey = deleteInfo[i * 2 + 1];
+          let deleteUrl = deleteInfo[i * 2];
+          deleteKEY.push(deleteKey);
+          deleteURL.push(deleteUrl);
+        }
+      }
+      console.log(deleteKEY, "삭제할 이미지KEY 배열화");
+      console.log(deleteURL, "삭제할 이미지URL 배열화");
     }
 
-    let newImageKEY = [];
-    let newImageURL = [];
-    for (let i = 0; i < image.length; i++) {
-      let newImageKey = image[i].key;           // 수정되는 이미지 KEY
-      let newImageUrl = image[i].location;      // 수정되는 이미지 URL
-      newImageKEY.push(newImageKey)
-      newImageURL.push(newImageUrl)
+    // DB 삭제
+    const destroyKEY = await images.findAll({
+      where: { hostId },
+      attributes: [ 'postImageKEY', 'postImageURL' ]
+    })
+    let imagesDestroyKEY = [];
+    let imagesDestroyURL = [];
+    for (let i = 0; i < deleteInfo.length / 2; i++) {
+      if ( i < 0 ) {
+        deleteInfo[0] = deleteInfo[1]
+      } else {
+        let deleteKey = deleteInfo[i * 2 + 1];
+        let deleteUrl = deleteInfo[i * 2];
+        imagesDestroyKEY.push(deleteKey);
+        imagesDestroyURL.push(deleteUrl);
+      }
     }
-    console.log('DB에서 찾아옴', imageKEY, '여기까지');
-    console.log('어떻게 확인하나', newImageKEY.concat(imageKEY), "이거 확인");
 
+    // 이미지 파일객체 map
+    const postImagesKEY = image.map((postImageKey) => postImageKey.key);
+    const postImagesURL = image.map((postImageUrl) => postImageUrl.location);
+  
+    if (deleteImages) {
+      // AWS S3 삭제 코드
+      const s3 = new AWS.S3();
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: {
+          Objects: imagesDestroyKEY.map(imagesDestroyKEY => ({ Key: imagesDestroyKEY })), 
+        }
+      };
+      s3.deleteObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+      });
+  
+      // URL 받아서 DB와 비교, 삭제
+      const deleteDB = await images.findOne({
+        where: { hostId },
+        attributes: [ 'postImageURL' ],
+      })
+      for (let i = 0; i < deleteImages.length; i++) {
+        if (deleteImages[i] === deleteURL[i]) {
+          const destroyImage = await images.destroy({
+            where: { postImageURL:imagesDestroyURL }
+          })
+        }
+      }
+      console.log("지나가는거 확인할게요");
+    }
 
+    // 삭제 전 미리 KEY, URL 획득하기
+    const DBImagesInfo = await images.findAll({
+      where: {hostId},
+      attributes: [ 'postImageKEY', 'postImageURL' ]
+    })
+    const DBImagesKEY = [];
+    const DBImagesURL = [];
+    for (let i = 0; i < DBImagesInfo.length; i++) {
+      let dbImagesKEY = DBImagesInfo[i].postImageKEY;
+      let dbImagesURL = DBImagesInfo[i].postImageURL;
+      DBImagesKEY.push(dbImagesKEY);
+      DBImagesURL.push(dbImagesURL);
+    }
 
-    // 추가되는 새로운 사진
-    // const postImageKey = image.map((postImageKey) => postImageKey.key);
-    // const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
-    // const thumbnailKEY = postImageKey[0];
-    // const thumbnailURL = postImageUrl[0]; 
+    const existImage = req.body.existImages.replaceAll(" ", "");
+    const existImage1 = existImage.replaceAll("postImageURL:", "");
+    const existImage2 = existImage1.replaceAll("postImageKEY:", "");
+    const existImageInfo = existImage2.replaceAll("'", "").split(',')
+    console.log(existImageInfo);
+    let existImageInfoKEY = [];
+    let existImageInfoURL = [];
+    for (let i = 0; i < existImageInfo.length / 2; i++) {
+      if (i < 0) {
+        existImageInfo[0] = existImageInfo[1]
+      } else {
+        let existImageInfoKey = existImageInfo[i * 2 + 1]
+        let existImageInfoUrl = existImageInfo[i * 2]
+        existImageInfoKEY.push(existImageInfoKey)
+        existImageInfoURL.push(existImageInfoUrl)
+      }
+    }
+    console.log(existImageInfoKEY, "클라이언트에서 받은 기존 이미지 KEY");
+    console.log(existImageInfoURL, "클라이언트에서 받은 기존 이미지 URL");
 
-    // Object.assign(postImageKey, {
-    //   findImageURL:findImageURL
-    // })
+    // 이미지 삭제 후 DB에서 삭제함
+    const destroyImages = await images.destroy({ where: { hostId: hostId } });
 
-    const KEY = findImageKEY.toString()
-    const URL = findImageURL.toString()
+    // URL 배열 전체 합치기
+    const preAllPostImageKey = existImageInfoKEY.concat(postImagesKEY);
+    const preAllPostImageUrl = existImageInfoURL.concat(postImagesURL);
 
-    res.send({ findImageURL, findImageKEY, postImageUrl })
-  }
-}
+    // 기존 이미지에서 삭제될 이미지 지우고 배열화
+    const resImageKeyInfo = preAllPostImageKey.filter(x => !deleteKEY.includes(x))
+    const resImageUrlInfo = preAllPostImageUrl.filter(x => !deleteURL.includes(x))
+    console.log(resImageKeyInfo, "최종 KEY값");
+    console.log(resImageUrlInfo, "최종 URL값");
+  
 
-    
+    resImageKeyInfo.forEach((element, i) => {
+      const updateImages = images.create({
+        userId: userId,
+        userImageURL:userImageURL,
+        nickname: nickname,
+        hostId: hostId,
+        thumbnailURL: resImageUrlInfo[0],
+        thumbnailKEY: resImageKeyInfo[0],
+        postImageURL: resImageUrlInfo[i],
+        postImageKEY: resImageKeyInfo[i],
+      })
+    })
 
-    // 기존 사진 전달값
-    // existImages = [{
-    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png', 
-    //  postImageKEY: 'images/67a02ae9-00f5-4492-8503-67b4d8788c3c.png'}
-    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp', 
-    //  postImageKEY: 'images/60d5e3c5-10b7-48a6-95eb-8aa635c58de5.webp'}
-    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/452895a5-f23d-453a-8571-ba7438469c04.png', 
-    //  postImageKEY: 'images/452895a5-f23d-453a-8571-ba7438469c04.png'}
-    // {postImageURL: 'https://yushin-s3.s3.ap-northeast-2.amazonaws.com/images/a02e4056-7938-4a8a-a6dd-dfe431752eba.png', 
-    //  postImageKEY: 'images/a02e4056-7938-4a8a-a6dd-dfe4317}
-    // }]
+    const updateHostAcc = await hosts.update({ 
+      title,
+      category,
+      houseInfo,
+      mainAddress,
+      subAddress,
+      stepSelect,
+      stepInfo,
+      link,
+      hostContent,
+      tagList,
+    }, { where : { hostId:hostId } })
 
-
-    // ====== 기존 사진 중 일부 유지, 사진 추가  ======
-  //   if (existImages) {
-  //     let stringCut = existImages.slice(3, -4)
-  //     let stringCut2 = stringCut.replaceAll("{", "")
-  //     let stringCut3 = stringCut2.replaceAll("}", "")
-  //     let stringCut4 = stringCut3.replaceAll("'", "")
-  //     let stringCut5 = stringCut4.replaceAll(",", "")
-  //     let stringCut6 = stringCut5.replaceAll("postImageURL:", "")
-  //     let stringCut7 = stringCut6.replaceAll("postImageKEY:", "")
-  //     let stringCut8 = stringCut7.trim().split("  ");
-  //     let imageKEY = [];
-  //     let imageURL = [];
-  //     for (let i = 0; i < stringCut8.length/2; i++) {
-  //       let stringCut9 = stringCut8[i * 2]
-  //       let stringCut10 = stringCut8[i * 2 + 1]
-  //       imageURL.push(stringCut9)
-  //       imageKEY.push(stringCut10)
-  //       }
-  //       console.log(imageKEY);
-  //       console.log(imageURL);
-
-  //   const findImages = await images.findAll({
-  //     where: { hostId },
-  //     attributes: ['postImageKEY', 'postImageURL']
-  //   })
-
-  // }
-    
-
-
-    // const tagListArr = tagList.split(" ")
-
-    // const updateAcc = await hosts.update({
-    //     title,
-    //     category,
-    //     houseInfo,
-    //     mainAddress,
-    //     subAddress,
-    //     stepSelect,
-    //     stepInfo,
-    //     link,
-    //     hostContent,
-    //     tagList
-    // },{
-    //     where: { hostId:hostId }
-    // });
-
-    // const updatedAcc = await hosts.findOne({
-    //     where: { hostId:hostId }
-    // })
-
-    // Object.assign(updatedAcc, {
-    //   tagList: tagListArr
-    // })
-
-    //   res.status(200).send({ msg: "게시글이 수정되었습니다!" });
+    // let newTagStr = '';
+    // if (req.body.tagList) {
+    //   const newTag = req.body.tagList.split(" ");
+    //   newTagStr += newTag
+  
+    //   Object.assign(updateHostAcc, {
+    //     tagList : newTagStr.split(',')
+    //   })
     // }
-  // } catch (error) {
-  //   res.status(400).send({errorMessage : "게시물 수정 실패"})
-  // }
+
+    const updatedHostAcc = await hosts.findAll({
+      where: { hostId },
+      include: [{
+        model: images,
+        attributes: [ "postImageURL" ]
+      }]
+    })
+
+    let newTagStr = [];
+    if (req.body.tagList) {
+      const newTag = req.body.tagList.split(" ");
+      newTagStr.push(newTag)
+  
+      Object.assign(updatedHostAcc, {
+        tagList : newTagStr
+      })
+    }
+
+    res.send({ updatedHostAcc })
+  } 
