@@ -594,9 +594,9 @@ async function hostsearch(req, res) {
       }
     }
 
-    res.status(200).send({ findAll, msg: "타입 검색이 완료되었습니다." });
+    res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
-    res.status(400).send({ findAll, msg: "호스트 검색에 실패하였습니다.." });
+    res.status(400).send({ searchResult, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
 
