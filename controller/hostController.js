@@ -520,7 +520,11 @@ async function hostsearch(req, res) {
     let searchResult = [];
     const findbyaddress = await hosts.findAll({
       where: {
-        [Op.or]: [{ mainAddress: querydata.search }, { houseInfo: querydata.search }]
+        [Op.or]: [{
+            mainAddress: {
+              [Op.substring]: querydata.search,
+            },
+          }, { houseInfo: querydata.search }]
       },
       include: [
         {
