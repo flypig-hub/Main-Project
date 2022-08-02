@@ -514,7 +514,7 @@ const querydata = req.query
 res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
 }
 
-async function hostSearch(req, res) {
+async function hostsearch(req, res) {
   try {
     const querydata = req.query;
     let searchResult = [];
