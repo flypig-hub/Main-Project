@@ -514,9 +514,10 @@ const querydata = req.query
 res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
 }
 
-async function hostsearch(req, res) {
+async function hostSearch(req, res) {
   try {
     const querydata = req.query;
+    let searchResult = [];
     const findbyaddress = await hosts.findAll({
       where: {
         mainAddress: querydata.search,
@@ -534,6 +535,9 @@ async function hostsearch(req, res) {
         },
       ],
     });
+    for (i = 0; i < findbyaddress.length; i++){
+      searchResult.push[i]
+    }
     const findbytitle = await hosts.findAll({
       where: {
         title: {
@@ -554,6 +558,9 @@ async function hostsearch(req, res) {
         },
       ],
     });
+    for (i = 0; i < findbyaddress.length; i++) {
+      findbytitle.push[i];
+    }
     const findbyhostContent = await hosts.findAll({
       where: {
         hostContent: {
@@ -574,23 +581,17 @@ async function hostsearch(req, res) {
         },
       ],
     });
-    if (address) {
-      res
-        .status(200)
-        .send({ findbyaddress, msg: "타입 검색이 완료되었습니다." });
-      return;
-    } else if (findbytitle) {
-      res.status(200).send({ findbytitle, msg: "타입 검색이 완료되었습니다." });
-      return;
-    } else {
-      res
-        .status(200)
-        .send({ findbyhostContent, msg: "타입 검색이 완료되었습니다." });
+    for (i = 0; i < findbyaddress.length; i++) {
+      findbyhostContent.push[i];
     }
+   
+      res
+        .status(200)
+        .send({ searchResult, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res
       .status(400)
-      .send({ findbyhostContent, msg: "호스트 검색에 실패하였습니다.." });
+      .send({ searchResult, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
 
