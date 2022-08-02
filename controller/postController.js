@@ -599,7 +599,7 @@ async function ModifyPosting(req, res) {
   let preImagesArr = PreImage.replaceAll("'", "").split(',')
   console.log(preImagesArr, "이게 바뀌어야 함");
   let newContent = req.body.content;
-  for (let i = 1; i < image.length; i++) {
+  for (let i = 1; i <= image.length; i++) {
     let preIMG = preImagesArr[i - 1]
     console.log(preIMG, "이미지 대체하기");
     let ImGList = image[i].location
