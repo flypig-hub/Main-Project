@@ -741,10 +741,10 @@ async function updateAcc(req, res) {
         userImageURL:userImageURL,
         nickname: nickname,
         hostId: hostId,
-        thumbnailURL: preAllPostImageKey[0],
-        thumbnailKEY: preAllPostImageUrl[0],
-        postImageURL: postImageKEY,
-        postImageKEY: postImageURL,
+        thumbnailURL: preAllPostImageKey[0].toString(),
+        thumbnailKEY: preAllPostImageUrl[0].toString(),
+        postImageURL: postImageKEY.toString(),
+        postImageKEY: postImageURL.toString(),
       })
     })
 

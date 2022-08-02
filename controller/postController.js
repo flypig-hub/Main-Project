@@ -558,7 +558,6 @@ async function ModifyPosting(req, res) {
       deleteURL.push(deleteUrl);
     }
   }
-  console.log(deleteKEY, "지나가는지 확인");
 
   // 썸네일을 위해 삭제되기 전에 DB에서 미리 찾아둠
   const getThumnailInfo = await images.findAll({
@@ -608,7 +607,7 @@ async function ModifyPosting(req, res) {
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Delete: {
-        Objects: imagesDestroyKEY.map(imagesDestroyKEY => ({ Key: imagesDestroyKEY })), 
+        Objects: deleteKEY.map(deleteKEY => ({ Key: deleteKEY })), 
       }
     };
     s3.deleteObjects(params, function(err, data) {
@@ -617,18 +616,11 @@ async function ModifyPosting(req, res) {
     });
   }
 
-  const destroyImages = await images.destroy({ where: { postId: postId } });
-
-  // DB에서 찾은 배열에서 삭제할 이미지 배열 중복값 제거하기
-  const fromDBDeleteImagesKEY = getThumnailInfo.filter(x => !deleteKEY.includes(x))
-  const fromDBDeleteImagesURL = getThumnailInfo.filter(x => !deleteURL.includes(x))
-
-  // // URL 배열 전체 합치기
-  const allPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
-  const allPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
-  console.log(allPostImageKey, "최종 키값");
-  console.log(allPostImageUrl, "최종 URL");
-
+  const destroyImages = await images.destroy({ 
+    where: { postImageURL : deleteURL } 
+  });
+  console.log(destroyImages, "이것만 삭제한다");
+  
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
   if (changeThumbnail) {  
@@ -636,8 +628,10 @@ async function ModifyPosting(req, res) {
     const thumnailKey = image[0].key;
     console.log("썸네일 바꿔서 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
-      const postImageKEY = allPostImageKey[i];
-      const postImageURL = allPostImageUrl[i];
+      const postImageKEY = postImagesKEY[i];
+      const postImageURL = postImagesURL[i];
+      console.log(postImageKEY, "이미지 DB가 업데이트 됩니다.");
+      console.log(postImageURL, "이미지 DB가 업데이트 됩니다.");
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
@@ -645,9 +639,16 @@ async function ModifyPosting(req, res) {
         postId: postId,
         thumbnailURL: thumnailUrl,
         thumbnailKEY: thumnailKey,
-        postImageURL: postImageURL,
-        postImageKEY: postImageKEY,
+        postImageURL: postImageURL.toString(),
+        postImageKEY: postImageKEY.toString(),
       })
+    })
+
+    const updateImages = await images.update({
+      thumbnailURL: thumnailUrl,
+      thumbnailKEY: thumnailKey
+    }, {
+      where: { postId: postId }
     })
   }
 
@@ -664,8 +665,8 @@ async function ModifyPosting(req, res) {
         postId: postId,
         thumbnailURL: imagesInfoURL[0],
         thumbnailKEY: imagesInfoKEY[0],
-        postImageURL: postImageURL,
-        postImageKEY: postImageKEY,
+        postImageURL: postImageURL.toString(),
+        postImageKEY: postImageKEY.toString(),
       })
     })
   }
