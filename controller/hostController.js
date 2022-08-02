@@ -519,20 +519,13 @@ res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다.
 
 async function hostsearch(req, res) {
   try {
+    let searchResult = [];
+    let searchResultId = [];
     const querydata = req.query;
-    const searchResult = await hosts.findAll({
+
+    const findbyaddress = await hosts.findAll({
       where: {
         [Op.or]: [
-          {
-            hostContent: {
-              [Op.substring]: querydata.search,
-            },
-          },
-          {
-            title: {
-              [Op.substring]: querydata.search,
-            },
-          },
           {
             mainAddress: {
               [Op.substring]: querydata.search,
@@ -555,47 +548,67 @@ async function hostsearch(req, res) {
         },
       ],
     });
-    const findbyaddress = await hosts.findAll({
-      Attributes: ["hostId"],
-      where: {
-        [Op.or]: [
-          {
-            mainAddress: {
-              [Op.substring]: querydata.search,
-            },
-          },
-          { houseInfo: querydata.search },
-        ]
-      },
-      order: [["createdAt", "DESC"]],
-    });
-    
+
     const findbytitle = await hosts.findAll({
-      Attributes: ["hostId"],
       where: {
         title: {
           [Op.substring]: querydata.search,
         },
       },
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
     });
-
-    for (j = 0; j < searchResult.length; j++) {
-      let host = searchResult[j];
-      if (host.hostId == findbytitle.roomId) {
-        searchResult[j] = searchResult[0];
-        searchResult[0] = host;
+    let hostContent = await hosts.findAll({
+      where: {
+        hostContent: {
+          [Op.substring]: querydata.search,
+        },
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    for (h = 0; h < findbyaddress.length; h++) {
+      searchResult.push(findbyaddress[h]);
+      searchResultId.push(findbyaddress[h].hostId);
+    }
+    for (p = 0; p < findbytitle.length; p++) {
+      if (searchResultId.includes(findbytitle[p].hostId)) {
+      } else {
+      searchResult.push(findbytitle[p]);
+      searchResultId.push(findbytitle[p].hostId);
       }
     }
-    for (l = 0; l < searchResult.length; l++) {
-      let host = searchResult[l];
-      if (host.hostId == findbyaddress.roomId) {
-        searchResult[l] = searchResult[0];
-        searchResult[0] = host;
+    for (i = 0; i < hostContent.length; i++) {
+      if (searchResultId.includes(hostContent[i].hostId)) {
+      }
+       else {
+        searchResult.push(hostContent[i]);
+        searchResultId.push(hostContent[i].hostId);
       }
     }
-
-    res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
+    res.status(200).send({ searchResult,searchResultId, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res
       .status(400)
