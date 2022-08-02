@@ -550,7 +550,7 @@ async function ModifyPosting(req, res) {
     deleteImages,    // 키값 형태: 배열(길이 - KEY : 47 / URL : 62)
     changeThumbnail 
   } = req.body;
-  console.log(req.body.changeThumbnail, "false값 확인하러 갑니다");
+  console.log(typeof(req.body.changeThumbnail), "false값 확인하러 갑니다");
   const image = req.files; // 4장
   console.log(req.body.deleteImages, "삭제할 이미지");
   console.log(req.body.preImages, "프리이미지스어쩌구");
@@ -640,7 +640,7 @@ async function ModifyPosting(req, res) {
 
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
-  if (changeThumbnail) {  
+  if (changeThumbnail === "true") {  
     const thumnailUrl = image[0].location;
     const thumnailKey = image[0].key;
     console.log("썸네일 바꿔서 사진을 수정합니다");
@@ -670,7 +670,7 @@ async function ModifyPosting(req, res) {
   }
 
   // 상황 2. 사진이 추가되고 썸네일 수정 없음
-  if (changeThumbnail === false) {
+  if (changeThumbnail === "false") {
     console.log("썸네일 없이 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
