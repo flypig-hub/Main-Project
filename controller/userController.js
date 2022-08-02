@@ -335,12 +335,12 @@ async function CNU_CK (req, res, next) {
         await users.update({host:true}, {where:{userId}})
         res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
       } else {
-        res.status(404).send({result : true, message :"국세청에 등록되지 않은 사업자등록번호입니다."})
+        res.status(400).send({result : true, message :"국세청에 등록되지 않은 사업자등록번호입니다."})
       }
 
       } catch (error) {
         console.error(error);
-        res.status(404).send({
+        res.status(400).send({
           errorMEssage: '국세청에 등록되지 않은 사업자등록번호입니다.',
       })
         return;
