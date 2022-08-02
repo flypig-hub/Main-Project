@@ -512,6 +512,9 @@ async function ModifyPosting(req, res) {
     changeThumbnail 
   } = req.body;
   const image = req.files; // 4장
+  console.log(req.body.deleteImages, "삭제할 이미지");
+  console.log(req.body.preImages, "프리이미지스어쩌구");
+  console.log(image.length, "이미지 몇개 왔는지?");
 
   if (deleteImages) {
     // 키 값은 S3 삭제, URL은 DB 삭제
@@ -548,8 +551,6 @@ async function ModifyPosting(req, res) {
     imagesInfoKEY.push(getThumnailInfoKEY)
     imagesInfoURL.push(getThumnailInfoURL)
   }
-  console.log(imagesInfoURL, "원래 DB에 있던 URL");
-  console.log(imagesInfoKEY, "원래 DB에 있던 KEY");
 
   // 이미지 파일객체 map
   const postImagesKEY = image.map((postImageKey) => postImageKey.key);
@@ -598,13 +599,6 @@ async function ModifyPosting(req, res) {
       where: { postId },
       attributes: [ 'postImageURL' ],
     })
-    for (let i = 0; i < deleteImages.length; i++) {
-      if (deleteImages[i] === deleteURL[i]) {
-        const destroyImage = await images.destroy({
-          where: { postImageURL:imagesDestroyURL }
-        })
-      }
-    }
   }
 
   const destroyImages = await images.destroy({ where: { postId: postId } });
