@@ -132,7 +132,7 @@ async function GetPostingList(req, res) {
     
   });
   for(j = 0; j < Top5.length; j++){
-    let tpost = allPost[i];
+    let tpost = Top5[j];
     const tpostComments = await Comments.findAll({
       where: { postId: tpost.postId },
     });
