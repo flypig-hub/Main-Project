@@ -669,7 +669,7 @@ async function ModifyPosting(req, res) {
   }
 
   // 상황 2. 사진이 추가되고 썸네일 수정 없음
-  if (!changeThumbnail) {
+  if (changeThumbnail === false) {
     console.log("썸네일 없이 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
