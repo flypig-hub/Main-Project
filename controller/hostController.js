@@ -516,6 +516,112 @@ const querydata = req.query
 res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
 }
 
+async function hostsearch(req, res) {
+  try {
+    const querydata = req.query;
+    let searchResult = [];
+    const findbyaddress = await hosts.findAll({
+      where: {
+        [Op.or]: [
+          {
+            mainAddress: {
+              [Op.substring]: querydata.search,
+            },
+          },
+          { houseInfo: querydata.search },
+        ],
+      },
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    for (i = 0; i < findbyaddress.length; i++) {
+      searchResult.push(findbyaddress[i]);
+    }
+    const findbytitle = await hosts.findAll({
+      where: {
+        title: {
+          [Op.substring]: querydata.search,
+        },
+        mainAddress: {
+          [Op.ne]: {
+            [Op.substring]: querydata.search,
+          },
+        },
+        houseInfo: {
+          [Op.ne]: querydata.search,
+        },
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    for (i = 0; i < findbytitle.length; i++) {
+      searchResult.push(findbytitle[i]);
+    }
+    const findbyhostContent = await hosts.findAll({
+      where: {
+        hostContent: {
+          [Op.substring]: querydata.search,
+        },
+        title: {
+          [Op.ne]: {
+            [Op.substring]: querydata.search,
+          },
+        },
+        mainAddress: {
+          [Op.ne]: {
+            [Op.substring]: querydata.search,
+          },
+        },
+        houseInfo: {
+          [Op.ne]: querydata.search,
+        },
+      },
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
+    for (i = 0; i < findbyhostContent.length; i++) {
+      searchResult.push(findbyhostContent[i]);
+    }
+    res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ searchResult, msg: "호스트 검색에 실패하였습니다.." });
+  }
+}
+
 
 
 module.exports.deleteAcc = deleteAcc
@@ -526,6 +632,7 @@ module.exports.updateAcc = updateAcc;
 module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
 module.exports.getAllACC_Star = getAllACC_Star;
+module.exports.hostsearch = hostsearch;
 
 // 호스트 숙소 등록 수정
 async function updateAcc(req, res) {

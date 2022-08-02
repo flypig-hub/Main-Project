@@ -209,7 +209,21 @@ async function exitRoom(req, res) {
     );
   }
 }
+async function populerRoom(req, res) {
+try {
+  const allRoom = await Rooms.findAll({
+    order: [[sequelize.literal("COUNT(roomUserId)"), "DESC"]],
+  });
+  
 
+  return res.status(200).send({ allRoom, tags, msg: "인기룸을 조회했습니다" });
+} catch (err) {
+  return res.status(400).send({ msg: "인기룸 조회가 되지 않았습니다." });
+}
+
+  
+
+}
 
 module.exports = {
   callchats,
@@ -220,4 +234,5 @@ module.exports = {
   exitRoom,
   searchRoombyhashtag,
   Roomdetail,
+  populerRoom
 };
