@@ -655,6 +655,9 @@ async function updateAcc(req, res) {
         deleteImages
     } = req.body;
     const image = req.files;
+    console.log(image.length, "이미지 몇장 들어오나요??");
+    console.log(req.body.existImages, "기존의 이미지입니다.");
+    console.log(req.body.deleteImages, "사진을 삭제합니다.");
 
       // 삭제할 이미지 KEY, URL 나눠서 배열화
       const deleteinfo2 = req.body.deleteImages.replaceAll(" ", "");
