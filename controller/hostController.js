@@ -639,7 +639,6 @@ async function updateAcc(req, res) {
     if (userId !== findAcc.userId) {
         res.send({ errorMessage: "작성자가 아닙니다!" })
     }
-
     const { 
         title,
         category,
@@ -659,50 +658,49 @@ async function updateAcc(req, res) {
     console.log(req.body.existImages, "기존의 이미지입니다.");
     console.log(req.body.deleteImages, "사진을 삭제합니다.");
 
-      // 삭제할 이미지 KEY, URL 나눠서 배열화
-      const deleteinfo2 = req.body.deleteImages.replaceAll(" ", "");
-      const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
-      const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
-      const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
-      // deleteImages 배열화
-      let deleteKEY = [];
-      let deleteURL = [];
-      for (let i = 0; i < deleteInfo.length / 2; i++) {
-        if ( i < 0 ) {
-          deleteInfo[0] = deleteInfo[1]
-        } else {
-          let deleteKey = deleteInfo[i * 2 + 1];
-          let deleteUrl = deleteInfo[i * 2];
-          deleteKEY.push(deleteKey);
-          deleteURL.push(deleteUrl);
-        }
-      }
-      console.log(deleteKEY, "삭제할 이미지KEY 배열화");
-      console.log(deleteURL, "삭제할 이미지URL 배열화");
-
-    // DB 삭제
-    const destroyKEY = await images.findAll({
-      where: { hostId },
-      attributes: [ 'postImageKEY', 'postImageURL' ]
-    })
-    let imagesDestroyKEY = [];
-    let imagesDestroyURL = [];
+    // 삭제할 이미지 KEY, URL 나눠서 배열화
+    const deleteinfo2 = req.body.deleteImages.replaceAll(" ", "");
+    const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
+    const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
+    const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
+    // deleteImages 배열화
+    let deleteKEY = [];
+    let deleteURL = [];
     for (let i = 0; i < deleteInfo.length / 2; i++) {
       if ( i < 0 ) {
         deleteInfo[0] = deleteInfo[1]
       } else {
         let deleteKey = deleteInfo[i * 2 + 1];
         let deleteUrl = deleteInfo[i * 2];
-        imagesDestroyKEY.push(deleteKey);
-        imagesDestroyURL.push(deleteUrl);
+        deleteKEY.push(deleteKey);
+        deleteURL.push(deleteUrl);
       }
     }
+    console.log(deleteKEY, "삭제할 이미지KEY 배열화");
+    console.log(deleteURL, "삭제할 이미지URL 배열화");
 
     // 이미지 파일객체 map
     const postImagesKEY = image.map((postImageKey) => postImageKey.key);
     const postImagesURL = image.map((postImageUrl) => postImageUrl.location);
   
+    // S3 삭제
     if (deleteImages) {
+      const destroyKEY = await images.findAll({
+        where: { hostId },
+        attributes: [ 'postImageKEY', 'postImageURL' ]
+      })
+      let imagesDestroyKEY = [];
+      let imagesDestroyURL = [];
+      for (let i = 0; i < deleteInfo.length / 2; i++) {
+        if ( i < 0 ) {
+          deleteInfo[0] = deleteInfo[1]
+        } else {
+          let deleteKey = deleteInfo[i * 2 + 1];
+          let deleteUrl = deleteInfo[i * 2];
+          imagesDestroyKEY.push(deleteKey);
+          imagesDestroyURL.push(deleteUrl);
+        }
+      }
       // AWS S3 삭제 코드
       const s3 = new AWS.S3();
       const params = {
@@ -715,36 +713,11 @@ async function updateAcc(req, res) {
         if (err) console.log(err, err.stack); // error
         else { console.log("S3에서 삭제되었습니다"), data }; // deleted
       });
-  
-      // URL 받아서 DB와 비교, 삭제
-      const deleteDB = await images.findOne({
-        where: { hostId },
-        attributes: [ 'postImageURL' ],
-      })
-      for (let i = 0; i < deleteImages.length; i++) {
-        if (deleteImages[i] === deleteURL[i]) {
-          const destroyImage = await images.destroy({
-            where: { postImageURL:imagesDestroyURL }
-          })
-        }
-      }
-      console.log("지나가는거 확인할게요");
     }
+    // 이미지 삭제 후 DB에서 삭제함
+    const destroyImages = await images.destroy({ where: { hostId: hostId } });
 
-    // 삭제 전 미리 KEY, URL 획득하기
-    const DBImagesInfo = await images.findAll({
-      where: {hostId},
-      attributes: [ 'postImageKEY', 'postImageURL' ]
-    })
-    const DBImagesKEY = [];
-    const DBImagesURL = [];
-    for (let i = 0; i < DBImagesInfo.length; i++) {
-      let dbImagesKEY = DBImagesInfo[i].postImageKEY;
-      let dbImagesURL = DBImagesInfo[i].postImageURL;
-      DBImagesKEY.push(dbImagesKEY);
-      DBImagesURL.push(dbImagesURL);
-    }
-
+    // 기존 이미지 배열화해서 deleteImages의 KEY, URL 빼주기
     const existImage = req.body.existImages.replaceAll(" ", "");
     const existImage1 = existImage.replaceAll("postImageURL:", "");
     const existImage2 = existImage1.replaceAll("postImageKEY:", "");
@@ -765,30 +738,29 @@ async function updateAcc(req, res) {
     console.log(existImageInfoKEY, "클라이언트에서 받은 기존 이미지 KEY");
     console.log(existImageInfoURL, "클라이언트에서 받은 기존 이미지 URL");
 
-    // 이미지 삭제 후 DB에서 삭제함
-    const destroyImages = await images.destroy({ where: { hostId: hostId } });
+    // deleteImages의 KEY, URL 빼주기
+    const fromDBDeleteImagesKEY = existImageInfoKEY.filter((x) => !deleteKEY.includes(x))
+    const fromDBDeleteImagesURL = existImageInfoURL.filter((x) => !deleteURL.includes(x))
 
-    // URL 배열 전체 합치기
-    const preAllPostImageKey = existImageInfoKEY.concat(postImagesKEY);
-    const preAllPostImageUrl = existImageInfoURL.concat(postImagesURL);
+    // // URL 배열 전체 합치기
+    const preAllPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
+    const preAllPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
+    console.log(preAllPostImageKey, "최종 KEY값");
+    console.log(preAllPostImageUrl, "최종 URL값");
 
-    // 기존 이미지에서 삭제될 이미지 지우고 배열화
-    const resImageKeyInfo = preAllPostImageKey.filter(x => !deleteKEY.includes(x))
-    const resImageUrlInfo = preAllPostImageUrl.filter(x => !deleteURL.includes(x))
-    console.log(resImageKeyInfo, "최종 KEY값");
-    console.log(resImageUrlInfo, "최종 URL값");
-  
 
-    resImageKeyInfo.forEach((element, i) => {
+    preAllPostImageKey.forEach((element, i) => {
+      const postImageKEY = preAllPostImageKey[i];
+      const postImageURL = preAllPostImageUrl[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
         hostId: hostId,
-        thumbnailURL: resImageUrlInfo[0],
-        thumbnailKEY: resImageKeyInfo[0],
-        postImageURL: resImageUrlInfo[i],
-        postImageKEY: resImageKeyInfo[i],
+        thumbnailURL: preAllPostImageKey[0],
+        thumbnailKEY: preAllPostImageUrl[0],
+        postImageURL: postImageKEY,
+        postImageKEY: postImageURL,
       })
     })
 
@@ -805,21 +777,11 @@ async function updateAcc(req, res) {
       tagList,
     }, { where : { hostId:hostId } })
 
-    // let newTagStr = '';
-    // if (req.body.tagList) {
-    //   const newTag = req.body.tagList.split(" ");
-    //   newTagStr += newTag
-  
-    //   Object.assign(updateHostAcc, {
-    //     tagList : newTagStr.split(',')
-    //   })
-    // }
-
     const updatedHostAcc = await hosts.findAll({
       where: { hostId },
       include: [{
         model: images,
-        attributes: [ "postImageURL" ]
+        attributes: [ "thumbnailURL", "postImageURL" ]
       }]
     })
 

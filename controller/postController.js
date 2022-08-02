@@ -516,25 +516,23 @@ async function ModifyPosting(req, res) {
   console.log(req.body.preImages, "프리이미지스어쩌구");
   console.log(image.length, "이미지 몇개 왔는지?");
 
+  // 키 값은 S3 삭제, URL은 DB 삭제
+  const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")
+  const deleteinfo2 = deleteinfo.replaceAll(" ", "");
+  const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
+  const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
+  const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
+  // deleteImages 배열화
   let deleteKEY = [];
   let deleteURL = [];
-  if (deleteImages) {
-    // 키 값은 S3 삭제, URL은 DB 삭제
-    const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")
-    const deleteinfo2 = deleteinfo.replaceAll(" ", "");
-    const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
-    const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
-    const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
-    // deleteImages 배열화
-    for (let i = 0; i < deleteInfo.length / 2; i++) {
-      if ( i < 0 ) {
-        deleteInfo[0] = deleteInfo[1]
-      } else {
-        let deleteKey = deleteInfo[i * 2 + 1];
-        let deleteUrl = deleteInfo[i * 2];
-        deleteKEY.push(deleteKey);
-        deleteURL.push(deleteUrl);
-      }
+  for (let i = 0; i < deleteInfo.length / 2; i++) {
+    if ( i < 0 ) {
+      deleteInfo[0] = deleteInfo[1]
+    } else {
+      let deleteKey = deleteInfo[i * 2 + 1];
+      let deleteUrl = deleteInfo[i * 2];
+      deleteKEY.push(deleteKey);
+      deleteURL.push(deleteUrl);
     }
   }
   console.log(deleteKEY, "지나가는지 확인");
@@ -594,24 +592,19 @@ async function ModifyPosting(req, res) {
       if (err) console.log(err, err.stack); // error
       else { console.log("S3에서 삭제되었습니다"), data }; // deleted
     });
-
-    // URL 받아서 DB와 비교, 삭제
-    const deleteDB = await images.findOne({
-      where: { postId },
-      attributes: [ 'postImageURL' ],
-    })
   }
 
   const destroyImages = await images.destroy({ where: { postId: postId } });
 
-  // URL 배열 전체 합치기
-  const allPostImageKey = imagesInfoKEY.concat(postImagesKEY);
-  const allPostImageUrl = imagesInfoURL.concat(postImagesURL);
-  // 전체 배열 합에서 삭제 이미지 제거
-  const resImageKeyInfo = allPostImageKey.filter(x => !deleteKEY.includes(x))
-  const resImageUrlInfo = allPostImageUrl.filter(x => !deleteURL.includes(x))
-  console.log(resImageKeyInfo, "최종 키값");
-  console.log(resImageUrlInfo, "최종 URL");
+  // DB에서 찾은 배열에서 삭제할 이미지 배열 중복값 제거하기
+  const fromDBDeleteImagesKEY = getThumnailInfo.filter(x => !deleteKEY.includes(x))
+  const fromDBDeleteImagesURL = getThumnailInfo.filter(x => !deleteURL.includes(x))
+
+  // // URL 배열 전체 합치기
+  const allPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
+  const allPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
+  console.log(allPostImageKey, "최종 키값");
+  console.log(allPostImageUrl, "최종 URL");
 
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
@@ -620,8 +613,8 @@ async function ModifyPosting(req, res) {
     const thumnailKey = image[0].key;
     console.log("썸네일 바꿔서 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
-      const postImageKEY = postImagesKEY[i];
-      const postImageURL = postImagesURL[i];
+      const postImageKEY = allPostImageKey[i];
+      const postImageURL = allPostImageUrl[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
@@ -639,8 +632,8 @@ async function ModifyPosting(req, res) {
   if (!changeThumbnail) {
     console.log("썸네일 없이 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
-      const postImageKEY = postImagesKEY[i];
-      const postImageURL = postImagesURL[i];
+      const postImageKEY = allPostImageKey[i];
+      const postImageURL = allPostImageUrl[i];
       const updateImages = images.create({
         userId: userId,
         userImageURL:userImageURL,
