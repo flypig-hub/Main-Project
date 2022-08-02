@@ -434,6 +434,7 @@ async function getDetailAcc(req, res) {
 
      await hosts.update(
        {average: averageStarpoint,
+        isSave:isSave
       },
        {where:{hostId:findAllAcc.hostId}}
      )
@@ -519,10 +520,19 @@ res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다.
 async function hostsearch(req, res) {
   try {
     const querydata = req.query;
-    let searchResult = [];
-    const findbyaddress = await hosts.findAll({
+    const searchResult = await hosts.findAll({
       where: {
         [Op.or]: [
+          {
+            hostContent: {
+              [Op.substring]: querydata.search,
+            },
+          },
+          {
+            title: {
+              [Op.substring]: querydata.search,
+            },
+          },
           {
             mainAddress: {
               [Op.substring]: querydata.search,
@@ -531,6 +541,7 @@ async function hostsearch(req, res) {
           { houseInfo: querydata.search },
         ],
       },
+      order: [["createdAt", "DESC"]],
       include: [
         {
           model: images,
@@ -544,81 +555,53 @@ async function hostsearch(req, res) {
         },
       ],
     });
-    for (i = 0; i < findbyaddress.length; i++) {
-      searchResult.push(findbyaddress[i]);
-    }
+    const findbyaddress = await hosts.findAll({
+      Attributes: ["hostId"],
+      where: {
+        [Op.or]: [
+          {
+            mainAddress: {
+              [Op.substring]: querydata.search,
+            },
+          },
+          { houseInfo: querydata.search },
+        ]
+      },
+      order: [["createdAt", "DESC"]],
+    });
+    
     const findbytitle = await hosts.findAll({
+      Attributes: ["hostId"],
       where: {
         title: {
           [Op.substring]: querydata.search,
         },
-        mainAddress: {
-          [Op.substring]: {[Op.ne]: querydata.search }
+      },
+      order: [["createdAt", "DESC"]],
+    });
 
-        },
-        houseInfo: {
-          [Op.ne]: querydata.search,
-        },
-      },
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: images,
-          required: false,
-          attributes: [
-            "hostId",
-            "postImageURL",
-            "thumbnailURL",
-            "userImageURL",
-          ],
-        },
-      ],
-    });
-    for (j = 0; j < findbytitle.length; j++) {
-      searchResult.push(findbytitle[j]);
+    for (j = 0; j < searchResult.length; j++) {
+      let host = searchResult[j];
+      if (host.hostId == findbytitle.roomId) {
+        searchResult[j] = searchResult[0];
+        searchResult[0] = host;
+      }
     }
-    const findbyhostContent = await hosts.findAll({
-      where: {
-        hostContent: {
-          [Op.substring]: querydata.search,
-        },
-        title: {
-          [Op.substring]: { [Op.ne]: querydata.search },
-        },
-        mainAddress: {
-          [Op.substring]: { [Op.ne]: querydata.search },
-        },
-        houseInfo: {
-          [Op.ne]: querydata.search,
-        },
-      },
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: images,
-          required: false,
-          attributes: [
-            "hostId",
-            "postImageURL",
-            "thumbnailURL",
-            "userImageURL",
-          ],
-        },
-      ],
-    });
-    for (l = 0; l < findbyhostContent.length; l++) {
-      searchResult.push(findbyhostContent[l]);
+    for (l = 0; l < searchResult.length; l++) {
+      let host = searchResult[l];
+      if (host.hostId == findbyaddress.roomId) {
+        searchResult[l] = searchResult[0];
+        searchResult[0] = host;
+      }
     }
-    // console.log("1",findbyaddress,"2",findbytitle,"3",findbyhostContent,"4",searchResult,"5","6","7");
-    res.status(200).send({searchResult, msg: "타입 검색이 완료되었습니다." });
+
+    res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res
       .status(400)
-      .send({searchResult, msg: "호스트 검색에 실패하였습니다.." });
+      .send({ searchResult, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
-
-
 
 module.exports.deleteAcc = deleteAcc
 module.exports.hostCreateAcc = hostCreateAcc;
@@ -629,6 +612,7 @@ module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
 module.exports.getAllACC_Star = getAllACC_Star;
 module.exports.hostsearch = hostsearch;
+
 
 // 호스트 숙소 등록 수정
 async function updateAcc(req, res) {

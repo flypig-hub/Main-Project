@@ -36,7 +36,7 @@ async function WritePosting(req, res) {
   const image = req.files;
   // console.log(image);
 
-  let isLike = false;
+  let islike = false;
 
   const PreImages = req.body.preImages.replace(/\s'/g, "")
   let preImagesArr = PreImages.replaceAll("'", "").split(',')
@@ -60,7 +60,7 @@ async function WritePosting(req, res) {
     houseTitle,
     commentNum: 0,
     likeNum: 0,
-    isLike: isLike,
+    islike: islike,
     tagList,
   });
 
@@ -131,6 +131,25 @@ async function GetPostingList(req, res) {
     limit : 5,
     
   });
+  for(j = 0; j < Top5.length; j++){
+    let tpost = Top5[j];
+    let islike = await Like.findOne({
+      where : {userId : queryData.userId, postId: tpost.postId},
+    });
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
+    }
+    Object.assign(tpost, {
+      islike:islike
+    });
+    await posts.update({
+      islike:islike,
+    },
+    {where : {postId:tpost.postId}}
+    )
+  }
   // const Top5post = Top5.map((tpost)=>({
   //   postId : tpost.postId,
   //   title : tpost.title,
@@ -321,17 +340,7 @@ await posts.update(
       }
     ],
   });
-  const outherPostInfo = outherPosts.map((outherpostinfo) =>({
-    postId : outherpostinfo.postId,
-    userId : outherpostinfo.userId,
-    nickname : outherpostinfo.user.nickname,
-    title : outherpostinfo.title,
-    commentNum : outherpostinfo.commentNum,
-    likeNum : outherpostinfo.likeNum,
-    islike : outherpostinfo.islike,
-    preImages : outherpostinfo.preImages,
-    images : outherpostinfo.images
-   }));
+
 
 
   for (i = 0; outherPosts.length > i; i++){
@@ -359,7 +368,8 @@ await posts.update(
     await posts.update(
       {
         likeNum: likeNum,
-        commentNum: commentNum
+        commentNum: commentNum,
+        islike:islike
       },
       { where: { postId: allPostInfo[0].postId } }
     );
@@ -413,7 +423,17 @@ await posts.update(
     
     
   }
-
+  const outherPostInfo = outherPosts.map((outherpostinfo) =>({
+    postId : outherpostinfo.postId,
+    userId : outherpostinfo.userId,
+    nickname : outherpostinfo.user.nickname,
+    title : outherpostinfo.title,
+    commentNum : outherpostinfo.commentNum,
+    likeNum : outherpostinfo.likeNum,
+    islike : outherpostinfo.islike,
+    preImages : outherpostinfo.preImages,
+    images : outherpostinfo.images
+   }));
   
     // 이 글에 나온 숙소 찾아오기
     let findHostId = await hosts.findAll({
@@ -435,8 +455,11 @@ await posts.update(
       }
       Object.assign(house,{
           isSave:isSave,
-          
        });
+      await hosts.update(
+        {isSave:isSave,},
+        {where :{hostId : house.hostId} }
+      )
     }
 
   let findAllAcc = [];

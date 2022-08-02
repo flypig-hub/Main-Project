@@ -317,7 +317,7 @@ async function CNU_CK (req, res, next) {
    
   // Company Number check
   async function postCRN(crn){
-    //try {
+    try {
       const postUrl = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=hsmMPV8Yvh7MAswqXiCCcM%2BlWTuetywv5slb0C2xYqLlwk1Qrqp%2BbChwrRIEvBHmVzPxy%2BR9%2FYcZ08ZUa65rHQ%3D%3D"
 
        
@@ -330,21 +330,21 @@ async function CNU_CK (req, res, next) {
         
       });
       
-      // if (result !== '국세청에 등록되지 않은 사업자등록번호입니다.'){
-      //   const userId = res.locals.userId
-      //   await users.update({host:true}, {where:{userId}})
-      //   res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
-      // } else {
-      //   res.status(404).send({result : true, message :"국세청에 등록되지 않은 사업자등록번호입니다."})
-      // }
+      if (result !== '국세청에 등록되지 않은 사업자등록번호입니다.'){
+        const userId = res.locals.userId
+        await users.update({host:true}, {where:{userId}})
+        res.status(200).send({result : true, message :"멘도롱 제주의 호스트가 되셨습니다."})
+      } else {
+        res.status(400).send({result : true, message :"국세청에 등록되지 않은 사업자등록번호입니다."})
+      }
 
-    //   } catch (error) {
-    //     console.error(error);
-    //     res.status(404).send({
-    //       errorMEssage: '국세청에 등록되지 않은 사업자등록번호입니다.',
-    //   })
-    //     return;
-    // }
+      } catch (error) {
+        console.error(error);
+        res.status(400).send({
+          errorMEssage: '국세청에 등록되지 않은 사업자등록번호입니다.',
+      })
+        return;
+    }
   }
   next();
 };
