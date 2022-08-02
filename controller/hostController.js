@@ -604,7 +604,7 @@ module.exports.updateAcc = updateAcc;
 module.exports.hostAddresssearch = hostAddresssearch;
 module.exports.hosTypesearch = hosTypesearch;
 module.exports.getAllACC_Star = getAllACC_Star;
-// module.exports.hostsearch = hostsearch;
+module.exports.hostsearch = hostsearch;
 
 // 게시글 수정( 수정 중 )
 async function updateAcc(req, res) {
