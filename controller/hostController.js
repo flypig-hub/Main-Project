@@ -615,6 +615,7 @@ module.exports.hosTypesearch = hosTypesearch;
 module.exports.getAllACC_Star = getAllACC_Star;
 module.exports.hostsearch = hostsearch;
 
+
 // 호스트 숙소 등록 수정
 async function updateAcc(req, res) {
   const { userId, nickname, userImageURL } = res.locals;
