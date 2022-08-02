@@ -519,25 +519,27 @@ res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다.
 async function hostsearch(req, res) {
   try {
     const querydata = req.query;
-    const findAll = await hosts.findAll({
-      where: {[Op.or]:
-        [{
-          hostContent: {
-            [Op.substring]: querydata.search,
-          }
-        },
+    const searchResult = await hosts.findAll({
+      where: {
+        [Op.or]: [
+          {
+            hostContent: {
+              [Op.substring]: querydata.search,
+            },
+          },
           {
             title: {
               [Op.substring]: querydata.search,
-            }
+            },
           },
           {
             mainAddress: {
               [Op.substring]: querydata.search,
-            }
+            },
           },
           { houseInfo: querydata.search },
-      ]},
+        ],
+      },
       order: [["createdAt", "DESC"]],
       include: [
         {
@@ -577,32 +579,26 @@ async function hostsearch(req, res) {
       order: [["createdAt", "DESC"]],
     });
 
-    for (j = 0; j < findAll.length; j++) {
-      let host = findAll[j];
+    for (j = 0; j < searchResult.length; j++) {
+      let host = searchResult[j];
       if (host.hostId == findbytitle.roomId) {
-        findAll[j] = findAll[0];
-        findAll[0] = host;
+        searchResult[j] = searchResult[0];
+        searchResult[0] = host;
       }
     }
-    for (l = 0; l < findAll.length; l++) {
-      let host = findAll[l];
+    for (l = 0; l < searchResult.length; l++) {
+      let host = searchResult[l];
       if (host.hostId == findbyaddress.roomId) {
-        findAll[l] = findAll[0];
-        findAll[0] = host;
+        searchResult[l] = searchResult[0];
+        searchResult[0] = host;
       }
     }
-    
 
-    let num = findAll.length
-
-
-    
-    res.status(200).send({ findAll, num, msg: "타입 검색이 완료되었습니다." });
+    res.status(200).send({ findAll, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res.status(400).send({ findAll, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
-
 
 
 module.exports.deleteAcc = deleteAcc
