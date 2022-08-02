@@ -131,6 +131,25 @@ async function GetPostingList(req, res) {
     limit : 5,
     
   });
+  for(j = 0; j < Top5.length; j++){
+    let tpost = Top5[j];
+    let islike = await Like.findOne({
+      where : {userId : queryData.userId, postId: tpost.postId},
+    });
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
+    }
+    Object.assign(tpost, {
+      islike:islike
+    });
+    await posts.update({
+      islike:islike,
+    },
+    {where : {postId:tpost.postId}}
+    )
+  }
   // const Top5post = Top5.map((tpost)=>({
   //   postId : tpost.postId,
   //   title : tpost.title,
