@@ -36,7 +36,7 @@ async function WritePosting(req, res) {
   const image = req.files;
   // console.log(image);
 
-  let isLike = false;
+  let islike = false;
 
   const PreImages = req.body.preImages.replace(/\s'/g, "")
   let preImagesArr = PreImages.replaceAll("'", "").split(',')
@@ -60,7 +60,7 @@ async function WritePosting(req, res) {
     houseTitle,
     commentNum: 0,
     likeNum: 0,
-    isLike: isLike,
+    islike: islike,
     tagList,
   });
 
@@ -439,7 +439,7 @@ await posts.update(
        });
       await hosts.update(
         {isSave:isSave,},
-        {where :{hostId : findHostId[0].hostId} }
+        {where :{hostId : allPostInfo[0].hostId} }
       )
     }
 
