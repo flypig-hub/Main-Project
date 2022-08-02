@@ -609,7 +609,7 @@ async function hostsearch(req, res) {
     for (l = 0; l < findbyhostContent.length; l++) {
       searchResult.push(findbyhostContent[l]);
     }
-    // console.log("1",findbyaddress,"2",findbytitle,"3",findbyhostContent,"4",searchResult,"5","6","7");
+    
     res.status(200).send({searchResult, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
     res
