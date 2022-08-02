@@ -519,8 +519,41 @@ res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다.
 async function hostsearch(req, res) {
   try {
     const querydata = req.query;
-    let searchResult = [];
+    const findAll = await hosts.findAll({
+      where: {[Op.or]:
+        [{
+          hostContent: {
+            [Op.substring]: querydata.search,
+          }
+        },
+          {
+            title: {
+              [Op.substring]: querydata.search,
+            }
+          },
+          {
+            mainAddress: {
+              [Op.substring]: querydata.search,
+            }
+          },
+          { houseInfo: querydata.search },
+      ]},
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: [
+            "hostId",
+            "postImageURL",
+            "thumbnailURL",
+            "userImageURL",
+          ],
+        },
+      ],
+    });
     const findbyaddress = await hosts.findAll({
+      Attributes: ["hostId"],
       where: {
         [Op.or]: [
           {
@@ -530,91 +563,43 @@ async function hostsearch(req, res) {
           },
           { houseInfo: querydata.search },
         ],
+        order: [["createdAt", "DESC"]],
       },
-      include: [
-        {
-          model: images,
-          required: false,
-          attributes: [
-            "hostId",
-            "postImageURL",
-            "thumbnailURL",
-            "userImageURL",
-          ],
-        },
-      ],
     });
-    for (i = 0; i < findbyaddress.length; i++) {
-      searchResult.push(findbyaddress[i]);
-    }
+    
     const findbytitle = await hosts.findAll({
+      Attributes: ["hostId"],
       where: {
         title: {
           [Op.substring]: querydata.search,
         },
-        mainAddress: {
-          [Op.substring]: {[Op.ne]: querydata.search }
+      },
+      order: [["createdAt", "DESC"]],
+    });
 
-        },
-        houseInfo: {
-          [Op.ne]: querydata.search,
-        },
-      },
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: images,
-          required: false,
-          attributes: [
-            "hostId",
-            "postImageURL",
-            "thumbnailURL",
-            "userImageURL",
-          ],
-        },
-      ],
-    });
-    for (j = 0; j < findbytitle.length; j++) {
-      searchResult.push(findbytitle[j]);
+    for (j = 0; j < findAll.length; j++) {
+      let host = findAll[j];
+      if (host.hostId == findbytitle.roomId) {
+        findAll[j] = findAll[0];
+        findAll[0] = host;
+      }
     }
-    const findbyhostContent = await hosts.findAll({
-      where: {
-        hostContent: {
-          [Op.substring]: querydata.search,
-        },
-        title: {
-          [Op.substring]: { [Op.ne]: querydata.search },
-        },
-        mainAddress: {
-          [Op.substring]: { [Op.ne]: querydata.search },
-        },
-        houseInfo: {
-          [Op.ne]: querydata.search,
-        },
-      },
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: images,
-          required: false,
-          attributes: [
-            "hostId",
-            "postImageURL",
-            "thumbnailURL",
-            "userImageURL",
-          ],
-        },
-      ],
-    });
-    for (l = 0; l < findbyhostContent.length; l++) {
-      searchResult.push(findbyhostContent[l]);
+    for (l = 0; l < findAll.length; l++) {
+      let host = findAll[l];
+      if (host.hostId == findbyaddress.roomId) {
+        findAll[l] = findAll[0];
+        findAll[0] = host;
+      }
     }
     
-    res.status(200).send({searchResult, msg: "타입 검색이 완료되었습니다." });
+
+    let num = findAll.length
+
+
+    
+    res.status(200).send({ findAll, num, msg: "타입 검색이 완료되었습니다." });
   } catch (error) {
-    res
-      .status(400)
-      .send({searchResult, msg: "호스트 검색에 실패하였습니다.." });
+    res.status(400).send({ findAll, msg: "호스트 검색에 실패하였습니다.." });
   }
 }
 
