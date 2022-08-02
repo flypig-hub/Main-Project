@@ -594,18 +594,6 @@ async function ModifyPosting(req, res) {
   const postImagesKEY = image.map((postImageKey) => postImageKey.key);
   const postImagesURL = image.map((postImageUrl) => postImageUrl.location);
 
-  // content 중 blob 값을 대체
-  const PreImage = req.body.preImages.replace(/\s'/g, "")
-  let preImagesArr = PreImage.replaceAll("'", "").split(',')
-  console.log(preImagesArr, "이게 바뀌어야 함");
-  let newContent = req.body.content;
-  for (let i = 1; i <= image.length; i++) {
-    let preIMG = preImagesArr[i - 1]
-    console.log(preIMG, "이미지 대체하기");
-    let ImGList = image[i].location
-    newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
-  }
-
   // DB 삭제
   const destroyKEY = await images.findAll({
     where: { postId },
@@ -643,6 +631,18 @@ async function ModifyPosting(req, res) {
 
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
   if (changeThumbnail === "true") {  
+    // content 중 blob 값을 대체
+    const PreImage = req.body.preImages.replace(/\s'/g, "")
+    let preImagesArr = PreImage.replaceAll("'", "").split(',')
+    console.log(preImagesArr, "이게 바뀌어야 함");
+    let newContent = req.body.content;
+    for (let i = 1; i < image.length; i++) {
+      let preIMG = preImagesArr[i - 1]
+      console.log(preIMG, "이미지 대체하기");
+      let ImGList = image[i].location
+      newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
+    }
+
     const thumnailUrl = image[0].location;
     const thumnailKey = image[0].key;
     console.log("썸네일 바꿔서 사진을 수정합니다");
@@ -674,6 +674,18 @@ async function ModifyPosting(req, res) {
   // 상황 2. 사진이 추가되고 썸네일 수정 없음
   if (changeThumbnail === "false") {
     console.log("썸네일 없이 사진을 수정합니다");
+    // content 중 blob 값을 대체
+    const PreImage = req.body.preImages.replace(/\s'/g, "")
+    let preImagesArr = PreImage.replaceAll("'", "").split(',')
+    console.log(preImagesArr, "이게 바뀌어야 함");
+    let newContent = req.body.content;
+    for (let i = 0; i < image.length; i++) {
+      let preIMG = preImagesArr[i]
+      console.log(preIMG, "이미지 대체하기");
+      let ImGList = image[i].location
+      newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
+    }
+
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
       const postImageURL = postImagesURL[i];
