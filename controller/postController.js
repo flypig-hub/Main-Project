@@ -628,14 +628,13 @@ async function ModifyPosting(req, res) {
   });
   console.log(destroyImages, "이것만 삭제한다");
 
-
+  let newContent = req.body.content;
   // 상황 1. 사진이 추가되고 썸네일 수정 있음, 이미지의 0번째는 썸네일
   if (changeThumbnail === "true") {  
     // content 중 blob 값을 대체
     const PreImage = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImage.replaceAll("'", "").split(',')
     console.log(preImagesArr, "이게 바뀌어야 함");
-    let newContent = req.body.content;
     for (let i = 1; i < image.length; i++) {
       let preIMG = preImagesArr[i - 1]
       console.log(preIMG, "이미지 대체하기");
@@ -678,7 +677,6 @@ async function ModifyPosting(req, res) {
     const PreImage = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImage.replaceAll("'", "").split(',')
     console.log(preImagesArr, "이게 바뀌어야 함");
-    let newContent = req.body.content;
     for (let i = 0; i < image.length; i++) {
       let preIMG = preImagesArr[i]
       console.log(preIMG, "이미지 대체하기");
