@@ -16,7 +16,11 @@ router.get('/', userIdMiddleware, HostController.getAllAcc)
 // 호스트 숙소 전체 조회
 router.get('/starpoint', userIdMiddleware, HostController.getAllACC_Star)
 
-
+router.get(
+  "/search",
+  userIdMiddleware,
+  HostController.hostsearch
+);
 
 // 숙소 검색하기 지역
 router.get("/address/search", userIdMiddleware, HostController.hostAddresssearch);
