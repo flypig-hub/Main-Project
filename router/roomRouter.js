@@ -12,5 +12,5 @@ router.get("/:roomId", userIdMiddleware, roomController.Roomdetail);
 router.post("/", authMiddleware, roomController.createRoom);
 router.post("/:roomId", authMiddleware, roomController.enterRoom);
 router.delete("/:roomId", authMiddleware, roomController.exitRoom);
-router.get("/populer", userIdMiddleware, roomController.populerRoom);
+router.get("/search/populer", userIdMiddleware, roomController.populerRoom);
 module.exports = router;
