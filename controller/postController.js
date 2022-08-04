@@ -324,70 +324,70 @@ async function GetPost(req, res) {
     ],
   });
   console.log(allPostInfo[0].tagList);
- const writtenTime = Date.parse(allPostInfo.createdAt);
- const timeNow = Date.parse(Date());
- const diff = timeNow - writtenTime;
- if (diff > 1123200000) {
- } else {
-   const times = [
-     { time: "분", milliSeconds: 1000 * 60 },
-     { time: "시간", milliSeconds: 1000 * 60 * 60 },
-     { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-     { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-   ].reverse();
+//  const writtenTime = Date.parse(allPostInfo.createdAt);
+//  const timeNow = Date.parse(Date());
+//  const diff = timeNow - writtenTime;
+//  if (diff > 1123200000) {
+//  } else {
+//    const times = [
+//      { time: "분", milliSeconds: 1000 * 60 },
+//      { time: "시간", milliSeconds: 1000 * 60 * 60 },
+//      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+//      { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+//    ].reverse();
 
-   for (const value of times) {
-     const betweenTime = Math.floor(diff / value.milliSeconds);
-     if (betweenTime > 0) {
-       allPostInfo = {
-         hostId: allPostInfo.hostId,
-         userId: allPostInfo.userId,
-         reviewId: allPostInfo.reviewId,
-         average: allPostInfo.average,
-         title: allPostInfo.title,
-         isSave: allPostInfo.isSave,
-         nickname: allPostInfo.nickname,
-         category: allPostInfo.category,
-         houseInfo: allPostInfo.houseInfo,
-         mainAddress: allPostInfo.mainAddress,
-         subAddress: allPostInfo.subAddress,
-         stepSelect: allPostInfo.stepSelect,
-         stepInfo: allPostInfo.stepInfo,
-         link: allPostInfo.link,
-         hostContent: allPostInfo.hostContent,
-         preImages: allPostInfo.preImages,
-         tagList: allPostInfo.tagList,
-         createdAt: betweenTime + value.time + "전",
-         updatedAt: allPostInfo.updatedAt,
-         images: allPostInfo.images,
-       };
-       break;
-     } else {
-       allPostInfo = {
-         hostId: allPostInfo.hostId,
-         userId: allPostInfo.userId,
-         reviewId: allPostInfo.reviewId,
-         average: allPostInfo.average,
-         title: allPostInfo.title,
-         isSave: allPostInfo.isSave,
-         nickname: allPostInfo.nickname,
-         category: allPostInfo.category,
-         houseInfo: allPostInfo.houseInfo,
-         mainAddress: allPostInfo.mainAddress,
-         subAddress: allPostInfo.subAddress,
-         stepSelect: allPostInfo.stepSelect,
-         stepInfo: allPostInfo.stepInfo,
-         link: allPostInfo.link,
-         hostContent: allPostInfo.hostContent,
-         preImages: allPostInfo.preImages,
-         tagList: allPostInfo.tagList,
-         createdAt: "방금전",
-         updatedAt: allPostInfo.updatedAt,
-         images: allPostInfo.images,
-       };
-     }
-   }
- }
+//    for (const value of times) {
+//      const betweenTime = Math.floor(diff / value.milliSeconds);
+//      if (betweenTime > 0) {
+//        allPostInfo = {
+//          hostId: allPostInfo.hostId,
+//          userId: allPostInfo.userId,
+//          reviewId: allPostInfo.reviewId,
+//          average: allPostInfo.average,
+//          title: allPostInfo.title,
+//          isSave: allPostInfo.isSave,
+//          nickname: allPostInfo.nickname,
+//          category: allPostInfo.category,
+//          houseInfo: allPostInfo.houseInfo,
+//          mainAddress: allPostInfo.mainAddress,
+//          subAddress: allPostInfo.subAddress,
+//          stepSelect: allPostInfo.stepSelect,
+//          stepInfo: allPostInfo.stepInfo,
+//          link: allPostInfo.link,
+//          hostContent: allPostInfo.hostContent,
+//          preImages: allPostInfo.preImages,
+//          tagList: allPostInfo.tagList,
+//          createdAt: betweenTime + value.time + "전",
+//          updatedAt: allPostInfo.updatedAt,
+//          images: allPostInfo.images,
+//        };
+//        break;
+//      } else {
+//        allPostInfo = {
+//          hostId: allPostInfo.hostId,
+//          userId: allPostInfo.userId,
+//          reviewId: allPostInfo.reviewId,
+//          average: allPostInfo.average,
+//          title: allPostInfo.title,
+//          isSave: allPostInfo.isSave,
+//          nickname: allPostInfo.nickname,
+//          category: allPostInfo.category,
+//          houseInfo: allPostInfo.houseInfo,
+//          mainAddress: allPostInfo.mainAddress,
+//          subAddress: allPostInfo.subAddress,
+//          stepSelect: allPostInfo.stepSelect,
+//          stepInfo: allPostInfo.stepInfo,
+//          link: allPostInfo.link,
+//          hostContent: allPostInfo.hostContent,
+//          preImages: allPostInfo.preImages,
+//          tagList: allPostInfo.tagList,
+//          createdAt: "방금전",
+//          updatedAt: allPostInfo.updatedAt,
+//          images: allPostInfo.images,
+//        };
+//      }
+//    }
+//  }
   // tagList 배열화
   let newTagStr = '';
   if (allPostInfo[0].tagList.length) {
