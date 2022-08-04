@@ -6,7 +6,7 @@ async function readComment(req, res) {
   try {
     const { postId } = req.params;
     
-    const comments = await Comments.findAll({
+    let comments = await Comments.findAll({
       where: {
         postId
       },
@@ -19,6 +19,70 @@ async function readComment(req, res) {
         
       ],
     });
+     const writtenTime = Date.parse(comments.createdAt);
+     const timeNow = Date.parse(Date());
+     const diff = timeNow - writtenTime;
+     if (diff > 1123200000) {
+     } else {
+       const times = [
+         { time: "분", milliSeconds: 1000 * 60 },
+         { time: "시간", milliSeconds: 1000 * 60 * 60 },
+         { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+         { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+       ].reverse();
+
+       for (const value of times) {
+         const betweenTime = Math.floor(diff / value.milliSeconds);
+         if (betweenTime > 0) {
+           comments = {
+             hostId: comments.hostId,
+             userId: comments.userId,
+             reviewId: comments.reviewId,
+             average: comments.average,
+             title: comments.title,
+             isSave: comments.isSave,
+             nickname: comments.nickname,
+             category: comments.category,
+             houseInfo: comments.houseInfo,
+             mainAddress: comments.mainAddress,
+             subAddress: comments.subAddress,
+             stepSelect: comments.stepSelect,
+             stepInfo: comments.stepInfo,
+             link: comments.link,
+             hostContent: comments.hostContent,
+             preImages: comments.preImages,
+             tagList: comments.tagList,
+             createdAt: betweenTime + value.time + "전",
+             updatedAt: comments.updatedAt,
+             images: comments.images,
+           };
+           break;
+         } else {
+           comments = {
+             hostId: comments.hostId,
+             userId: comments.userId,
+             reviewId: comments.reviewId,
+             average: comments.average,
+             title: comments.title,
+             isSave: comments.isSave,
+             nickname: comments.nickname,
+             category: comments.category,
+             houseInfo: comments.houseInfo,
+             mainAddress: comments.mainAddress,
+             subAddress: comments.subAddress,
+             stepSelect: comments.stepSelect,
+             stepInfo: comments.stepInfo,
+             link: comments.link,
+             hostContent: comments.hostContent,
+             preImages: comments.preImages,
+             tagList: comments.tagList,
+             createdAt: "방금 전",
+             updatedAt: comments.updatedAt,
+             images: comments.images,
+           };
+         }
+       }
+     }
      const commentInfo = await comments.map((commentinfo) =>({
       userId : commentinfo.userId,
       commentId : commentinfo.commentId,
