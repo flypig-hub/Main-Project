@@ -1,32 +1,31 @@
 const { Comments, users, images, sequelize, Sequelize } = require("../models");
 
-
 //댓글 불러오기 API
 async function readComment(req, res) {
   try {
     const { postId } = req.params;
-    
+
     let comments = await Comments.findAll({
       where: {
-        postId
+        postId,
       },
-      include: [{
-        model: users,
-        attributes: ['nickname', 'userImageURL']
-      }],
-      order: [
-        ["commentid", "DESC"],
+      include: [
+        {
+          model: users,
+          attributes: ["nickname", "userImageURL"],
+        },
       ],
+      order: [["commentid", "DESC"]],
     });
-     
-     const commentInfo = await comments.map((commentinfo) =>({
-      userId : commentinfo.userId,
-      commentId : commentinfo.commentId,
-      comment : commentinfo.comment,
-      userImageURL : commentinfo.user.userImageURL,
-      nickname : commentinfo.user.nickname
-     }));
-   res.status(200).send({ commentInfo, msg : "댓글을 읽었습니다."});
+
+    const commentInfo = await comments.map((commentinfo) => ({
+      userId: commentinfo.userId,
+      commentId: commentinfo.commentId,
+      comment: commentinfo.comment,
+      userImageURL: commentinfo.user.userImageURL,
+      nickname: commentinfo.user.nickname,
+    }));
+    res.status(200).send({ commentInfo, msg: "댓글을 읽었습니다." });
   } catch (error) {
     res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
   }
@@ -37,39 +36,38 @@ async function writeComment(req, res) {
   const { postId } = req.params;
   const { nickname, userId, userImageURL } = res.locals;
   const { comment } = req.body;
-  
+
   if (!userId) {
     res.status(400).send({
       errorMessage: "로그인이 필요한 서비스 입니다.-댓글작성",
     });
     return;
   }
-try {
-  if (!comment) {
-    res.status(412).send({
-      errorMessage: "댓글을 입력해 주세요.",
+  try {
+    if (!comment) {
+      res.status(412).send({
+        errorMessage: "댓글을 입력해 주세요.",
+      });
+      return;
+    }
+
+    const comment_c = await Comments.create({
+      postId: postId,
+      userId: userId,
+      userImageURL: userImageURL,
+      comment: comment,
+      nickname: nickname,
     });
-    return;
+    res.status(201).send({ comment_c, msg: "댓글이 등록 되었습니다." });
+  } catch (err) {
+    res
+      .status(400)
+      .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
   }
- 
-  const comment_c = await Comments.create({
-    postId: postId,
-    userId: userId,
-    userImageURL : userImageURL,
-    comment: comment,
-    nickname: nickname,
-  });
-  res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
-} catch (err) {
-  res
-    .status(400)
-    .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
-}
 }
 
 // 댓글 수정 API
 async function updateComment(req, res) {
-
   const { userId } = res.locals;
   const { commentId } = req.params;
   const { comment } = req.body;
@@ -78,32 +76,27 @@ async function updateComment(req, res) {
     const existsComment = await Comments.findOne({
       where: { commentId },
     });
-   
+
     if (!userId) {
       res.status(400).send({
         errorMessage: "로그인이 필요한 서비스 입니다.-댓글수정-",
       });
       return;
-    }
-     else if (existsComment.userId != userId) {
+    } else if (existsComment.userId != userId) {
       res.status(400).send({
         errorMessage: "댓글 작성자만 댓글을 수정할 수 있습니다.",
       });
       return;
     }
-     const updateComment = await existsComment.update(
-       { comment: comment },
-       { updatedAt: Date() }
-     );
-      res
-        .status(200)
-        .send({ comment, updateComment, message: "댓글 수정 완료" });
-    }
-    catch (err) {
-      res.status(400).send({ errorMessage: "댓글 수정을 할 수 없습니다." });
-    }
+    const updateComment = await existsComment.update(
+      { comment: comment },
+      { updatedAt: Date() }
+    );
+    res.status(200).send({ comment, updateComment, message: "댓글 수정 완료" });
+  } catch (err) {
+    res.status(400).send({ errorMessage: "댓글 수정을 할 수 없습니다." });
   }
-
+}
 
 async function deleteComment(req, res) {
   const { userId } = res.locals;
@@ -138,7 +131,6 @@ async function deleteComment(req, res) {
     res.status(400).send({ errorMessage: "댓글 삭제를 할 수 없습니다." });
   }
 }
-
 
 module.exports.readComment = readComment;
 module.exports.writeComment = writeComment;
