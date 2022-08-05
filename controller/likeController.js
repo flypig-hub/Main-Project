@@ -1,5 +1,5 @@
 
-const { posts, Like, sequelize, Sequelize } = require("../models");
+const { Like, sequelize, Sequelize } = require("../models");
 
 
 async function onlike(req, res) {
@@ -14,7 +14,7 @@ async function onlike(req, res) {
     res.status(400).send({ errorMessage: "이미 좋아요를 클릭하셨습니다." });
     return
   } 
-    const dolike = await Like.create({
+     await Like.create({
     
         userId:userId, postId:postId
       
@@ -35,7 +35,7 @@ async function unlike(req, res) {
   const { userId } = res.locals;
   const { postId } = req.params;
 try {
-  const dellike = await Like.destroy({
+   await Like.destroy({
     where: {
       userId: userId,
       postId: postId

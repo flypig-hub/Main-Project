@@ -10,10 +10,8 @@ const {
   sequelize,
   Sequelize,
 } = require("../models");
-const multiparty = require("multiparty");
 const AWS = require("aws-sdk");
 const Op = Sequelize.Op;
-const ImageController = require("./ImageController");
 const { isTypedArray } = require("util/types");
 
 
@@ -83,10 +81,8 @@ async function WritePosting(req, res) {
     postImageKey.forEach((element, i) => {
       const postImageKEY = postImageKey[i];
       const postImageURL = postImageUrl[i];
-      console.log(postImageKEY);
-      console.log(postImageURL);
     
-      const saveImage = images.create({
+       images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
@@ -107,198 +103,194 @@ async function WritePosting(req, res) {
 
 // 유저 커뮤니티 게시글 전체 조회
 async function GetPostingList(req, res) {
-  const user = res.locals;
   let queryData = res.locals;
   if (queryData.userId === undefined) {
     queryData.userId = 0;
   }
-
-  // Top 5 게시물
-  let Top5 = await posts.findAll({
-    include: [
-      {
-        model: images,
-        required: true,
-        attributes: ["postId", "thumbnailURL", "userImageURL"],
-      },
-      {
-        model: users,
-        attributes: ["nickname"],
-      },
-    ],
-    order: [["likeNum", "DESC"]],
-    limit: 5,
-  });
-  for (j = 0; j < Top5.length; j++) {
-    let tpost = Top5[j];
-    const tpostComments = await Comments.findAll({
-      where: { postId: tpost.postId },
+  try {
+    // Top 5 게시물
+    let Top5 = await posts.findAll({
+      include: [
+        {
+          model: images,
+          required: true,
+          attributes: ["postId", "thumbnailURL", "userImageURL"],
+        },
+        {
+          model: users,
+          attributes: ["nickname"],
+        },
+      ],
+      order: [["likeNum", "DESC"]],
+      limit: 5,
     });
+    for (j = 0; j < Top5.length; j++) {
+      let tpost = Top5[j];
+      const tpostComments = await Comments.findAll({
+        where: { postId: tpost.postId },
+      });
 
-    const tpostLikes = await Like.findAll({
-      where: { postId: tpost.postId },
-    });
+      const tpostLikes = await Like.findAll({
+        where: { postId: tpost.postId },
+      });
 
-    let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: tpost.postId },
-    });
+      let islike = await Like.findOne({
+        where: { userId: queryData.userId, postId: tpost.postId },
+      });
 
-    const likeNum = tpostLikes.length;
-    const commentNum = tpostComments.length;
+      const likeNum = tpostLikes.length;
+      const commentNum = tpostComments.length;
 
-    if (islike) {
-      islike = true;
-    } else {
-      islike = false;
-    }
-    Object.assign(tpost, {
-      islike: islike,
-      commentNum: commentNum,
-      likeNum: likeNum,
-    });
-    await posts.update(
-      {
+      if (islike) {
+        islike = true;
+      } else {
+        islike = false;
+      }
+      Object.assign(tpost, {
         islike: islike,
-        likeNum: likeNum,
         commentNum: commentNum,
-      },
-      { where: { postId: tpost.postId } }
-    );
-  }
-  // const Top5post = Top5.map((tpost)=>({
-  //   postId : tpost.postId,
-  //   title : tpost.title,
-  //   nickname : tpost.nickname,
-  //   likeNum : tpost.likeNum,
-  //   commentNum : tpost.commentNum,
-  //   images : tpost.images
-  // }));
-
-  let allPost = await posts.findAll({
-    include: [
-      {
-        model: images,
-        required: true,
-        attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
-      },
-      {
-        model: users,
-        attributes: ["nickname"],
-      },
-    ],
-    order: [["createdAt", "DESC"]],
-  });
-
-  for (i = 0; i < allPost.length; i++) {
-    let post = allPost[i];
-    const writtenTime = Date.parse(post.createdAt);
-    const timeNow = Date.parse(Date());
-    const diff = timeNow - writtenTime; // 경과 시간
-
-    const times = [
-      { time: "분", milliSeconds: 1000 * 60 },
-      { time: "시간", milliSeconds: 1000 * 60 * 60 },
-      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-      { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-    ].reverse();
-    const postComments = await Comments.findAll({
-      where: { postId: post.postId },
-    });
-
-    const postLikes = await Like.findAll({
-      where: { postId: post.postId },
-    });
-
-    let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: post.postId },
-    });
-
-    const likeNum = postLikes.length;
-    const commentNum = postComments.length;
-    if (islike) {
-      islike = true;
-    } else {
-      islike = false;
+        likeNum: likeNum,
+      });
+      await posts.update(
+        {
+          islike: islike,
+          likeNum: likeNum,
+          commentNum: commentNum,
+        },
+        { where: { postId: tpost.postId } }
+      );
     }
+
+    let allPost = await posts.findAll({
+      include: [
+        {
+          model: images,
+          required: true,
+          attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
+        },
+        {
+          model: users,
+          attributes: ["nickname"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    for (i = 0; i < allPost.length; i++) {
+      let post = allPost[i];
+      const writtenTime = Date.parse(post.createdAt);
+      const timeNow = Date.parse(Date());
+      const diff = timeNow - writtenTime; // 경과 시간
+
+      const times = [
+        { time: "분", milliSeconds: 1000 * 60 },
+        { time: "시간", milliSeconds: 1000 * 60 * 60 },
+        { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+        { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+      ].reverse();
+      const postComments = await Comments.findAll({
+        where: { postId: post.postId },
+      });
+
+      const postLikes = await Like.findAll({
+        where: { postId: post.postId },
+      });
+
+      let islike = await Like.findOne({
+        where: { userId: queryData.userId, postId: post.postId },
+      });
+
+      const likeNum = postLikes.length;
+      const commentNum = postComments.length;
+      if (islike) {
+        islike = true;
+      } else {
+        islike = false;
+      }
     
-    if (diff > 1123200000) {
+      if (diff > 1123200000) {
      
-    } else {
-      for (const value of times) {
-        const betweenTime = Math.floor(diff / value.milliSeconds);
-        if (betweenTime > 0) {
-          post = {
-            postId: post.postId,
-            hostId: post.hostId,
-            userId: post.userId,
-            nickname: post.nickname,
-            content: post.content,
-            title: post.title,
-            commentId: post.commentId,
-            commentNum: commentNum,
-            likeNum: likeNum,
-            islike: islike,
-            mainAddress: post.mainAddress,
-            subAddress: post.subAddress,
-            category: post.category,
-            type: post.type,
-            link: post.link,
-            houseTitle: post.houseTitle,
-            tagList: post.tagList,
-            preImages: post.preImages,
-            createdAt: betweenTime + value.time + "전",
-            updatedAt: post.updatedAt,
-            images: post.images,
-            user: post.user,
-          };
-          allPost[i] = post;
-          break;
-        } else {
-          post = {
-            postId: post.postId,
-            hostId: post.hostId,
-            userId: post.userId,
-            nickname: post.nickname,
-            content: post.content,
-            title: post.title,
-            commentId: post.commentId,
-            commentNum: commentNum,
-            likeNum: likeNum,
-            islike: islike,
-            mainAddress: post.mainAddress,
-            subAddress: post.subAddress,
-            category: post.category,
-            type: post.type,
-            link: post.link,
-            houseTitle: post.houseTitle,
-            tagList: post.tagList,
-            preImages: post.preImages,
-            createdAt: "방금 전",
-            updatedAt: post.updatedAt,
-            images: post.images,
-            user: post.user,
-          };
-          allPost[i] = post;
+      } else {
+        for (const value of times) {
+          const betweenTime = Math.floor(diff / value.milliSeconds);
+          if (betweenTime > 0) {
+            post = {
+              postId: post.postId,
+              hostId: post.hostId,
+              userId: post.userId,
+              nickname: post.nickname,
+              content: post.content,
+              title: post.title,
+              commentId: post.commentId,
+              commentNum: commentNum,
+              likeNum: likeNum,
+              islike: islike,
+              mainAddress: post.mainAddress,
+              subAddress: post.subAddress,
+              category: post.category,
+              type: post.type,
+              link: post.link,
+              houseTitle: post.houseTitle,
+              tagList: post.tagList,
+              preImages: post.preImages,
+              createdAt: betweenTime + value.time + "전",
+              updatedAt: post.updatedAt,
+              images: post.images,
+              user: post.user,
+            };
+            allPost[i] = post;
+            break;
+          } else {
+            post = {
+              postId: post.postId,
+              hostId: post.hostId,
+              userId: post.userId,
+              nickname: post.nickname,
+              content: post.content,
+              title: post.title,
+              commentId: post.commentId,
+              commentNum: commentNum,
+              likeNum: likeNum,
+              islike: islike,
+              mainAddress: post.mainAddress,
+              subAddress: post.subAddress,
+              category: post.category,
+              type: post.type,
+              link: post.link,
+              houseTitle: post.houseTitle,
+              tagList: post.tagList,
+              preImages: post.preImages,
+              createdAt: "방금 전",
+              updatedAt: post.updatedAt,
+              images: post.images,
+              user: post.user,
+            };
+            allPost[i] = post;
+          }
         }
       }
+      await posts.update(
+        { likeNum: likeNum, commentNum: commentNum },
+        { where: { postId: post.postId } }
+      );
     }
-    await posts.update(
-      { likeNum: likeNum, commentNum: commentNum },
-      { where: { postId: post.postId } }
-    );
+    res.status(200).send({ Top5, allPost });
+  } catch (err) {
+     res.status(400).send({ msg:"포스트 전체조회에 실패했습니다." });
   }
-  res.send({ Top5, allPost });
 }
 
 
 // 유저 커뮤니티 게시글 상세 조회
 async function GetPost(req, res) {
+  try{
   const { postId } = req.params;
   let queryData = res.locals;
 
   if (queryData.userId === undefined) {
     queryData.userId = 0;
   }
+
   let allPostInfo = await posts.findAll({
     where: { postId },
     include: [
@@ -324,82 +316,10 @@ async function GetPost(req, res) {
       },
     ],
   });
-  console.log(allPostInfo[0].tagList);
 
-  //  const writtenTime = Date.parse(allPostInfo.createdAt);
-  //  const timeNow = Date.parse(Date());
-  //  const diff = timeNow - writtenTime;
-
-//  const writtenTime = Date.parse(allPostInfo.createdAt);
-//  const timeNow = Date.parse(Date());
-//  const diff = timeNow - writtenTime;
-//  if (diff > 1123200000) {
-//  } else {
-//    const times = [
-//      { time: "분", milliSeconds: 1000 * 60 },
-//      { time: "시간", milliSeconds: 1000 * 60 * 60 },
-//      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-//      { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-//    ].reverse();
-
-//    for (const value of times) {
-//      const betweenTime = Math.floor(diff / value.milliSeconds);
-//      if (betweenTime > 0) {
-//        allPostInfo = {
-//          hostId: allPostInfo.hostId,
-//          userId: allPostInfo.userId,
-//          reviewId: allPostInfo.reviewId,
-//          average: allPostInfo.average,
-//          title: allPostInfo.title,
-//          isSave: allPostInfo.isSave,
-//          nickname: allPostInfo.nickname,
-//          category: allPostInfo.category,
-//          houseInfo: allPostInfo.houseInfo,
-//          mainAddress: allPostInfo.mainAddress,
-//          subAddress: allPostInfo.subAddress,
-//          stepSelect: allPostInfo.stepSelect,
-//          stepInfo: allPostInfo.stepInfo,
-//          link: allPostInfo.link,
-//          hostContent: allPostInfo.hostContent,
-//          preImages: allPostInfo.preImages,
-//          tagList: allPostInfo.tagList,
-//          createdAt: betweenTime + value.time + "전",
-//          updatedAt: allPostInfo.updatedAt,
-//          images: allPostInfo.images,
-//        };
-//        break;
-//      } else {
-//        allPostInfo = {
-//          hostId: allPostInfo.hostId,
-//          userId: allPostInfo.userId,
-//          reviewId: allPostInfo.reviewId,
-//          average: allPostInfo.average,
-//          title: allPostInfo.title,
-//          isSave: allPostInfo.isSave,
-//          nickname: allPostInfo.nickname,
-//          category: allPostInfo.category,
-//          houseInfo: allPostInfo.houseInfo,
-//          mainAddress: allPostInfo.mainAddress,
-//          subAddress: allPostInfo.subAddress,
-//          stepSelect: allPostInfo.stepSelect,
-//          stepInfo: allPostInfo.stepInfo,
-//          link: allPostInfo.link,
-//          hostContent: allPostInfo.hostContent,
-//          preImages: allPostInfo.preImages,
-//          tagList: allPostInfo.tagList,
-//          createdAt: "방금전",
-//          updatedAt: allPostInfo.updatedAt,
-//          images: allPostInfo.images,
-//        };
-//      }
-//    }
-//  }
-
-  // tagList 배열화
   let newTagStr = "";
   if (allPostInfo[0].tagList.length) {
     const newTag = allPostInfo[0].tagList.split(" ");
-    console.log(newTag);
     newTagStr += newTag;
   }
   const newTAG = newTagStr.split(",");
@@ -438,31 +358,6 @@ async function GetPost(req, res) {
     { where: { postId: allPostInfo[0].postId } }
   );
 
-  const writtenTime = Date.parse(allPostInfo[0].createdAt); //등등
-  const timeNow = Date.parse(Date());
-  const diff = timeNow - writtenTime; // 경과 시간
-
-  if (diff > 1123200000) {
-  } else {
-    const times = [
-      { time: "분", milliSeconds: 1000 * 60 },
-      { time: "시간", milliSeconds: 1000 * 60 * 60 },
-      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-      { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-    ].reverse();
-
-    for (const value of times) {
-      const betweenTime = Math.floor(diff / value.milliSeconds);
-      if (betweenTime > 0) {
-        console.log(1)
-        
-        break;
-      } else {
-        console.log(0)
-      }
-    }
-  }
-
   const allPost = allPostInfo.map((postInfo) => ({
     postId: postInfo.postId,
     userId: postInfo.userId,
@@ -486,7 +381,6 @@ async function GetPost(req, res) {
     images: postInfo.images,
   }));
 
-  console.log(allPost, "로그");
 
   //글쓴이의 다른 게시물
 
@@ -541,6 +435,7 @@ async function GetPost(req, res) {
       },
       { where: { postId: allPostInfo[0].postId } }
     );
+
     Object.defineProperties(outherPost.dataValues, {
       title: {
         enumerable: true,
@@ -578,9 +473,6 @@ async function GetPost(req, res) {
       tagList: {
         enumerable: false,
       },
-      // preImages: {
-      //   enumerable: false,
-      // },
       createdAt: {
         enumerable: false,
       },
@@ -589,6 +481,7 @@ async function GetPost(req, res) {
       },
     });
   }
+
   const outherPostInfo = outherPosts.map((outherpostinfo) => ({
     postId: outherpostinfo.postId,
     userId: outherpostinfo.userId,
@@ -663,27 +556,26 @@ async function GetPost(req, res) {
         { where: { hostId: findAllAcc[0].hostId } }
       );
     }
-
-    // // console.log(allPostInfo);
-
-    // //  console.log(outherPostInfo);
+    
     res.send({ allPost, findAllAcc, outherPostInfo });
   } else {
     res.send({ allPost, findAllAcc, outherPostInfo });
   }
-}
-
+}catch (err) {
+  res.status(400).send({msg:"포스트 상세조회에 실패했습니다."})
+}}
   
 
 
 
 // 유저 커뮤니티 게시글 수정
 async function ModifyPosting(req, res) {
+  try{
   const { userId, userImageURL, nickname } = res.locals;
   const { postId } = req.params;
   const {
     title,
-    content, 
+    content,
     mainAddress,
     subAddress,
     category,
@@ -691,9 +583,9 @@ async function ModifyPosting(req, res) {
     link,
     houseTitle,
     tagList,
-    preImages,       // blob값
-    deleteImages,    // 키값 형태: 배열(길이 - KEY : 47 / URL : 62)
-    changeThumbnail 
+    preImages, 
+    deleteImages, // 키값 형태: 배열(길이 - KEY : 47 / URL : 62)
+    changeThumbnail,
   } = req.body;
   const image = req.files; // 4장
 
@@ -785,13 +677,11 @@ async function ModifyPosting(req, res) {
 
     const thumnailUrl = image[0].location;
     const thumnailKey = image[0].key;
-    console.log("썸네일 바꿔서 사진을 수정합니다");
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
       const postImageURL = postImagesURL[i];
-      console.log(postImageKEY, "이미지 DB가 업데이트 됩니다.");
-      console.log(postImageURL, "이미지 DB가 업데이트 됩니다.");
-      const updateImages = images.create({
+    
+       images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
@@ -803,7 +693,7 @@ async function ModifyPosting(req, res) {
       })
     })
 
-    const updateImages = await images.update({
+     await images.update({
       thumbnailURL: thumnailUrl,
       thumbnailKEY: thumnailKey
     }, {
@@ -813,14 +703,11 @@ async function ModifyPosting(req, res) {
 
   // 상황 2. 사진이 추가되고 썸네일 수정 없음
   if (changeThumbnail === "false") {
-    console.log("썸네일 없이 사진을 수정합니다");
     // content 중 blob 값을 대체
     const PreImage = req.body.preImages.replace(/\s'/g, "")
     let preImagesArr = PreImage.replaceAll("'", "").split(',')
-    console.log(preImagesArr, "이게 바뀌어야 함");
     for (let i = 0; i < image.length; i++) {
       let preIMG = preImagesArr[i]
-      console.log(preIMG, "이미지 대체하기");
       let ImGList = image[i].location
       newContent = newContent.replaceAll(`${ preIMG }`,`${ ImGList }`)
     }
@@ -828,7 +715,7 @@ async function ModifyPosting(req, res) {
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
       const postImageURL = postImagesURL[i];
-      const updateImages = images.create({
+      images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
@@ -841,7 +728,7 @@ async function ModifyPosting(req, res) {
     })
   }
 
-  const postUpdate = await posts.update({
+    await posts.update({
     userId: userId,
     nickname: nickname,
     title: title,
@@ -874,15 +761,17 @@ async function ModifyPosting(req, res) {
       tagList : newTagStr.split(',')
     })
   }
-  console.log(postInfo.tagList);
 
-  res.send({ postInfo })
+  res.status(200).send({ postInfo });
+}catch {
+  res.status(400).send({  msg:"포스트 수정에 실패했습니다."});
+}
 }
 
 
 // 유저 커뮤니티 게시글 삭제
 async function DeletePost(req, res) {
-  const { userId, nickname } = res.locals;
+  try{
   const { postId } = req.params;
   console.log(postId);
 
@@ -891,7 +780,6 @@ async function DeletePost(req, res) {
   });
 
   const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
-  console.log(postImageKey);
 
   postImageKey.forEach((element, i) => {
     const postImageKEY = postImageKey[i];
@@ -905,19 +793,23 @@ async function DeletePost(req, res) {
         }
       };
       s3.deleteObjects(params, function(err, data) {
-        if (err) console.log(err, err.stack); // error
-        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+        if (err) console.log(err, err.stack); 
+        else { console.log("S3에서 삭제되었습니다"), data }; 
       });
     }
   });
 
-  const destroyLike = await Like.destroy({ where: { postId } });
-  const destroyComment = await Comments.destroy({ where: { postId } });
-  const destroyImages = await images.destroy({ where: { postId } });
-  const destroyPost = await posts.destroy({ where: { postId } });
+ await Like.destroy({ where: { postId } });
+ await Comments.destroy({ where: { postId } });
+ await images.destroy({ where: { postId } });
+ await posts.destroy({ where: { postId } });
 
   res.status(200).send({ postImageInfo, msg: "게시글이 삭제되었습니다!" });
+}catch (err) {
+  res.status(400).send({ postImageInfo, msg: "게시글 삭제실패!" });
+  }
 }
+
 module.exports.WritePosting = WritePosting;
 module.exports.GetPostingList = GetPostingList;
 module.exports.GetPost = GetPost;
