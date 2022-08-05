@@ -550,11 +550,7 @@ async function ModifyPosting(req, res) {
     deleteImages,    // 키값 형태: 배열(길이 - KEY : 47 / URL : 62)
     changeThumbnail 
   } = req.body;
-  console.log(typeof(req.body.changeThumbnail), "false값 확인하러 갑니다");
   const image = req.files; // 4장
-  console.log(req.body.deleteImages, "삭제할 이미지");
-  console.log(req.body.preImages, "프리이미지스어쩌구");
-  console.log(image.length, "이미지 몇개 왔는지?");
 
   // 키 값은 S3 삭제, URL은 DB 삭제
   const deleteinfo = req.body.deleteImages.replace(/\s'/g, "")

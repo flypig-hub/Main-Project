@@ -708,18 +708,6 @@ async function updateAcc(req, res) {
     })
     console.log(DBDeleteImagesInfo[0].postImageURL, "상태좀 봅시다");
 
-    // // deleteImages의 KEY, URL 빼주기
-    // const fromDBDeleteImagesKEY = existImageInfoKEY.filter((x) => !deleteKEY.includes(x))
-    // const fromDBDeleteImagesURL = existImageInfoURL.filter((x) => !deleteURL.includes(x))
-    // console.log(fromDBDeleteImagesURL, "너도 같이 보자");
-
-    // // // URL 배열 전체 합치기
-    // const preAllPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
-    // const preAllPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
-    // console.log(preAllPostImageKey, "최종 KEY값");
-    // console.log(preAllPostImageUrl, "최종 URL값");
-
-
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
       const postImageURL = postImagesURL[i];
