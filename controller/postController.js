@@ -122,7 +122,7 @@ async function GetPostingList(req, res) {
       order: [["likeNum", "DESC"]],
       limit: 5,
     });
-    for (j = 0; j < Top5.length; j++) {
+    for (let j = 0; j < Top5.length; j++) {
       let tpost = Top5[j];
       const tpostComments = await Comments.findAll({
         where: { postId: tpost.postId },
@@ -179,7 +179,7 @@ async function GetPostingList(req, res) {
       order: [["createdAt", "DESC"]],
     });
 
-    for (i = 0; i < allPost.length; i++) {
+    for (let i = 0; i < allPost.length; i++) {
       let post = allPost[i];
       const writtenTime = Date.parse(post.createdAt);
       const timeNow = Date.parse(Date());
@@ -410,7 +410,7 @@ async function GetPost(req, res) {
       ],
     });
 
-    for (i = 0; outherPosts.length > i; i++) {
+    for (let i = 0; outherPosts.length > i; i++) {
       const outherPost = outherPosts[i];
       const outherPostComments = await Comments.findAll({
         where: { postId: outherPost.postId },
@@ -546,7 +546,7 @@ async function GetPost(req, res) {
       });
 
       starsum = [];
-      for (i = 0; findStar.length > i; i++) {
+      for (let i = 0; findStar.length > i; i++) {
         const star = findStar[i];
         starsum.push(star.dataValues.starpoint);
       }

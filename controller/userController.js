@@ -136,7 +136,6 @@ async function checkMe(req, res) {
 //마이페이지 정보 - 1
 async function Mypage(req, res) {
   const { userId } = res.locals;
-  // const {nickname, userImageURL, host, email, userId} = res.locals;
 
   try {
     const mysavelist = await saves.findAll({
@@ -146,7 +145,7 @@ async function Mypage(req, res) {
     const mysavehost = [];
     const mysaveinfo = mysavelist.map((saveinfo) => saveinfo.hostId);
 
-    for (i = 0; mysaveinfo.length > i; i++) {
+    for (let i = 0; mysaveinfo.length > i; i++) {
       const savehost = await hosts.findOne({
         where: { hostId: mysaveinfo[i] },
         include: [
@@ -156,7 +155,6 @@ async function Mypage(req, res) {
           },
         ],
       });
-      console.log(mysaveinfo);
       const mysavehostlist = {
         hostId: savehost.hostId,
         title: savehost.title,
@@ -175,7 +173,7 @@ async function Mypage(req, res) {
     const mylikespost = [];
     const mylikeinfo = mylikelist.map((likeinfo) => likeinfo.postId);
 
-    for (i = 0; mylikeinfo.length > i; i++) {
+    for (let i = 0; mylikeinfo.length > i; i++) {
       const likepost = await posts.findOne({
         where: { postId: mylikeinfo[i] },
         include: [
@@ -234,13 +232,11 @@ async function Mypage(req, res) {
       images: hosts.images,
     }));
 
-    res.json({
-      mypostinfo, // 내가 쓴 게시물 목록
-      mylikespost, // 좋아요를 누른 게시물 목록
-      hostinfo, // 호스트 등록 시, 호스트 유저로 쓴 호스트 게시물
-      mysavehost, // 마음에 든 호스트 게시물을 저장한 목록
-
-      // mypostthumbnail
+    res.status(200).json({
+      mypostinfo,
+      mylikespost,
+      hostinfo,
+      mysavehost,
     });
   } catch (error) {
     res.status(400).send({ errorMessage: "마이페이지 오류" });
@@ -248,7 +244,7 @@ async function Mypage(req, res) {
 }
 
 // 마이페이지 정보 수정
-//닉네임
+
 async function MypagePutname(req, res) {
   try {
     const userId = res.locals.userId;
@@ -396,7 +392,7 @@ async function otherUser(req, res) {
     }));
     console.log(otherinfo);
 
-    res.json({
+    res.status(200).json({
       otherinfo,
       userImageURL: otherPostuser.userImageURL,
       nickname: otherPostuser.nickname,

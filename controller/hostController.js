@@ -230,7 +230,7 @@ async function getAllACC_Star(req, res) {
       ],
       order: [["average", "DESC"]],
     });
-    for (j = 0; findAllAcc.length > j; j++) {
+    for (let j = 0; findAllAcc.length > j; j++) {
       const hoststar = findAllAcc[j];
 
       const findStar = await reviews.findAll({
@@ -241,7 +241,7 @@ async function getAllACC_Star(req, res) {
       // 별점 평균 for 문
       starsum = [];
 
-      for (i = 0; findStar.length > i; i++) {
+      for (let i = 0; findStar.length > i; i++) {
         const star = findStar[i];
 
         starsum.push(star.dataValues.starpoint);
@@ -301,7 +301,7 @@ async function getAllAcc(req, res) {
       order: [["createdAt", "DESC"]],
     });
 
-    for (j = 0; findAllAcc.length > j; j++) {
+    for (let j = 0; findAllAcc.length > j; j++) {
       const hoststar = findAllAcc[j];
 
       const findStar = await reviews.findAll({
@@ -312,7 +312,7 @@ async function getAllAcc(req, res) {
       // 별점 평균 for 문
       starsum = [];
 
-      for (i = 0; findStar.length > i; i++) {
+      for (let i = 0; findStar.length > i; i++) {
         const star = findStar[i];
 
         starsum.push(star.dataValues.starpoint);
@@ -451,7 +451,7 @@ async function getDetailAcc(req, res) {
     });
 
     starsum = [];
-    for (i = 0; findStar.length > i; i++) {
+    for (let i = 0; findStar.length > i; i++) {
       const star = findStar[i];
       starsum.push(star.dataValues.starpoint);
     }
@@ -637,18 +637,18 @@ async function hostsearch(req, res) {
         },
       ],
     });
-    for (h = 0; h < findbyaddress.length; h++) {
+    for (let h = 0; h < findbyaddress.length; h++) {
       searchResult.push(findbyaddress[h]);
       searchResultId.push(findbyaddress[h].hostId);
     }
-    for (p = 0; p < findbytitle.length; p++) {
+    for (let p = 0; p < findbytitle.length; p++) {
       if (searchResultId.includes(findbytitle[p].hostId)) {
       } else {
         searchResult.push(findbytitle[p]);
         searchResultId.push(findbytitle[p].hostId);
       }
     }
-    for (i = 0; i < hostContent.length; i++) {
+    for (let i = 0; i < hostContent.length; i++) {
       if (searchResultId.includes(hostContent[i].hostId)) {
       } else {
         searchResult.push(hostContent[i]);

@@ -52,9 +52,9 @@ async function allRoomList(req, res) {
     const allRoom = await Rooms.findAll({ order: [["createdAt", "DESC"]] });
     
     let tags = [];
-    for (i = 0; i < allRoom.length; i++) {
+    for (let i = 0; i < allRoom.length; i++) {
       const room = allRoom[i];
-      for (l = 0; l < room.hashTag.length; l++) {
+      for (let l = 0; l < room.hashTag.length; l++) {
         const hashtag = room.hashTag[l];
         tags.push(hashtag);
       }
@@ -67,7 +67,7 @@ async function allRoomList(req, res) {
     let max = 0;
     let max2 = 0;
     let max3 = 0;
-    for (j = 0; j < Object.values(tags).length; j++) {
+    for (let j = 0; j < Object.values(tags).length; j++) {
       if (max < Object.values(tags)[j]) {
         max = Object.values(tags)[j];
       }
@@ -111,7 +111,7 @@ async function Roomdetail(req, res) {
       },
     });
 
-    for (i = 0; i < chatingRooms.length; i++) {
+    for (let i = 0; i < chatingRooms.length; i++) {
       let chatRoom = chatingRooms[i];
       if (chatRoom.roomId == roomId) {
         chatingRooms[i] = chatingRooms[0];
