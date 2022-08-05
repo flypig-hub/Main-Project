@@ -1,5 +1,5 @@
 const app = require("./app");
-const fs = require("fs");
+require("fs");
 const {
   images,
   Chats,
@@ -8,10 +8,8 @@ const {
   sequelize,
   Sequelize,
 } = require("./models");
-const Op = Sequelize.Op;
-const authMiddleware = require("./middlewares/auth-middleware");
-const socket = require("socket.io-client")("https://mendorong-jeju.com");
-const server = require("http").createServer(app);
+ require("socket.io-client")("https://mendorong-jeju.com");
+ require("http").createServer(app);
 
 module.exports = (server, app) => {
   const io = require("socket.io")(server, {
@@ -22,10 +20,8 @@ module.exports = (server, app) => {
   });
   app.set("io", io);
   io.on("connection", (socket) => {
-    socket.onAny((event) => {
-      console.log(`Socket Event:${event}`);
-      console.log(socket.id);
-    });
+    //socket.onAny((event) => {
+    // });
     socket.on("join-room", async (roomId, userId) => {
       const enterRoom = await Rooms.findOne({
         where: { roomId: roomId },
@@ -49,11 +45,7 @@ module.exports = (server, app) => {
           userImg: null,
         });
       }
-      console.log(enterRoom,"룸유저아이디",enterRoom.dataValues.roomUserId)
-      console.log("유저가 방에 들어와있나요?", enterRoom.dataValues.roomUserId.includes(Number(userId), enterRoom.dataValues.roomUserId, Number(userId)))
-      console.log("호스트가 방에 들어와있나요?",enterRoom.dataValues.hostId == Number(userId), enterRoom.dataValues.hostId,Number(userId) )         
-      console.log("호스트와 유저 둘다 아닌가요?",enterRoom.dataValues.hostId != Number(userId) &&
-        !enterRoom.dataValues.roomUserId.includes(Number(userId)))
+      
       if (enterRoom.dataValues.hostId != Number(userId) &&
         !enterRoom.dataValues.roomUserId.includes(Number(userId)))
       
@@ -86,7 +78,7 @@ module.exports = (server, app) => {
       const chatUser = await users.findOne({ where: { userId: userId } });
       const userImg = await images.findOne({ where: { userId: userId } });
       const room = await Rooms.findOne({ where: { roomId: roomId } });
-      const newchat = await Chats.create({
+      await Chats.create({
         userNickname: chatUser.dataValues.nickname,
         userId: userId,
         roomId: roomId,
@@ -155,7 +147,7 @@ module.exports = (server, app) => {
         (roomUsersImg) => roomUsersImg !== leaveRoom.dataValues.roomUserImg[0]
       );
         let roomUserNum = roomUsersId.length + 1;
-        
+
         await Rooms.update(
           { hostId:leaveRoom.dataValues.roomUserId[0],
           hostNickname: leaveRoom.dataValues.roomUserNickname[0],
@@ -166,8 +158,7 @@ module.exports = (server, app) => {
           roomUserNum: roomUserNum},
           { where: { roomId: roomId } }
         );
-       
-        
+
       }else{
       let roomUsersId = leaveRoom.dataValues.roomUserId.filter(
         (roomUsersId) => roomUsersId !== Number(userId)

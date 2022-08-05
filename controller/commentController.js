@@ -132,7 +132,4 @@ async function deleteComment(req, res) {
   }
 }
 
-module.exports.readComment = readComment;
-module.exports.writeComment = writeComment;
-module.exports.updateComment = updateComment;
-module.exports.deleteComment = deleteComment;
+module.exports = { readComment, writeComment, updateComment, deleteComment };
