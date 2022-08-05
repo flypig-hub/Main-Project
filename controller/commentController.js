@@ -6,7 +6,7 @@ async function readComment(req, res) {
   try {
     const { postId } = req.params;
     
-    const comments = await Comments.findAll({
+    let comments = await Comments.findAll({
       where: {
         postId
       },
@@ -19,6 +19,7 @@ async function readComment(req, res) {
         
       ],
     });
+     
      const commentInfo = await comments.map((commentinfo) =>({
       userId : commentinfo.userId,
       commentId : commentinfo.commentId,

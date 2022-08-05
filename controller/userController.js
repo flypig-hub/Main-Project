@@ -138,7 +138,7 @@ async function checkMe(req, res) {
   const {userId} = res.locals;
   // const {nickname, userImageURL, host, email, userId} = res.locals;
   
-  //try {
+  try {
     const mysavelist = await saves.findAll({
       where : {userId},
   
@@ -218,6 +218,7 @@ async function checkMe(req, res) {
       likeNum : postinfo.likeNum,
       images : postinfo.images
     }))
+
     // 호스트 게시물
     const hostpost = await hosts.findAll({
       where : {userId},
@@ -245,11 +246,9 @@ async function checkMe(req, res) {
   
       // mypostthumbnail
     })
-  // } catch (error) {
-  //   res.status(400).send({errorMessage : "마이페이지 오류"})
-  // }
-  // 저장한 게시물
-  
+  } catch (error) {
+    res.status(400).send({errorMessage : "마이페이지 오류"})
+  }
  }
 
 

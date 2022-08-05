@@ -379,73 +379,133 @@ async function getDetailAcc(req, res) {
   {queryData.userId = 0}
 
   try {
-    const findAllAcc = await hosts.findOne({
+    let findAllAcc = await hosts.findOne({
       where: { hostId },
-      include : [{
+      include: [
+        {
           model: images,
           required: true,
-          attributes: [ 'postImageURL', 'postImageKEY' ]
-      }]
-  });
-
-  let isSave = await saves.findOne({
-    where : {hostId : hostId, userId: queryData.userId}
-  });
-  
-  if (isSave) {
-    isSave = true;
-  } else {
-    isSave = false;
-  }
-
-  const findStar = await reviews.findAll({
-    where:{hostId},
-    attributes: ['starpoint']
-  })
-
-
-
-  starsum =[];
-  for (i = 0; findStar.length > i; i++) {
-   const star = findStar[i]
-  starsum.push(star.dataValues.starpoint);
-  }
-
-  console.log(findAllAcc.tagList);
-  if (findAllAcc.tagList) {
-    const tagListArr = findAllAcc.tagList.split(",")
-      console.log(tagListArr, "이거 확인하는거임");
-
-      Object.assign(findAllAcc,{
-        tagList: tagListArr
-      })
-  }
-      
-  
-    if (findStar.length){
-      const numStar = findStar.length
-      let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
-      
+          attributes: ["postImageURL", "postImageKEY"],
+        },
+      ],
+    });
+    const writtenTime = Date.parse(findAllAcc.createdAt); 
+    const timeNow = Date.parse(Date());
+    const diff = timeNow - writtenTime;
+          if (diff >1123200000) {
      
-      Object.assign(findAllAcc,{
-       average: averageStarpoint,
-       isSave:isSave,
-     })
+  } else {
+      const times = [
+        { time: "분", milliSeconds: 1000 * 60 },
+        { time: "시간", milliSeconds: 1000 * 60 * 60 },
+        { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+        { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+      ].reverse();
 
-     await hosts.update(
-       {average: averageStarpoint,
-        isSave:isSave
-      },
-       {where:{hostId:findAllAcc.hostId}}
-     )
+      for (const value of times) {
+        const betweenTime = Math.floor(diff / value.milliSeconds);
+        if (betweenTime > 0) {
+          findAllAcc = {
+            hostId: findAllAcc.hostId,
+            userId: findAllAcc.userId,
+            reviewId: findAllAcc.reviewId,
+            average: findAllAcc.average,
+            title: findAllAcc.title,
+            isSave: findAllAcc.isSave,
+            nickname: findAllAcc.nickname,
+            category: findAllAcc.category,
+            houseInfo: findAllAcc.houseInfo,
+            mainAddress: findAllAcc.mainAddress,
+            subAddress: findAllAcc.subAddress,
+            stepSelect: findAllAcc.stepSelect,
+            stepInfo: findAllAcc.stepInfo,
+            link: findAllAcc.link,
+            hostContent: findAllAcc.hostContent,
+            preImages: findAllAcc.preImages,
+            tagList: findAllAcc.tagList,
+            createdAt: betweenTime + value.time + "전",
+            updatedAt: findAllAcc.updatedAt,
+            images: findAllAcc.images
+          }
+          break
+        } else {
+          findAllAcc = {
+            hostId: findAllAcc.hostId,
+            userId: findAllAcc.userId,
+            reviewId: findAllAcc.reviewId,
+            average: findAllAcc.average,
+            title: findAllAcc.title,
+            isSave: findAllAcc.isSave,
+            nickname: findAllAcc.nickname,
+            category: findAllAcc.category,
+            houseInfo: findAllAcc.houseInfo,
+            mainAddress: findAllAcc.mainAddress,
+            subAddress: findAllAcc.subAddress,
+            stepSelect: findAllAcc.stepSelect,
+            stepInfo: findAllAcc.stepInfo,
+            link: findAllAcc.link,
+            hostContent: findAllAcc.hostContent,
+            preImages: findAllAcc.preImages,
+            tagList: findAllAcc.tagList,
+            createdAt: "방금 전",
+            updatedAt: findAllAcc.updatedAt,
+            images: findAllAcc.images
+          }
+        };
+      }
     }
-    else {
-      Object.assign(findAllAcc,{
-        isSave:isSave,
-      })
-      
-    }
-    res.status(200).send({ findAllAcc})
+
+      let isSave = await saves.findOne({
+        where: { hostId: hostId, userId: queryData.userId },
+      });
+
+      if (isSave) {
+        isSave = true;
+      } else {
+        isSave = false;
+      }
+
+      const findStar = await reviews.findAll({
+        where: { hostId },
+        attributes: ["starpoint"],
+      });
+
+      starsum = [];
+      for (i = 0; findStar.length > i; i++) {
+        const star = findStar[i];
+        starsum.push(star.dataValues.starpoint);
+      }
+
+      console.log(findAllAcc.tagList);
+      if (findAllAcc.tagList) {
+        const tagListArr = findAllAcc.tagList.split(",");
+        console.log(tagListArr, "이거 확인하는거임");
+
+        Object.assign(findAllAcc, {
+          tagList: tagListArr,
+        });
+      }
+
+      if (findStar.length) {
+        const numStar = findStar.length;
+        let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar;
+
+        Object.assign(findAllAcc, {
+          average: averageStarpoint,
+          isSave: isSave,
+        });
+
+        await hosts.update(
+          { average: averageStarpoint, isSave: isSave },
+          { where: { hostId: findAllAcc.hostId } }
+        );
+      } else {
+        Object.assign(findAllAcc, {
+          isSave: isSave,
+        });
+      }
+    
+    res.status(200).send({ findAllAcc });
   } catch (error) {
      res.status(400).send({errorMessage : "호스트 숙소 상세 조회 실패"})
   }
