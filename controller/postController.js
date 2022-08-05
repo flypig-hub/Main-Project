@@ -295,9 +295,10 @@ async function GetPostingList(req, res) {
 async function GetPost(req, res) {
   const { postId } = req.params;
   let queryData = res.locals;
-  
-  if (queryData.userId === undefined)
-  {queryData.userId = 0}
+
+  if (queryData.userId === undefined) {
+    queryData.userId = 0;
+  }
   let allPostInfo = await posts.findAll({
     where: { postId },
     include: [
@@ -319,88 +320,30 @@ async function GetPost(req, res) {
       {
         model: users,
         required: false,
-        attributes: ["userImageURL", 'nickname'],
+        attributes: ["userImageURL", "nickname"],
       },
     ],
   });
   console.log(allPostInfo[0].tagList);
- const writtenTime = Date.parse(allPostInfo.createdAt);
- const timeNow = Date.parse(Date());
- const diff = timeNow - writtenTime;
- if (diff > 1123200000) {
- } else {
-   const times = [
-     { time: "분", milliSeconds: 1000 * 60 },
-     { time: "시간", milliSeconds: 1000 * 60 * 60 },
-     { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-     { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-   ].reverse();
+  //  const writtenTime = Date.parse(allPostInfo.createdAt);
+  //  const timeNow = Date.parse(Date());
+  //  const diff = timeNow - writtenTime;
 
-   for (const value of times) {
-     const betweenTime = Math.floor(diff / value.milliSeconds);
-     if (betweenTime > 0) {
-       allPostInfo = {
-         hostId: allPostInfo.hostId,
-         userId: allPostInfo.userId,
-         reviewId: allPostInfo.reviewId,
-         average: allPostInfo.average,
-         title: allPostInfo.title,
-         isSave: allPostInfo.isSave,
-         nickname: allPostInfo.nickname,
-         category: allPostInfo.category,
-         houseInfo: allPostInfo.houseInfo,
-         mainAddress: allPostInfo.mainAddress,
-         subAddress: allPostInfo.subAddress,
-         stepSelect: allPostInfo.stepSelect,
-         stepInfo: allPostInfo.stepInfo,
-         link: allPostInfo.link,
-         hostContent: allPostInfo.hostContent,
-         preImages: allPostInfo.preImages,
-         tagList: allPostInfo.tagList,
-         createdAt: betweenTime + value.time + "전",
-         updatedAt: allPostInfo.updatedAt,
-         images: allPostInfo.images,
-       };
-       break;
-     } else {
-       allPostInfo = {
-         hostId: allPostInfo.hostId,
-         userId: allPostInfo.userId,
-         reviewId: allPostInfo.reviewId,
-         average: allPostInfo.average,
-         title: allPostInfo.title,
-         isSave: allPostInfo.isSave,
-         nickname: allPostInfo.nickname,
-         category: allPostInfo.category,
-         houseInfo: allPostInfo.houseInfo,
-         mainAddress: allPostInfo.mainAddress,
-         subAddress: allPostInfo.subAddress,
-         stepSelect: allPostInfo.stepSelect,
-         stepInfo: allPostInfo.stepInfo,
-         link: allPostInfo.link,
-         hostContent: allPostInfo.hostContent,
-         preImages: allPostInfo.preImages,
-         tagList: allPostInfo.tagList,
-         createdAt: "방금전",
-         updatedAt: allPostInfo.updatedAt,
-         images: allPostInfo.images,
-       };
-     }
-   }
- }
   // tagList 배열화
-  let newTagStr = '';
+  let newTagStr = "";
   if (allPostInfo[0].tagList.length) {
     const newTag = allPostInfo[0].tagList.split(" ");
     console.log(newTag);
-    newTagStr += newTag
-  } 
-  const newTAG = newTagStr.split(',')
+    newTagStr += newTag;
+  }
+  const newTAG = newTagStr.split(",");
 
   let postComments = await Comments.findAll({
     where: { postId: allPostInfo[0].postId },
   });
-  const postLikes = await Like.findAll({ where: { postId: allPostInfo[0].postId } });
+  const postLikes = await Like.findAll({
+    where: { postId: allPostInfo[0].postId },
+  });
 
   let islike = await Like.findOne({
     where: { userId: queryData.userId, postId: allPostInfo[0].postId },
@@ -414,53 +357,74 @@ async function GetPost(req, res) {
   } else {
     islike = false;
   }
-  
+
   Object.assign(allPostInfo[0], {
     likeNum: likeNum,
     commentNum: commentNum,
     islike: islike,
   });
-await posts.update(
-  {
-    likeNum: likeNum,
-    commentNum: commentNum,
-    islike: islike,
-  },
-  { where: { postId: allPostInfo[0].postId } }  
-);
+  await posts.update(
+    {
+      likeNum: likeNum,
+      commentNum: commentNum,
+      islike: islike,
+    },
+    { where: { postId: allPostInfo[0].postId } }
+  );
 
+  const writtenTime = Date.parse(allPostInfo[0].createdAt); //등등
+  const timeNow = Date.parse(Date());
+  const diff = timeNow - writtenTime; // 경과 시간
 
-  const allPost = allPostInfo.map((postInfo) =>({
-    postId : postInfo.postId,
-    userId : postInfo.userId,
-    nickname : postInfo.user.nickname,
-    userImageURL : postInfo.user.userImageURL,
-    content : postInfo.content,
-    title : postInfo.title,
-    commentId : postInfo.commentId,
-    commentNum : postInfo.commentNum,
-    likeNum : postInfo.likeNum,
-    islike : postInfo.islike,
-    mainAddress : postInfo.mainAddress,
-    subAddress : postInfo.subAddress,
-    category : postInfo.category,
-    type : postInfo.type,
-    link : postInfo.link,
-    houseTitle : postInfo.houseTitle,
-    tagList : newTAG,
-    createdAt : postInfo.createdAt,
-    updatedAt : postInfo.updatedAt,
-    images : postInfo.images
-  })); 
- 
-  console.log(allPost,'로그');
+  if (diff > 1123200000) {
+  } else {
+    const times = [
+      { time: "분", milliSeconds: 1000 * 60 },
+      { time: "시간", milliSeconds: 1000 * 60 * 60 },
+      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+      { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+    ].reverse();
 
- 
+    for (const value of times) {
+      const betweenTime = Math.floor(diff / value.milliSeconds);
+      if (betweenTime > 0) {
+        console.log(1)
+        
+        break;
+      } else {
+        console.log(0)
+      }
+    }
+  }
 
+  const allPost = allPostInfo.map((postInfo) => ({
+    postId: postInfo.postId,
+    userId: postInfo.userId,
+    nickname: postInfo.user.nickname,
+    userImageURL: postInfo.user.userImageURL,
+    content: postInfo.content,
+    title: postInfo.title,
+    commentId: postInfo.commentId,
+    commentNum: postInfo.commentNum,
+    likeNum: postInfo.likeNum,
+    islike: postInfo.islike,
+    mainAddress: postInfo.mainAddress,
+    subAddress: postInfo.subAddress,
+    category: postInfo.category,
+    type: postInfo.type,
+    link: postInfo.link,
+    houseTitle: postInfo.houseTitle,
+    tagList: newTAG,
+    createdAt: postInfo.createdAt,
+    updatedAt: postInfo.updatedAt,
+    images: postInfo.images,
+  }));
 
-//글쓴이의 다른 게시물
-  
-   const outherPosts = await posts.findAll({
+  console.log(allPost, "로그");
+
+  //글쓴이의 다른 게시물
+
+  const outherPosts = await posts.findAll({
     where: {
       userId: allPostInfo[0].userId,
       postId: {
@@ -475,45 +439,43 @@ await posts.update(
         attributes: ["postId", "postImageURL", "thumbnailURL", "userImageURL"],
       },
       {
-        model : users,
-        attributes : ['nickname']
-      }
+        model: users,
+        attributes: ["nickname"],
+      },
     ],
   });
 
-
-
-  for (i = 0; outherPosts.length > i; i++){
+  for (i = 0; outherPosts.length > i; i++) {
     const outherPost = outherPosts[i];
-     const outherPostComments = await Comments.findAll({
-       where: { postId: outherPost.postId },
-     });
-     const outherPostLikes = await Like.findAll({
-       where: { postId: outherPost.postId },
-     });
+    const outherPostComments = await Comments.findAll({
+      where: { postId: outherPost.postId },
+    });
+    const outherPostLikes = await Like.findAll({
+      where: { postId: outherPost.postId },
+    });
 
-     let islike = await Like.findOne({
-       where: { userId: queryData.userId, postId: outherPost.postId },
-     });
+    let islike = await Like.findOne({
+      where: { userId: queryData.userId, postId: outherPost.postId },
+    });
 
-     const likeNum = outherPostLikes.length;
-     const commentNum = outherPostComments.length;
+    const likeNum = outherPostLikes.length;
+    const commentNum = outherPostComments.length;
 
-     if (islike) {
-       islike = true;
-     } else {
-       islike = false;
+    if (islike) {
+      islike = true;
+    } else {
+      islike = false;
     }
-    
+
     await posts.update(
       {
         likeNum: likeNum,
         commentNum: commentNum,
-        islike:islike
+        islike: islike,
       },
       { where: { postId: allPostInfo[0].postId } }
     );
-   Object.defineProperties(outherPost.dataValues, {
+    Object.defineProperties(outherPost.dataValues, {
       title: {
         enumerable: true,
       },
@@ -560,95 +522,88 @@ await posts.update(
         enumerable: false,
       },
     });
-    
-    
   }
-  const outherPostInfo = outherPosts.map((outherpostinfo) =>({
-    postId : outherpostinfo.postId,
-    userId : outherpostinfo.userId,
-    nickname : outherpostinfo.user.nickname,
-    title : outherpostinfo.title,
-    commentNum : outherpostinfo.commentNum,
-    likeNum : outherpostinfo.likeNum,
-    islike : outherpostinfo.islike,
-    preImages : outherpostinfo.preImages,
-    images : outherpostinfo.images
-   }));
-  
-    // 이 글에 나온 숙소 찾아오기
-    let findHostId = await hosts.findAll({
-    attributes: [ 'title', 'hostId' ],
-    })
-    
-    let houseTitle = [];
-    for (let i = 0; i < findHostId.length; i++) {
-      let house = findHostId[i]
-      houseTitle.push(house.title);
-      
-      let isSave = await saves.findOne({
-        where :{hostId :house.hostId, userId: queryData.userId}
-      });
-      if (isSave) {
-        isSave = true;
-      } else {
-        isSave = false;
-      }
-      Object.assign(house,{
-          isSave:isSave,
-       });
-      await hosts.update(
-        {isSave:isSave,},
-        {where :{hostId : house.hostId} }
-      )
+  const outherPostInfo = outherPosts.map((outherpostinfo) => ({
+    postId: outherpostinfo.postId,
+    userId: outherpostinfo.userId,
+    nickname: outherpostinfo.user.nickname,
+    title: outherpostinfo.title,
+    commentNum: outherpostinfo.commentNum,
+    likeNum: outherpostinfo.likeNum,
+    islike: outherpostinfo.islike,
+    preImages: outherpostinfo.preImages,
+    images: outherpostinfo.images,
+  }));
+
+  // 이 글에 나온 숙소 찾아오기
+  let findHostId = await hosts.findAll({
+    attributes: ["title", "hostId"],
+  });
+
+  let houseTitle = [];
+  for (let i = 0; i < findHostId.length; i++) {
+    let house = findHostId[i];
+    houseTitle.push(house.title);
+
+    let isSave = await saves.findOne({
+      where: { hostId: house.hostId, userId: queryData.userId },
+    });
+    if (isSave) {
+      isSave = true;
+    } else {
+      isSave = false;
     }
+    Object.assign(house, {
+      isSave: isSave,
+    });
+    await hosts.update({ isSave: isSave }, { where: { hostId: house.hostId } });
+  }
 
   let findAllAcc = [];
   if (houseTitle.indexOf(allPostInfo[0].houseTitle) != -1) {
     let findAllAcc = await hosts.findAll({
       where: { title: allPostInfo[0].houseTitle },
-      attritutes : [ 'hostId' ],
-      include: [{
-        model: images,
-        required: false,
-        attributes: ["postImageURL", "thumbnailURL"],
-      }],
-    })
-    
+      attritutes: ["hostId"],
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: ["postImageURL", "thumbnailURL"],
+        },
+      ],
+    });
+
     const findStar = await reviews.findAll({
-      where:{ hostId: findAllAcc[0].hostId },
-      attributes: ['starpoint']
-    })
+      where: { hostId: findAllAcc[0].hostId },
+      attributes: ["starpoint"],
+    });
 
-
-    starsum =[];
+    starsum = [];
     for (i = 0; findStar.length > i; i++) {
-     const star = findStar[i]
+      const star = findStar[i];
       starsum.push(star.dataValues.starpoint);
-      }
-    
-
-      if (findStar.length){
-        const numStar = findStar.length
-        let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
-        
-        Object.assign(findAllAcc[0],{
-          average: averageStarpoint,
-          
-       })
-
-       await hosts.update(
-        {average: averageStarpoint},
-         {where:{hostId:findAllAcc[0].hostId}}
-      )
     }
 
-    
+    if (findStar.length) {
+      const numStar = findStar.length;
+      let averageStarpoint = starsum.reduce((a, b) => a + b) / numStar;
+
+      Object.assign(findAllAcc[0], {
+        average: averageStarpoint,
+      });
+
+      await hosts.update(
+        { average: averageStarpoint },
+        { where: { hostId: findAllAcc[0].hostId } }
+      );
+    }
+
     // // console.log(allPostInfo);
- 
+
     // //  console.log(outherPostInfo);
-    res.send({ allPost, findAllAcc, outherPostInfo  });
+    res.send({ allPost, findAllAcc, outherPostInfo });
   } else {
-    res.send({ allPost, findAllAcc , outherPostInfo });
+    res.send({ allPost, findAllAcc, outherPostInfo });
   }
 }
 

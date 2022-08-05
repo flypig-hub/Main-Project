@@ -1,6 +1,4 @@
 const {
-    posts,
-    users,
     images,
     hosts,
     reviews,
@@ -8,20 +6,19 @@ const {
     sequelize,
     Sequelize,
   } = require("../models");
-  const multiparty = require("multiparty");
   const AWS = require("aws-sdk");
-  const { Op } = require('sequelize');
-
+const { Op } = require('sequelize');
+  
 // 호스트 숙소 게시글 작성
 async function hostCreateAcc(req, res) {
     const { userId, nickname, userImageURL } = res.locals;
-    
     const host = res.locals.host
-    // try {
+  
+    try {
       if (host != true) {
-        res.send({ errorMessage : "호스트가 아닙니다!" })
-    };
-    const { 
+        res.send({ errorMessage: "호스트가 아닙니다!" });
+      }
+      const {
         title,
         category,
         houseInfo,
@@ -31,86 +28,86 @@ async function hostCreateAcc(req, res) {
         stepInfo,
         link,
         hostContent,
-        tagList 
-    } = req.body;
-    const image = req.files;
+        tagList,
+      } = req.body;
+      const image = req.files;
 
-    let tagListArr = [];
-    if (req.body.tagList) {
-      let tagListArray = tagList.split(" ")
-      tagListArr.push(tagListArray)
-    }
-    
-    const createAcc = await hosts.create({
-      // postId,
-      userId,
-      title,
-      category,
-      houseInfo,
-      mainAddress,
-      subAddress,
-      stepSelect,
-      stepInfo,
-      link,
-      hostContent,
-      tagList: tagListArr.toString(),
-      isSave: false,
-      average : 0,
-    });
+      let tagListArr = [];
+      if (req.body.tagList) {
+        let tagListArray = tagList.split(" ");
+        tagListArr.push(tagListArray);
+      }
+      //tagListArr를 string으로 관리할 건지 array로 관리할건지 결정 후 db형식을 일치화
+      const createAcc = await hosts.create({
+        userId,
+        title,
+        category,
+        houseInfo,
+        mainAddress,
+        subAddress,
+        stepSelect,
+        stepInfo,
+        link,
+        hostContent,
+        tagList: tagListArr.toString(),
+        isSave: false,
+        average: 0,
+      });
 
-    if (image) {
+      if (image) {
         // S3 이미지 등록 및 images DB 저장
         const postImageKey = image.map((postImageKey) => postImageKey.key);
         const postImageUrl = image.map((postImageUrl) => postImageUrl.location);
         const thumbnailKEY = postImageKey[0];
         const thumbnailURL = postImageUrl[0];
-        
+
         postImageKey.forEach((element, i) => {
-            const postImageKEY = postImageKey[i];
-            const postImageURL = postImageUrl[i];
-            console.log(postImageKEY);
-            console.log(postImageURL);
-            
-            const imagesInfo = images.create({
-                userId: userId,
-                nickname: nickname,
-                hostId: createAcc.hostId,
-                thumbnailURL: thumbnailURL.toString(),
-                thumbnailKEY: thumbnailKEY.toString(),
-                postImageURL: postImageURL,
-                postImageKEY: postImageKEY,
-                userImageURL: userImageURL,  
-            })
+          const postImageKEY = postImageKey[i];
+          const postImageURL = postImageUrl[i];
+          console.log(postImageKEY);
+          console.log(postImageURL);
+
+          const imagesInfo = images.create({
+            userId: userId,
+            nickname: nickname,
+            hostId: createAcc.hostId,
+            thumbnailURL: thumbnailURL.toString(),
+            thumbnailKEY: thumbnailKEY.toString(),
+            postImageURL: postImageURL,
+            postImageKEY: postImageKEY,
+            userImageURL: userImageURL,
+          });
         });
 
         const findAcc = await hosts.findAll({
-          where: { hostId: createAcc.hostId }
-        })
-
-        if (req.body.tagList) {
-          const tagListArr = tagList.split(" ")
-          
-        Object.assign(findAcc[0], {
-          tagList: tagListArr
-        })
-        }
+          where: { hostId: createAcc.hostId },
+        });
         
-        res.status(201).send({ findAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" })
-    } 
-    // } catch (error) {
-    //   res.status(400).send({errorMessage : "호스트 숙소 게시글 작성 실패"})
-    // }
-};
+        if (req.body.tagList) {
+          const tagListArr = tagList.split(" ");
 
+          Object.assign(findAcc[0], {
+            tagList: tagListArr,
+          });
+        }
+
+        res
+          .status(201)
+          .send({ findAcc, postImageUrl, msg: "숙소 등록이 완료되었습니다!" });
+      }
+    } catch (error) {
+      res.status(400).send({errorMessage : "호스트 숙소 게시글 작성 실패"})
+    }
+};
 
 
 //호스트 숙소 검색하기
 async function hostAddresssearch(req, res) {
   const queryData = req.query;
   let key = {};
-    
-      queryData.search === "Northarea"
-    ? (key = {
+  try {
+    queryData.search === "Northarea"
+      ? (key = {
         [Op.or]: [
           {
             mainAddress: {
@@ -129,101 +126,92 @@ async function hostAddresssearch(req, res) {
           },
         ],
       })
-    : queryData.search === "Westarea"
-    ? (key = {
-        [Op.or]: [
-          {
-            mainAddress: {
-              [Op.substring]: "한림읍",
+      : queryData.search === "Westarea"
+        ? (key = {
+          [Op.or]: [
+            {
+              mainAddress: {
+                [Op.substring]: "한림읍",
+              },
             },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "한경면",
+            {
+              mainAddress: {
+                [Op.substring]: "한경면",
+              },
             },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "대정읍",
+            {
+              mainAddress: {
+                [Op.substring]: "대정읍",
+              },
             },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "안덕면",
+            {
+              mainAddress: {
+                [Op.substring]: "안덕면",
+              },
             },
-          },
-        ],
-      })
-    : queryData.search === "Southarea"
-    ? (key = {
-        [Op.or]: [
-          {
-            mainAddress: {
-              [Op.substring]: "중문",
-            },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "서귀포시",
-            },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "남원읍",
-            },
-          },
-        ],
-      })
-    : queryData.search === "Eastarea"
-    ? (key = {
-        [Op.or]: [
-          {
-            mainAddress: {
-              [Op.substring]: "구좌읍",
-            },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "성산읍",
-            },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "표선면",
-            },
-          },
-          {
-            mainAddress: {
-              [Op.substring]: "우도면",
-            },
-          },
-        ],
-      })
-    : (key = {});
+          ],
+        })
+        : queryData.search === "Southarea"
+          ? (key = {
+            [Op.or]: [
+              {
+                mainAddress: {
+                  [Op.substring]: "중문",
+                },
+              },
+              {
+                mainAddress: {
+                  [Op.substring]: "서귀포시",
+                },
+              },
+              {
+                mainAddress: {
+                  [Op.substring]: "남원읍",
+                },
+              },
+            ],
+          })
+          : queryData.search === "Eastarea"
+            ? (key = {
+              [Op.or]: [
+                {
+                  mainAddress: {
+                    [Op.substring]: "구좌읍",
+                  },
+                },
+                {
+                  mainAddress: {
+                    [Op.substring]: "성산읍",
+                  },
+                },
+                {
+                  mainAddress: {
+                    [Op.substring]: "표선면",
+                  },
+                },
+                {
+                  mainAddress: {
+                    [Op.substring]: "우도면",
+                  },
+                },
+              ],
+            })
+            : (key = {});
     
-  const hostPost = await hosts.findAll({
-    where: key,
-    include : [{
-      model: images,
-      attributes: [ 'hostId', 'postImageURL' ]
+    const hostPost = await hosts.findAll({
+      where: key,
+      include: [{
+        model: images,
+        attributes: ['hostId', 'postImageURL']
       }],
-    order: [["createdAt", "DESC"]],
-  });
-  res.status(200).send({ msg: "숙소검색 완료", hostPost });
+      order: [["createdAt", "DESC"]],
+    });
+    res.status(200).send({ msg: "숙소검색 완료", hostPost });
+  } catch (error) {
+    res.status(400).send({ errorMessage: "호스트 숙소 게시글 작성 실패" })
+  }
 }
    
-  // async function searchRoombyhashtag(req, res) {
-  // const queryData = req.query;
-  //   const rooms = await Rooms.findAll({where: {
-  //          hashTag: { [Op.substring]: queryData.search }
-  //   },
-  //     order: [[
-  //       "createdAt", "DESC"
-  //     ]]
-  //   });
-  //   res.status(200).send({msg:"룸 해쉬태그 검색완료", rooms})
-  // }
-
 // 호스트 숙소 게시글 전체 조회 - 별점순
 async function getAllACC_Star(req, res) {
   let queryData = res.locals;
@@ -273,24 +261,24 @@ async function getAllACC_Star(req, res) {
         if (findStar.length){
           const numStar = findStar.length
           averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
-        }
-  
+      }
+      
         Object.assign(hoststar,{
           average: averageStarpoint,
           isSave:isSave
         })
+      
         await hosts.update(
           {average: averageStarpoint,
             isSave:isSave},
           {where:{hostId:hoststar.hostId}}
-          
-        )
-          // 위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
+      )
+      
         averageStarpoint = String(averageStarpoint) 
     }
       res.status(200).send({ findAllAcc })
   } catch (error) {
-    
+    res.status(400).send({ msg:"호스트 숙소 게시글 전체 조회를 하지 못했습니다" });
   }
 
 }
@@ -303,21 +291,17 @@ async function getAllAcc(req, res) {
   {queryData.userId = 0}
 
   try {
-    const findAllAcc = await hosts.findAll(
-      {  include : [{
+    const findAllAcc = await hosts.findAll({
+      include: [{
             model: images,
             attributes: [ 'hostId', 'postImageURL' ]
         }],
         order: [["createdAt", "DESC"]],
-      }
-       
-    );
-    //개별 객체 for문
-    
+      });
+
     for ( j = 0 ; findAllAcc.length > j; j++ ){
       const hoststar = findAllAcc[j]
-      
-      
+
       const findStar = await reviews.findAll({
         where : {hostId :hoststar.hostId },
         attributes: ['starpoint']
@@ -325,7 +309,6 @@ async function getAllAcc(req, res) {
       
       // 별점 평균 for 문
       starsum =[];
-      
       
       for (i = 0; findStar.length > i; i++) {
         const star = findStar[i]
@@ -348,7 +331,6 @@ async function getAllAcc(req, res) {
           const numStar = findStar.length
           averageStarpoint = starsum.reduce((a, b) => a + b) / numStar
         }
-  
         Object.assign(hoststar,{
           average: averageStarpoint,
           isSave:isSave
@@ -357,24 +339,21 @@ async function getAllAcc(req, res) {
           {average: averageStarpoint,
             isSave:isSave},
           {where:{hostId:hoststar.hostId}}
-          
         )
-          // 위에 함수에 감아보자 String(starsum.reduce((a, b) => a + b) / numStar)
         averageStarpoint = String(averageStarpoint) 
     }
       res.status(200).send({ findAllAcc })
   } catch (error) {
     res.status(400).send({errorMessage : "호스트 숙소 게시글 전체 조회 실패"})
   }
-  
   }
-
 
 
 // 호스트 숙소 게시글 상세 조회
 async function getDetailAcc(req, res) {
   const { hostId } = req.params; 
   let queryData = res.locals;
+
   if (queryData.userId === undefined)
   {queryData.userId = 0}
 
@@ -392,8 +371,8 @@ async function getDetailAcc(req, res) {
     const writtenTime = Date.parse(findAllAcc.createdAt); 
     const timeNow = Date.parse(Date());
     const diff = timeNow - writtenTime;
-          if (diff >1123200000) {
-     
+
+    if (diff >1123200000) {
   } else {
       const times = [
         { time: "분", milliSeconds: 1000 * 60 },
@@ -479,8 +458,6 @@ async function getDetailAcc(req, res) {
       console.log(findAllAcc.tagList);
       if (findAllAcc.tagList) {
         const tagListArr = findAllAcc.tagList.split(",");
-        console.log(tagListArr, "이거 확인하는거임");
-
         Object.assign(findAllAcc, {
           tagList: tagListArr,
         });
@@ -516,8 +493,9 @@ async function getDetailAcc(req, res) {
 
 // 호스트 숙소 게시글 삭제
 async function deleteAcc(req, res) {
-    const { userId, nickname } = res.locals;
+    const { userId } = res.locals;
     const { hostId } = req.params;
+  
  try {
   const findAcc = await hosts.findOne({ where: { hostId } })
   if (userId !== findAcc.userId) {
@@ -529,7 +507,6 @@ async function deleteAcc(req, res) {
   });
 
   const postImageKey = postImageInfo.map((postImageKey) => postImageKey.postImageKEY);
-  
 
   postImageKey.forEach((element, i) => {
     const postImageKEY = postImageKey[i];
@@ -543,14 +520,14 @@ async function deleteAcc(req, res) {
         }
       };
       s3.deleteObjects(params, function(err, data) {
-        if (err) console.log(err, err.stack); // error
-        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+        if (err) console.log(err, err.stack);
+        else { console.log("S3에서 삭제되었습니다"), data };
       });
     }
   });
 
-  const destroyHost = await hosts.destroy({ where: { hostId } });
-  const destroyImages = await images.destroy({ where: { hostId } });
+  await hosts.destroy({ where: { hostId } });
+  await images.destroy({ where: { hostId } });
 
   res.status(200).send({ msg: "게시글이 삭제되었습니다!" });
  } catch (error) {
@@ -559,30 +536,34 @@ async function deleteAcc(req, res) {
    
   }
 
-async function hosTypesearch(req, res) {
-const querydata = req.query
- const housebyType = await hosts.findAll({
-   where: { houseInfo: querydata.search },
-   include: [
-     {
-       model: images,
-       required: false,
-       attributes: ["hostId", "postImageURL", "thumbnailURL", "userImageURL"],
-     },
-   ],
-   order: [["createdAt", "DESC"]],
- });
-
-
-res.status(200).send({housebyType, msg: "타입 검색이 완료되었습니다." });
+//호스트 타입 검색
+async function hostTypesearch(req, res) {
+  const querydata = req.query
+  try {
+    const housebyType = await hosts.findAll({
+      where: { houseInfo: querydata.search },
+      include: [
+        {
+          model: images,
+          required: false,
+          attributes: ["hostId", "postImageURL", "thumbnailURL", "userImageURL"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+    res.status(200).send({ housebyType, msg: "타입 검색이 완료되었습니다." });
+  } catch (err){
+    res.status(400).send({ msg: "타입 검색을 하지 못하였습니다." });
+  }
 }
 
+//호스트 검색
 async function hostsearch(req, res) {
-  try {
-    let searchResult = [];
-    let searchResultId = [];
-    const querydata = req.query;
+  let searchResult = [];
+  let searchResultId = [];
+  const querydata = req.query;
 
+  try {
     const findbyaddress = await hosts.findAll({
       where: {
         [Op.or]: [
@@ -608,7 +589,6 @@ async function hostsearch(req, res) {
         },
       ],
     });
-
     const findbytitle = await hosts.findAll({
       where: {
         title: {
@@ -665,7 +645,7 @@ async function hostsearch(req, res) {
       }
        else {
         searchResult.push(hostContent[i]);
-//         searchResultId.push(hostContent[i].hostId);
+        searchResultId.push(hostContent[i].hostId);
       }
     }
     res.status(200).send({ searchResult, msg: "타입 검색이 완료되었습니다." });
@@ -676,22 +656,11 @@ async function hostsearch(req, res) {
   }
 }
 
-module.exports.deleteAcc = deleteAcc
-module.exports.hostCreateAcc = hostCreateAcc;
-module.exports.getAllAcc = getAllAcc;
-module.exports.getDetailAcc = getDetailAcc;
-module.exports.updateAcc = updateAcc;
-module.exports.hostAddresssearch = hostAddresssearch;
-module.exports.hosTypesearch = hosTypesearch;
-module.exports.getAllACC_Star = getAllACC_Star;
-module.exports.hostsearch = hostsearch;
-
-
 // 호스트 숙소 등록 수정
 async function updateAcc(req, res) {
   const { userId, nickname, userImageURL } = res.locals;
   const { hostId } = req.params;
-  // try {
+  try {
     const findAcc = await hosts.findOne({ where: { hostId } })
     if (userId !== findAcc.userId) {
         res.send({ errorMessage: "작성자가 아닙니다!" })
@@ -707,19 +676,23 @@ async function updateAcc(req, res) {
         link,
         hostContent,
         tagList,
-        existImages,        // { KEY : URL }
         deleteImages
     } = req.body;
     const image = req.files;
-    console.log(image.length, "이미지 몇장 들어오나요??");
-    console.log(req.body.existImages, "기존의 이미지입니다.");
-    console.log(req.body.deleteImages, "사진을 삭제합니다.");
-
-    // 삭제할 이미지 KEY, URL 나눠서 배열화
+     const updatedHostAcc = await hosts.findAll({
+       where: { hostId },
+       include: [
+         {
+           model: images,
+           attributes: ["thumbnailURL", "postImageURL"],
+         },
+       ],
+     });
     const deleteinfo2 = req.body.deleteImages.replaceAll(" ", "");
     const deleteinfo3 = deleteinfo2.replaceAll("postImageURL:", "");
     const deleteinfo4 = deleteinfo3.replaceAll("postImageKEY:", "");
     const deleteInfo = deleteinfo4.replaceAll("'", "").split(',')
+
     // deleteImages 배열화
     let deleteKEY = [];
     let deleteURL = [];
@@ -733,8 +706,6 @@ async function updateAcc(req, res) {
         deleteURL.push(deleteUrl);
       }
     }
-    console.log(deleteKEY, "삭제할 이미지KEY 배열화");
-    console.log(deleteURL, "삭제할 이미지URL 배열화");
   
     // S3 삭제
     if (deleteImages) {
@@ -747,15 +718,14 @@ async function updateAcc(req, res) {
         }
       };
       s3.deleteObjects(params, function(err, data) {
-        if (err) console.log(err, err.stack); // error
-        else { console.log("S3에서 삭제되었습니다"), data }; // deleted
+        if (err) console.log(err, err.stack); 
+        else { data }; 
       });
     }
 
-    const destroyImages = await images.destroy({ 
+    await images.destroy({ 
       where: { postImageURL : deleteURL } 
     });
-    console.log(destroyImages, "이것만 삭제한다");
 
     // 이미지 파일객체 map
     const postImagesKEY = image.map((postImageKey) => postImageKey.key);
@@ -766,24 +736,11 @@ async function updateAcc(req, res) {
       where: { hostId },
       attributes: [ 'postImageKEY', 'postImageURL' ]
     })
-    console.log(DBDeleteImagesInfo[0].postImageURL, "상태좀 봅시다");
-
-    // // deleteImages의 KEY, URL 빼주기
-    // const fromDBDeleteImagesKEY = existImageInfoKEY.filter((x) => !deleteKEY.includes(x))
-    // const fromDBDeleteImagesURL = existImageInfoURL.filter((x) => !deleteURL.includes(x))
-    // console.log(fromDBDeleteImagesURL, "너도 같이 보자");
-
-    // // // URL 배열 전체 합치기
-    // const preAllPostImageKey = fromDBDeleteImagesKEY.concat(postImagesKEY);
-    // const preAllPostImageUrl = fromDBDeleteImagesURL.concat(postImagesURL);
-    // console.log(preAllPostImageKey, "최종 KEY값");
-    // console.log(preAllPostImageUrl, "최종 URL값");
-
 
     postImagesKEY.forEach((element, i) => {
       const postImageKEY = postImagesKEY[i];
       const postImageURL = postImagesURL[i];
-      const updateImages = images.create({
+      images.create({
         userId: userId,
         userImageURL:userImageURL,
         nickname: nickname,
@@ -795,36 +752,44 @@ async function updateAcc(req, res) {
       })
     })
 
-    const updateHostAcc = await hosts.update({ 
-      title,
-      category,
-      houseInfo,
-      mainAddress,
-      subAddress,
-      stepSelect,
-      stepInfo,
-      link,
-      hostContent,
-      tagList,
-    }, { where : { hostId:hostId } })
-
-    const updatedHostAcc = await hosts.findAll({
-      where: { hostId },
-      include: [{
-        model: images,
-        attributes: [ "thumbnailURL", "postImageURL" ]
-      }]
-    })
-
     let newTagStr = [];
     if (req.body.tagList) {
       const newTag = req.body.tagList.split(" ");
-      newTagStr.push(newTag)
-  
-      Object.assign(updatedHostAcc, {
-        tagList : newTagStr
-      })
-    }
+      newTagStr.push(newTag);
 
-    res.send({ updatedHostAcc })
-  } 
+      Object.assign(updatedHostAcc, {
+        tagList: newTagStr,
+      });
+    }
+    await hosts.update(
+      {
+        title,
+        category,
+        houseInfo,
+        mainAddress,
+        subAddress,
+        stepSelect,
+        stepInfo,
+        link,
+        hostContent,
+        tagList: newTagStr,
+      },
+      { where: { hostId: hostId } }
+    );
+    
+    res.status(200).send({ updatedHostAcc })
+  } catch {
+    res.status(400).send({ msg: "호스트 수정에 실패했습니다." })
+  }
+}
+
+
+  module.exports.deleteAcc = deleteAcc;
+  module.exports.hostCreateAcc = hostCreateAcc;
+  module.exports.getAllAcc = getAllAcc;
+  module.exports.getDetailAcc = getDetailAcc;
+  module.exports.updateAcc = updateAcc;
+  module.exports.hostAddresssearch = hostAddresssearch;
+  module.exports.hostTypesearch = hostTypesearch;
+  module.exports.getAllACC_Star = getAllACC_Star;
+  module.exports.hostsearch = hostsearch;

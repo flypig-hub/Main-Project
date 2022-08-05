@@ -16,73 +16,9 @@ async function readComment(req, res) {
       }],
       order: [
         ["commentid", "DESC"],
-        
       ],
     });
-     const writtenTime = Date.parse(comments.createdAt);
-     const timeNow = Date.parse(Date());
-     const diff = timeNow - writtenTime;
-     if (diff > 1123200000) {
-     } else {
-       const times = [
-         { time: "분", milliSeconds: 1000 * 60 },
-         { time: "시간", milliSeconds: 1000 * 60 * 60 },
-         { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-         { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-       ].reverse();
-
-       for (const value of times) {
-         const betweenTime = Math.floor(diff / value.milliSeconds);
-         if (betweenTime > 0) {
-           comments = {
-             hostId: comments.hostId,
-             userId: comments.userId,
-             reviewId: comments.reviewId,
-             average: comments.average,
-             title: comments.title,
-             isSave: comments.isSave,
-             nickname: comments.nickname,
-             category: comments.category,
-             houseInfo: comments.houseInfo,
-             mainAddress: comments.mainAddress,
-             subAddress: comments.subAddress,
-             stepSelect: comments.stepSelect,
-             stepInfo: comments.stepInfo,
-             link: comments.link,
-             hostContent: comments.hostContent,
-             preImages: comments.preImages,
-             tagList: comments.tagList,
-             createdAt: betweenTime + value.time + "전",
-             updatedAt: comments.updatedAt,
-             images: comments.images,
-           };
-           break;
-         } else {
-           comments = {
-             hostId: comments.hostId,
-             userId: comments.userId,
-             reviewId: comments.reviewId,
-             average: comments.average,
-             title: comments.title,
-             isSave: comments.isSave,
-             nickname: comments.nickname,
-             category: comments.category,
-             houseInfo: comments.houseInfo,
-             mainAddress: comments.mainAddress,
-             subAddress: comments.subAddress,
-             stepSelect: comments.stepSelect,
-             stepInfo: comments.stepInfo,
-             link: comments.link,
-             hostContent: comments.hostContent,
-             preImages: comments.preImages,
-             tagList: comments.tagList,
-             createdAt: "방금 전",
-             updatedAt: comments.updatedAt,
-             images: comments.images,
-           };
-         }
-       }
-     }
+     
      const commentInfo = await comments.map((commentinfo) =>({
       userId : commentinfo.userId,
       commentId : commentinfo.commentId,
@@ -90,11 +26,7 @@ async function readComment(req, res) {
       userImageURL : commentinfo.user.userImageURL,
       nickname : commentinfo.user.nickname
      }));
-
-
-
    res.status(200).send({ commentInfo, msg : "댓글을 읽었습니다."});
-      
   } catch (error) {
     res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
   }
@@ -112,7 +44,7 @@ async function writeComment(req, res) {
     });
     return;
   }
-//try {
+try {
   if (!comment) {
     res.status(412).send({
       errorMessage: "댓글을 입력해 주세요.",
@@ -127,15 +59,12 @@ async function writeComment(req, res) {
     comment: comment,
     nickname: nickname,
   });
-
-
   res.status(201).send({comment_c, msg: "댓글이 등록 되었습니다." });
-// } catch (err) {
-//   // console.log(err);
-//   res
-//     .status(400)
-//     .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
-// }
+} catch (err) {
+  res
+    .status(400)
+    .send({ result: false, errorMessage: "댓글 작성을 할 수 없습니다." });
+}
 }
 
 // 댓글 수정 API
@@ -162,13 +91,10 @@ async function updateComment(req, res) {
       });
       return;
     }
- 
      const updateComment = await existsComment.update(
        { comment: comment },
        { updatedAt: Date() }
      );
-      
-
       res
         .status(200)
         .send({ comment, updateComment, message: "댓글 수정 완료" });
