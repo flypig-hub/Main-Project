@@ -13,7 +13,7 @@ async function readReview(req, res) {
   try {
     const { hostId } = req.params;
 
-    const review = await reviews.findAll({
+    const reviewInfo = await reviews.findAll({
       where: {
         hostId,
       },
@@ -25,48 +25,50 @@ async function readReview(req, res) {
       ],
       order: [["reviewId", "DESC"]],
     });
-     const writtenTime = Date.parse(review.createdAt);
-     const timeNow = Date.parse(Date());
-    const diff = timeNow - writtenTime;
-    let reviewInfo = []
-     if (diff > 1123200000) {
-     } else {
-       const times = [
-         { time: "분", milliSeconds: 1000 * 60 },
-         { time: "시간", milliSeconds: 1000 * 60 * 60 },
-         { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-         { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-       ].reverse();
+    for (let i = 0; i < reviewInfo.length; i++) {
+      let Review = reviewInfo[i];
+      const writtenTime = Date.parse(Review.createdAt);
+      const timeNow = Date.parse(Date());
+      const diff = timeNow - writtenTime;
+      console.log(diff);
+      if (diff > 1123200000) {
+      } else {
+        const times = [
+          { time: "분", milliSeconds: 1000 * 60 },
+          { time: "시간", milliSeconds: 1000 * 60 * 60 },
+          { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+          { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+        ].reverse();
 
-       for (const value of times) {
-         const betweenTime = Math.floor(diff / value.milliSeconds);
-         if (betweenTime > 0) {
-        let reviewIn = await review.map((reinfo) => ({
-          userId: reinfo.userId,
-          reviewId: reinfo.reviewId,
-          review: reinfo.review,
-          starpoint: reinfo.starpoint,
-          userImageURL: reinfo.user.userImageURL,
-          nickname: reinfo.user.nickname,
-          createdAt: betweenTime + value.time + "전",
-        }));
-           reviewInfo.push(reviewIn);
-           break;
-         } else {
-        let reviewIn = await review.map((reinfo) => ({
-          userId: reinfo.userId,
-          reviewId: reinfo.reviewId,
-          review: reinfo.review,
-          starpoint: reinfo.starpoint,
-          userImageURL: reinfo.user.userImageURL,
-          nickname: reinfo.user.nickname,
-          createdAt: "방금 전",
-        }));
-           reviewInfo.push(reviewIn);
-         }
-       }
-     }
-    
+        for (const value of times) {
+          const betweenTime = Math.floor(diff / value.milliSeconds);
+          if (betweenTime > 0) {
+            Review = {
+              userId: Review.userId,
+              reviewId: Review.reviewId,
+              review: Review.review,
+              starpoint: Review.starpoint,
+              userImageURL: Review.user.userImageURL,
+              nickname: Review.user.nickname,
+              createdAt: betweenTime + value.time + "전",
+            };
+            reviewInfo[i] = Review;
+            break;
+          } else {
+            Review = {
+              userId: Review.userId,
+              reviewId: Review.reviewId,
+              review: Review.review,
+              starpoint: Review.starpoint,
+              userImageURL: Review.user.userImageURL,
+              nickname: Review.user.nickname,
+              createdAt: betweenTime + value.time + "전",
+            };
+            reviewInfo[i] = Review;
+          }
+        }
+      }
+    }
 
     res.status(200).send({ reviewInfo, msg: "후기를 읽어옵니다." });
   } catch (error) {
