@@ -25,19 +25,52 @@ async function readReview(req, res) {
       ],
       order: [["reviewId", "DESC"]],
     });
+     const writtenTime = Date.parse(review.createdAt);
+     const timeNow = Date.parse(Date());
+    const diff = timeNow - writtenTime;
+    let reviewInfo = []
+     if (diff > 1123200000) {
+     } else {
+       const times = [
+         { time: "분", milliSeconds: 1000 * 60 },
+         { time: "시간", milliSeconds: 1000 * 60 * 60 },
+         { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+         { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+       ].reverse();
 
-    const reviewInfo = await review.map((reinfo) => ({
-      userId: reinfo.userId,
-      reviewId: reinfo.reviewId,
-      review: reinfo.review,
-      starpoint: reinfo.starpoint,
-      userImageURL: reinfo.user.userImageURL,
-      nickname: reinfo.user.nickname,
-    }));
+       for (const value of times) {
+         const betweenTime = Math.floor(diff / value.milliSeconds);
+         if (betweenTime > 0) {
+        let reviewIn = await review.map((reinfo) => ({
+          userId: reinfo.userId,
+          reviewId: reinfo.reviewId,
+          review: reinfo.review,
+          starpoint: reinfo.starpoint,
+          userImageURL: reinfo.user.userImageURL,
+          nickname: reinfo.user.nickname,
+          createdAt: betweenTime + value.time + "전",
+        }));
+           reviewInfo.push(reviewIn);
+           break;
+         } else {
+        let reviewIn = await review.map((reinfo) => ({
+          userId: reinfo.userId,
+          reviewId: reinfo.reviewId,
+          review: reinfo.review,
+          starpoint: reinfo.starpoint,
+          userImageURL: reinfo.user.userImageURL,
+          nickname: reinfo.user.nickname,
+          createdAt: "방금 전",
+        }));
+           reviewInfo.push(reviewIn);
+         }
+       }
+     }
+    
 
     res.status(200).send({ reviewInfo, msg: "후기를 읽어옵니다." });
   } catch (error) {
-    res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
+    res.status(400).send({ errorMessage: "후기 조회에 실패하였습니다." });
   }
 }
 
