@@ -30,7 +30,7 @@ async function readReview(req, res) {
       const writtenTime = Date.parse(Review.createdAt);
       const timeNow = Date.parse(Date());
       const diff = timeNow - writtenTime;
-      console.log(diff);
+      
       if (diff > 1123200000) {
       } else {
         const times = [

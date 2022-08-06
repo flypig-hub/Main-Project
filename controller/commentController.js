@@ -5,7 +5,7 @@ async function readComment(req, res) {
   try {
     const { postId } = req.params;
 
-    let comments = await Comments.findAll({
+    let commentInfo = await Comments.findAll({
       where: {
         postId,
       },
@@ -17,14 +17,55 @@ async function readComment(req, res) {
       ],
       order: [["commentid", "DESC"]],
     });
+for (let i = 0; i < commentInfo.length; i++) {
+  let comment = commentInfo[i];
+  const writtenTime = Date.parse(comment.createdAt);
+  const timeNow = Date.parse(Date());
+  const diff = timeNow - writtenTime;
 
-    const commentInfo = await comments.map((commentinfo) => ({
-      userId: commentinfo.userId,
-      commentId: commentinfo.commentId,
-      comment: commentinfo.comment,
-      userImageURL: commentinfo.user.userImageURL,
-      nickname: commentinfo.user.nickname,
-    }));
+  if (diff > 1123200000) {
+  } else {
+    const times = [
+      { time: "분", milliSeconds: 1000 * 60 },
+      { time: "시간", milliSeconds: 1000 * 60 * 60 },
+      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+      { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+    ].reverse();
+
+    for (const value of times) {
+      const betweenTime = Math.floor(diff / value.milliSeconds);
+      if (betweenTime > 0) {
+        comment = {
+          userId: comment.userId,
+          commentId: comment.commentId,
+          comment: comment.comment,
+          userImageURL: comment.user.userImageURL,
+          nickname: comment.user.nickname,
+          createdAt: betweenTime + value.time + "전",
+        };
+        commentInfo[i] = comment;
+        break;
+      } else {
+        Review = {
+          userId: comment.userId,
+          commentId: comment.commentId,
+          comment: comment.comment,
+          userImageURL: comment.user.userImageURL,
+          nickname: comment.user.nickname,
+          createdAt: "방금 전",
+        };
+        commentInfo[i] = comment;
+      }
+    }
+  }
+}
+    // const commentInfo = await comments.map((commentinfo) => ({
+    //   userId: commentinfo.userId,
+    //   commentId: commentinfo.commentId,
+    //   comment: commentinfo.comment,
+    //   userImageURL: commentinfo.user.userImageURL,
+    //   nickname: commentinfo.user.nickname,
+    // }));
     res.status(200).send({ commentInfo, msg: "댓글을 읽었습니다." });
   } catch (error) {
     res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
