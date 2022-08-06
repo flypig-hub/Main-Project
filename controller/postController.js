@@ -347,7 +347,7 @@ async function GetPost(req, res) {
     const writtenTime = Date.parse(allPostInfo[0].createdAt);
     const timeNow = Date.parse(Date());
     const diff = timeNow - writtenTime;
-   
+
     Object.assign(allPostInfo[0], {
       likeNum: likeNum,
       commentNum: commentNum,
@@ -362,69 +362,69 @@ async function GetPost(req, res) {
       { where: { postId: allPostInfo[0].postId } }
     );
     let allPost = [];
-     if (diff > 1123200000) {
-     } else {
-       const times = [
-         { time: "분", milliSeconds: 1000 * 60 },
-         { time: "시간", milliSeconds: 1000 * 60 * 60 },
-         { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
-         { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
-       ].reverse();
-       for (const value of times) {
-         const betweenTime = Math.floor(diff / value.milliSeconds);
-         if (betweenTime > 0) {
-           let allpostin = allPostInfo.map((postInfo) => ({
-             postId: postInfo.postId,
-             userId: postInfo.userId,
-             nickname: postInfo.user.nickname,
-             userImageURL: postInfo.user.userImageURL,
-             content: postInfo.content,
-             title: postInfo.title,
-             commentId: postInfo.commentId,
-             commentNum: postInfo.commentNum,
-             likeNum: postInfo.likeNum,
-             islike: postInfo.islike,
-             mainAddress: postInfo.mainAddress,
-             subAddress: postInfo.subAddress,
-             category: postInfo.category,
-             type: postInfo.type,
-             link: postInfo.link,
-             houseTitle: postInfo.houseTitle,
-             tagList: newTAG,
-             createdAt: betweenTime + value.time + "전",
-             updatedAt: postInfo.updatedAt,
-             images: postInfo.images,
-           }));
-           allPost.push(allpostin);
-           break;
-         } else {
-    let allpostin = allPostInfo.map((postInfo) => ({
-      postId: postInfo.postId,
-      userId: postInfo.userId,
-      nickname: postInfo.user.nickname,
-      userImageURL: postInfo.user.userImageURL,
-      content: postInfo.content,
-      title: postInfo.title,
-      commentId: postInfo.commentId,
-      commentNum: postInfo.commentNum,
-      likeNum: postInfo.likeNum,
-      islike: postInfo.islike,
-      mainAddress: postInfo.mainAddress,
-      subAddress: postInfo.subAddress,
-      category: postInfo.category,
-      type: postInfo.type,
-      link: postInfo.link,
-      houseTitle: postInfo.houseTitle,
-      tagList: newTAG,
-      createdAt: betweenTime + value.time + "전",
-      updatedAt: postInfo.updatedAt,
-      images: postInfo.images,
-    }));
-    allPost.push(allpostin);
-         }
-       }
+    if (diff > 1123200000) {
+    } else {
+      const times = [
+        { time: "분", milliSeconds: 1000 * 60 },
+        { time: "시간", milliSeconds: 1000 * 60 * 60 },
+        { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+        { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+      ].reverse();
+      for (const value of times) {
+        const betweenTime = Math.floor(diff / value.milliSeconds);
+        if (betweenTime > 0) {
+          let allpostin = allPostInfo.map((postInfo) => ({
+            postId: postInfo.postId,
+            userId: postInfo.userId,
+            nickname: postInfo.user.nickname,
+            userImageURL: postInfo.user.userImageURL,
+            content: postInfo.content,
+            title: postInfo.title,
+            commentId: postInfo.commentId,
+            commentNum: postInfo.commentNum,
+            likeNum: postInfo.likeNum,
+            islike: postInfo.islike,
+            mainAddress: postInfo.mainAddress,
+            subAddress: postInfo.subAddress,
+            category: postInfo.category,
+            type: postInfo.type,
+            link: postInfo.link,
+            houseTitle: postInfo.houseTitle,
+            tagList: newTAG,
+            createdAt: betweenTime + value.time + "전",
+            updatedAt: postInfo.updatedAt,
+            images: postInfo.images,
+          }));
+          allPost.push(allpostin);
+          break;
+        } else {
+          let allpostin = allPostInfo.map((postInfo) => ({
+            postId: postInfo.postId,
+            userId: postInfo.userId,
+            nickname: postInfo.user.nickname,
+            userImageURL: postInfo.user.userImageURL,
+            content: postInfo.content,
+            title: postInfo.title,
+            commentId: postInfo.commentId,
+            commentNum: postInfo.commentNum,
+            likeNum: postInfo.likeNum,
+            islike: postInfo.islike,
+            mainAddress: postInfo.mainAddress,
+            subAddress: postInfo.subAddress,
+            category: postInfo.category,
+            type: postInfo.type,
+            link: postInfo.link,
+            houseTitle: postInfo.houseTitle,
+            tagList: newTAG,
+            createdAt: betweenTime + value.time + "전",
+            updatedAt: postInfo.updatedAt,
+            images: postInfo.images,
+          }));
+          allPost.push(allpostin);
+        }
+      }
     }
-    console.log(allPost)
+    console.log(allPost);
     // const allPost = allPostInfo.map((postInfo) => ({
     //   postId: postInfo.postId,
     //   userId: postInfo.userId,
