@@ -48,8 +48,8 @@ async function readReview(req, res) {
               reviewId: Review.reviewId,
               review: Review.review,
               starpoint: Review.starpoint,
-              userImageURL: Review.user.userImageURL,
-              nickname: Review.user.nickname,
+              userImageURL: Review.users.userImageURL,
+              nickname: Review.users.nickname,
               createdAt: betweenTime + value.time + "전",
             };
             reviewInfo[i] = Review;
@@ -60,8 +60,8 @@ async function readReview(req, res) {
               reviewId: Review.reviewId,
               review: Review.review,
               starpoint: Review.starpoint,
-              userImageURL: Review.user.userImageURL,
-              nickname: Review.user.nickname,
+              userImageURL: Review.users.userImageURL,
+              nickname: Review.users.nickname,
               createdAt: betweenTime + value.time + "전",
             };
             reviewInfo[i] = Review;
