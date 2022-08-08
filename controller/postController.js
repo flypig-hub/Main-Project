@@ -630,7 +630,7 @@ async function GetPost(req, res) {
           { where: { hostId: findAllAcc[0].hostId } }
         );
       }
-
+      allPost = allPost[0]
       res.send({ allPost, findAllAcc, outherPostInfo });
     } else {
       res.send({ allPost, findAllAcc, outherPostInfo });
