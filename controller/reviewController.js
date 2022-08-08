@@ -30,7 +30,7 @@ async function readReview(req, res) {
       const writtenTime = Date.parse(Review.createdAt);
       const timeNow = Date.parse(Date());
       const diff = timeNow - writtenTime;
-      
+      console.log(Review, '로그');
       if (diff > 1123200000) {
       } else {
         const times = [
@@ -48,8 +48,8 @@ async function readReview(req, res) {
               reviewId: Review.reviewId,
               review: Review.review,
               starpoint: Review.starpoint,
-              userImageURL: Review.users.userImageURL,
-              nickname: Review.users.nickname,
+              userImageURL: Review.user.userImageURL,
+              nickname: Review.user.nickname,
               createdAt: betweenTime + value.time + "전",
             };
             reviewInfo[i] = Review;
@@ -60,8 +60,8 @@ async function readReview(req, res) {
               reviewId: Review.reviewId,
               review: Review.review,
               starpoint: Review.starpoint,
-              userImageURL: Review.users.userImageURL,
-              nickname: Review.users.nickname,
+              userImageURL: Review.user.userImageURL,
+              nickname: Review.user.nickname,
               createdAt: betweenTime + value.time + "전",
             };
             reviewInfo[i] = Review;
