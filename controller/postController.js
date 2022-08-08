@@ -368,7 +368,7 @@ async function GetPost(req, res) {
 
         if (betweenTime > 0) {
           console.log("---------------------------", betweenTime, value.time);
-          allPost = {
+          allPost = [{
             postId: allPostInfo.postId,
             userId: allPostInfo.userId,
             nickname: allPostInfo.user.nickname,
@@ -389,10 +389,10 @@ async function GetPost(req, res) {
             createdAt: betweenTime + value.time + "전",
             updatedAt: allPostInfo.updatedAt,
             images: allPostInfo.images,
-          };
+          }]
           break;
-        } else {
-         allPost = {
+        }else {
+         allPost =[{
            postId: allPostInfo.postId,
            userId: allPostInfo.userId,
            nickname: allPostInfo.user.nickname,
@@ -413,7 +413,7 @@ async function GetPost(req, res) {
            createdAt: "방금 전",
            updatedAt: allPostInfo.updatedAt,
            images: allPostInfo.images,
-         };
+         }]
         }
       }
     }
