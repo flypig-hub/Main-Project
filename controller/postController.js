@@ -424,29 +424,7 @@ async function GetPost(req, res) {
         }
       }
     }
-    console.log(allPost);
-    // const allPost = allPostInfo.map((postInfo) => ({
-    //   postId: postInfo.postId,
-    //   userId: postInfo.userId,
-    //   nickname: postInfo.user.nickname,
-    //   userImageURL: postInfo.user.userImageURL,
-    //   content: postInfo.content,
-    //   title: postInfo.title,
-    //   commentId: postInfo.commentId,
-    //   commentNum: postInfo.commentNum,
-    //   likeNum: postInfo.likeNum,
-    //   islike: postInfo.islike,
-    //   mainAddress: postInfo.mainAddress,
-    //   subAddress: postInfo.subAddress,
-    //   category: postInfo.category,
-    //   type: postInfo.type,
-    //   link: postInfo.link,
-    //   houseTitle: postInfo.houseTitle,
-    //   tagList: newTAG,
-    //   createdAt: postInfo.createdAt,
-    //   updatedAt: postInfo.updatedAt,
-    //   images: postInfo.images,
-    // }));
+    
 
     //글쓴이의 다른 게시물
 
@@ -633,6 +611,7 @@ async function GetPost(req, res) {
       allPost = allPost[0]
       res.send({ allPost, findAllAcc, outherPostInfo });
     } else {
+      allPost = allPost[0];
       res.send({ allPost, findAllAcc, outherPostInfo });
     }
   } catch (err) {
