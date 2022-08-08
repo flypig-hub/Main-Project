@@ -16,8 +16,9 @@
 
 ### ⏰Project Timeline⏰
 
-6월 24일 ~ 8월 5일(6주)<br><br>
-7월 30일 멘도롱제주 배포 & 마케팅 & UT 시작
+6월 24일 ~ 8월 5일(6주)<br>
+7월 30일 멘도롱제주 배포 & 마케팅 & UT 시작<br>
+8월 5일 멘도롱제주 서비스 발표 및 소개 (항해 99 실전프로젝트 발표회)
 
 <br>
 
@@ -42,6 +43,62 @@
   * Sequelize ORM을 통해 SQL의 절차적이고 순차적인 접근이 아닌 객체 지향적인 접근을 목표로 하였다.
   
 
+
+<br>
+
+-----
+
+<br>
+
+### 📝유저 피드백
+
+<details>
+<summary> ✒️참여 인원 및 만족도 평가✒️ </summary>
+<br>
+ 
+![유저 커뮤니티 차트(참여방법)](https://user-images.githubusercontent.com/72002228/183229041-9245e154-40d4-4f0b-b12a-160837b1ec98.png)
+ 
+<br>
+ 
+
+![유저 커뮤니티 차트(만족도 점수)](https://user-images.githubusercontent.com/72002228/183228983-48fba9fa-7534-41a7-ab59-937bcd30a2bd.png)
+
+</details>
+
+<br><br>
+<details>
+<summary>  ⛳피드백 결과⛳ </summary>
+<br>
+ 
+ 
+![유저피드백 반영결과](https://user-images.githubusercontent.com/72002228/183229128-cae145ca-2347-4b73-9608-81162baf9546.png)
+
+
+</details>
+
+
+<br>
+
+-----
+
+<br>
+
+
+### 🎬 기능 구현 영상
+<br>
+
+ [유튜브 영상](https://www.youtube.com/watch?v=7FfDIUuBeQU)
+
+<br>
+
+-----
+
+<br>
+
+### 📘 팀 노션
+<br>
+
+ [멘도롱제주 노션](https://unmarred-judge-712.notion.site/875e0fb4b7bf42d69e2fe7b217286aaa)
 
 <br>
 

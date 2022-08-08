@@ -13,7 +13,7 @@ async function readReview(req, res) {
  // try {
     const { hostId } = req.params;
 
-    const review = await reviews.findAll({
+    const reviewInfo = await reviews.findAll({
       where: {
         hostId,
       },
@@ -25,20 +25,57 @@ async function readReview(req, res) {
       ],
       order: [["reviewId", "DESC"]],
     });
+    for (let i = 0; i < reviewInfo.length; i++) {
+      let Review = reviewInfo[i];
+      const writtenTime = Date.parse(Review.createdAt);
+      const timeNow = Date.parse(Date());
+      const diff = timeNow - writtenTime;
+      
+      if (diff > 1123200000) {
+      } else {
+        const times = [
+          { time: "분", milliSeconds: 1000 * 60 },
+          { time: "시간", milliSeconds: 1000 * 60 * 60 },
+          { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+          { time: "주", milliSeconds: 1000 * 60 * 60 * 24 * 7 },
+        ].reverse();
 
-    const reviewInfo = await review.map((reinfo) => ({
-      userId: reinfo.userId,
-      reviewId: reinfo.reviewId,
-      review: reinfo.review,
-      starpoint: reinfo.starpoint,
-      userImageURL: reinfo.user.userImageURL,
-      nickname: reinfo.user.nickname,
-    }));
+        for (const value of times) {
+          const betweenTime = Math.floor(diff / value.milliSeconds);
+          if (betweenTime > 0) {
+            Review = {
+              userId: Review.userId,
+              reviewId: Review.reviewId,
+              review: Review.review,
+              starpoint: Review.starpoint,
+              userImageURL: Review.user.userImageURL,
+              nickname: Review.user.nickname,
+              createdAt: betweenTime + value.time + "전",
+            };
+            reviewInfo[i] = Review;
+            break;
+          } else {
+            Review = {
+              userId: Review.userId,
+              reviewId: Review.reviewId,
+              review: Review.review,
+              starpoint: Review.starpoint,
+              userImageURL: Review.user.userImageURL,
+              nickname: Review.user.nickname,
+              createdAt: betweenTime + value.time + "전",
+            };
+            reviewInfo[i] = Review;
+          }
+        }
+      }
+    }
 
     res.status(200).send({ reviewInfo, msg: "후기를 읽어옵니다." });
+
   // } catch (error) {
   //   res.status(400).send({ errorMessage: "댓글 조회에 실패하였습니다." });
   // }
+
 }
 
 //review 작성하기
