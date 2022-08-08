@@ -292,7 +292,7 @@ async function GetPost(req, res) {
       queryData.userId = 0;
     }
 
-    let allPostInfo = await posts.findAll({
+    let allPostInfo = await posts.findOne({
       where: { postId },
       include: [
         {
@@ -317,23 +317,22 @@ async function GetPost(req, res) {
         },
       ],
     });
-
     let newTagStr = "";
-    if (allPostInfo[0].tagList.length) {
-      const newTag = allPostInfo[0].tagList.split(" ");
+    if (allPostInfo.tagList.length) {
+      const newTag = allPostInfo.tagList.split(" ");
       newTagStr += newTag;
     }
     const newTAG = newTagStr.split(",");
 
     let postComments = await Comments.findAll({
-      where: { postId: allPostInfo[0].postId },
+      where: { postId: allPostInfo.postId },
     });
     const postLikes = await Like.findAll({
-      where: { postId: allPostInfo[0].postId },
+      where: { postId: allPostInfo.postId },
     });
 
     let islike = await Like.findOne({
-      where: { userId: queryData.userId, postId: allPostInfo[0].postId },
+      where: { userId: queryData.userId, postId: allPostInfo.postId },
     });
 
     const likeNum = postLikes.length;
@@ -344,24 +343,18 @@ async function GetPost(req, res) {
     } else {
       islike = false;
     }
-    const writtenTime = Date.parse(allPostInfo[0].createdAt);
+    const writtenTime = Date.parse(allPostInfo.createdAt);
     const timeNow = Date.parse(Date());
     const diff = timeNow - writtenTime;
-
-    Object.assign(allPostInfo[0], {
-      likeNum: likeNum,
-      commentNum: commentNum,
-      islike: islike,
-    });
+    let allPost = {}
     await posts.update(
       {
         likeNum: likeNum,
         commentNum: commentNum,
         islike: islike,
       },
-      { where: { postId: allPostInfo[0].postId } }
+      { where: { postId: allPostInfo.postId } }
     );
-    let allPost = [];
     if (diff > 1123200000) {
     } else {
       const times = [
@@ -372,65 +365,64 @@ async function GetPost(req, res) {
       ].reverse();
       for (const value of times) {
         const betweenTime = Math.floor(diff / value.milliSeconds);
+
         if (betweenTime > 0) {
-          let allpostin = allPostInfo.map((postInfo) => ({
-            postId: postInfo.postId,
-            userId: postInfo.userId,
-            nickname: postInfo.user.nickname,
-            userImageURL: postInfo.user.userImageURL,
-            content: postInfo.content,
-            title: postInfo.title,
-            commentId: postInfo.commentId,
-            commentNum: postInfo.commentNum,
-            likeNum: postInfo.likeNum,
-            islike: postInfo.islike,
-            mainAddress: postInfo.mainAddress,
-            subAddress: postInfo.subAddress,
-            category: postInfo.category,
-            type: postInfo.type,
-            link: postInfo.link,
-            houseTitle: postInfo.houseTitle,
+          console.log("---------------------------", betweenTime, value.time);
+          allPost = {
+            postId: allPostInfo.postId,
+            userId: allPostInfo.userId,
+            nickname: allPostInfo.user.nickname,
+            userImageURL: allPostInfo.user.userImageURL,
+            content: allPostInfo.content,
+            title: allPostInfo.title,
+            commentId: allPostInfo.commentId,
+            commentNum: commentNum,
+            likeNum: likeNum,
+            islike: islike,
+            mainAddress: allPostInfo.mainAddress,
+            subAddress: allPostInfo.subAddress,
+            category: allPostInfo.category,
+            type: allPostInfo.type,
+            link: allPostInfo.link,
+            houseTitle: allPostInfo.houseTitle,
             tagList: newTAG,
             createdAt: betweenTime + value.time + "전",
-            updatedAt: postInfo.updatedAt,
-            images: postInfo.images,
-          }));
-          allPost.push(allpostin);
+            updatedAt: allPostInfo.updatedAt,
+            images: allPostInfo.images,
+          };
           break;
         } else {
-          let allpostin = allPostInfo.map((postInfo) => ({
-            postId: postInfo.postId,
-            userId: postInfo.userId,
-            nickname: postInfo.user.nickname,
-            userImageURL: postInfo.user.userImageURL,
-            content: postInfo.content,
-            title: postInfo.title,
-            commentId: postInfo.commentId,
-            commentNum: postInfo.commentNum,
-            likeNum: postInfo.likeNum,
-            islike: postInfo.islike,
-            mainAddress: postInfo.mainAddress,
-            subAddress: postInfo.subAddress,
-            category: postInfo.category,
-            type: postInfo.type,
-            link: postInfo.link,
-            houseTitle: postInfo.houseTitle,
-            tagList: newTAG,
-            createdAt: betweenTime + value.time + "전",
-            updatedAt: postInfo.updatedAt,
-            images: postInfo.images,
-          }));
-          allPost.push(allpostin);
+         allPost = {
+           postId: allPostInfo.postId,
+           userId: allPostInfo.userId,
+           nickname: allPostInfo.user.nickname,
+           userImageURL: allPostInfo.user.userImageURL,
+           content: allPostInfo.content,
+           title: allPostInfo.title,
+           commentId: allPostInfo.commentId,
+           commentNum: commentNum,
+           likeNum: likeNum,
+           islike: islike,
+           mainAddress: allPostInfo.mainAddress,
+           subAddress: allPostInfo.subAddress,
+           category: allPostInfo.category,
+           type: allPostInfo.type,
+           link: allPostInfo.link,
+           houseTitle: allPostInfo.houseTitle,
+           tagList: newTAG,
+           createdAt: "방금 전",
+           updatedAt: allPostInfo.updatedAt,
+           images: allPostInfo.images,
+         };
         }
       }
     }
-    
 
     //글쓴이의 다른 게시물
 
     const outherPosts = await posts.findAll({
       where: {
-        userId: allPostInfo[0].userId,
+        userId: allPostInfo.userId,
         postId: {
           [Op.ne]: postId,
         },
@@ -482,7 +474,7 @@ async function GetPost(req, res) {
           commentNum: commentNum,
           islike: islike,
         },
-        { where: { postId: allPostInfo[0].postId } }
+        { where: { postId: allPostInfo.postId } }
       );
 
       Object.defineProperties(outherPost.dataValues, {
@@ -571,9 +563,9 @@ async function GetPost(req, res) {
     }
 
     let findAllAcc = [];
-    if (houseTitle.indexOf(allPostInfo[0].houseTitle) != -1) {
+    if (houseTitle.indexOf(allPostInfo.houseTitle) != -1) {
       let findAllAcc = await hosts.findAll({
-        where: { title: allPostInfo[0].houseTitle },
+        where: { title: allPostInfo.houseTitle },
         attritutes: ["hostId"],
         include: [
           {
@@ -608,10 +600,10 @@ async function GetPost(req, res) {
           { where: { hostId: findAllAcc[0].hostId } }
         );
       }
-      allPost = allPost[0]
+      
       res.send({ allPost, findAllAcc, outherPostInfo });
     } else {
-      allPost = allPost[0];
+      
       res.send({ allPost, findAllAcc, outherPostInfo });
     }
   } catch (err) {
