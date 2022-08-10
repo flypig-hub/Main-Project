@@ -142,6 +142,12 @@
  &nbsp;<img src="https://img.shields.io/badge/Passport-34E27A?style=flat-square&logo=Passport&logoColor=white" width="9%" height="9%"/>
  &nbsp;<img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white" width="16%" height="16%"/>
  &nbsp;<img src="https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=Socket.io&logoColor=white" width="10%" height="10%"/>
+ 
+ * AWS EC2 : IP 획득을 위해 인스턴스 개방. 서버 배포.
+ * AWS S3 : 멘도롱제주 프로젝트는 다중 이미지 관리가 대단히 중요하다. 한번에 이미지를 저장, 삭제 등의 작업을 수행하기 위해 S3를 사용하였으며 이미지 업로드는 multer를 활용한다.
+ * MySQL : 이용자, 숙소 등 그 모든 정보가 연결되어 있다. 유저는 호스트가 될 수 있는 것처럼 각 데이터 간의 관계가 밀접하기 때문에 데이터의 관리 역시 RDBMS를 사용하는 것이 적합하다고 판단하였다.
+ * Sequelize : MySQL 쿼리를 사용하면 속도는 빠를 수 있으나 코드의 양이 상당히 많아진다. 기존의 메서드를 그대로 사용할 수 있고 학습이 편리한 Sequelize를 선택하여 협업의 생산성을 높이는데 초점을 두었다.
+ * Socket.io : 실시간 채팅 기능을 위해 Socket.io를 사용하였다. 양방향 통신을 열어 클라이언트가 서버에 계속해서 연결되도록 하고 데이터의 전송을 실시간으로 이벤트를 발생시키고 클라이언트에 전송해주는 방식으로 채팅 기능을 구현하였다.
 
 <br>
 
