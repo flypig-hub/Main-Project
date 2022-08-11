@@ -207,11 +207,7 @@ account_email로 설정이 되어있어 발생했던 문제였다.<br><br>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. 이미지 치환 후 데이터를 DB에 저장 
  
-
-</details>
-
-<br><br>
-<details>
+<br>
 <summary> 💥 socket.io 채팅기능 구현 💥 </summary>
 <br>
 문제점 1 : 소켓 최초 연결 시에 알 수 없는 이유로 프론트 서버와 연결이 되지 않았다. <br>
