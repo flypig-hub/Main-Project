@@ -210,4 +210,18 @@ account_email로 설정이 되어있어 발생했던 문제였다.<br><br>
 
 </details>
 
+<br><br>
+<details>
+<summary> 💥 socket.io 채팅기능 구현 💥 </summary>
+<br>
+문제점 1 : 소켓 최초 연결 시에 알 수 없는 이유로 프론트 서버와 연결이 되지 않았다. <br>
+.<br>
+문제점 2 : 룸 입장 시 api사용을 실시간으로 구성하려고 했으나 일부 함수(unshift())가 중복 적용되는 버그가 발생. <br>
+<br><br>
 
+해결 1 : 서버 관련 설정을 다 사용해본 뒤 port redirect문제임을 발견, 해결. <br><br>
+
+해결 : 중복 호출이 되어도 버그가 발생하지 않도록 unshift()의 기능인 'array에 object추가'가 아닌
+'array안의 object'순서 변경으로 함수를 바꿔 사용. 문제해결.
+
+</details>
